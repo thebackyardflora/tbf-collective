@@ -51,7 +51,7 @@
     "tiny-invariant": "1.2.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "6.3.1",
+    "@faker-js/faker": "7.3.0",
     "@justinwaite/prettier-config": "1.0.0",
     "@remix-run/dev": "1.6.1",
     "@remix-run/eslint-config": "1.6.1",
