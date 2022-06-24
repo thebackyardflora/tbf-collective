@@ -7,13 +7,16 @@ ENV NODE_ENV production
 # Install openssl for Prisma
 RUN apt-get update && apt-get install -y openssl
 
+RUN corepack enable
+RUN corepack prepare pnpm@6.32.24 --activate
+
 # Install all node_modules, including dev dependencies
 FROM base as deps
 
 WORKDIR /myapp
 
-ADD package.json package-lock.json ./
-RUN npm install --production=false
+ADD package.json pnpm-lock.yaml ./
+RUN pnpm install --production=false
 
 # Setup production node_modules
 FROM base as production-deps
@@ -21,8 +24,8 @@ FROM base as production-deps
 WORKDIR /myapp
 
 COPY --from=deps /myapp/node_modules /myapp/node_modules
-ADD package.json package-lock.json ./
-RUN npm prune --production
+ADD package.json pnpm-lock.yaml ./
+RUN pnpm prune --production
 
 # Build the app
 FROM base as build
@@ -35,7 +38,7 @@ ADD prisma .
 RUN npx prisma generate
 
 ADD . .
-RUN npm run build
+RUN pnpm run build
 
 # Finally, build the production image with minimal footprint
 FROM base
@@ -49,4 +52,4 @@ COPY --from=build /myapp/build /myapp/build
 COPY --from=build /myapp/public /myapp/public
 ADD . .
 
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
