@@ -149,6 +149,12 @@ Now that everything is set up you can commit and push your changes to your repo.
 
 If you run into any issues deploying to Fly, make sure you've followed all of the steps above and if you have, then post as many details about your deployment (including your app name) to [the Fly support community](https://community.fly.io). They're normally pretty responsive over there and hopefully can help resolve any of your deployment issues and questions.
 
+### Proxy live databases
+If you want to proxy the live databases to localhost for inspection, run the following
+```sh
+flyctl proxy 15432:5432 -a tbf-collective-db
+```
+
 ### Multi-region deploys
 
 Once you have your site and database running in a single region, you can add more regions by following [Fly's Scaling](https://fly.io/docs/reference/scaling/) and [Multi-region PostgreSQL](https://fly.io/docs/getting-started/multi-region-databases/) docs.
