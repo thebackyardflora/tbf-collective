@@ -1,7 +1,7 @@
 import { createCookieSessionStorage } from '@remix-run/node';
-import { getRequiredEnvVariable } from '~/env.server';
+import invariant from 'tiny-invariant';
 
-const sessionSecret = getRequiredEnvVariable('SESSION_SECRET');
+invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set');
 
 const { getSession, destroySession, ...sessionStorage } = createCookieSessionStorage({
   cookie: {
@@ -9,7 +9,7 @@ const { getSession, destroySession, ...sessionStorage } = createCookieSessionSto
     httpOnly: true,
     path: '/',
     sameSite: 'lax',
-    secrets: [sessionSecret],
+    secrets: [process.env.SESSION_SECRET],
     maxAge: 1000 * 60 * 60 * 24 * 7,
     secure: process.env.NODE_ENV === 'production',
   },

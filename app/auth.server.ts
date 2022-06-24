@@ -1,9 +1,8 @@
 import { Authenticator } from 'remix-auth';
 import { Auth0Strategy } from 'remix-auth-auth0';
 import type { User } from '~/models/user.server';
-import { getUserById } from '~/models/user.server';
+import { findOrCreateUser, getUserById } from '~/models/user.server';
 import * as sessionStorage from '~/session.server';
-import { prisma } from '~/db.server';
 import { getRequiredEnvVariable } from '~/env.server';
 import { redirect } from '@remix-run/node';
 
@@ -23,11 +22,7 @@ const auth0Strategy = new Auth0Strategy(
   },
   async ({ profile }) => {
     // Get the user data from your DB or API using the tokens and profile
-    return prisma.user.upsert({
-      where: { externalId: profile.id },
-      create: { externalId: profile.id, email: profile.emails[0].value },
-      update: { externalId: profile.id, email: profile.emails[0].value },
-    });
+    return findOrCreateUser({ externalId: profile.id, email: profile.emails[0].value });
   }
 );
 
@@ -42,7 +37,7 @@ export async function getSession(request: Request) {
 
 export async function getUserId(request: Request): Promise<User['id'] | undefined> {
   const session = await getSession(request);
-  return session.get(USER_SESSION_KEY).id;
+  return session.get(USER_SESSION_KEY)?.id ?? undefined;
 }
 
 export async function getUser(request: Request) {

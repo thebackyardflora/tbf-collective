@@ -23,5 +23,8 @@ export default defineConfig({
 
       return { ...config, ...configOverrides };
     },
+    env: {
+      SESSION_SECRET: 'super-secret-session-secret',
+    },
   },
 });
