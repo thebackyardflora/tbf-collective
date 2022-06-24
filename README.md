@@ -96,8 +96,8 @@ Prior to your first deployment, you'll need to do a few things:
 - Create two apps on Fly, one for staging and one for production:
 
   ```sh
-  fly create tbf-collective-4166
-  fly create tbf-collective-4166-staging
+  fly create tbf-collective
+  fly create tbf-collective-staging
   ```
 
 - Initialize Git.
@@ -117,14 +117,14 @@ Prior to your first deployment, you'll need to do a few things:
 - Add a `SESSION_SECRET` to your fly app secrets, to do this you can run the following commands:
 
   ```sh
-  fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app tbf-collective-4166
-  fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app tbf-collective-4166-staging
+  fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app tbf-collective
+  fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app tbf-collective-staging
   ```
 
   > **Note:** When creating the staging secret, you may get a warning from the Fly CLI that looks like this:
   >
   > ```
-  > WARN app flag 'tbf-collective-4166-staging' does not match app name in config file 'tbf-collective-4166'
+  > WARN app flag 'tbf-collective-staging' does not match app name in config file 'tbf-collective'
   > ```
   >
   > This simply means that the current directory contains a config that references the production app we created in the first step. Ignore this warning and proceed to create the secret.
@@ -134,11 +134,11 @@ Prior to your first deployment, you'll need to do a few things:
 - Create a database for both your staging and production environments. Run the following:
 
   ```sh
-  fly postgres create --name tbf-collective-4166-db
-  fly postgres attach --postgres-app tbf-collective-4166-db --app tbf-collective-4166
+  fly postgres create --name tbf-collective-db
+  fly postgres attach --postgres-app tbf-collective-db --app tbf-collective
 
-  fly postgres create --name tbf-collective-4166-staging-db
-  fly postgres attach --postgres-app tbf-collective-4166-staging-db --app tbf-collective-4166-staging
+  fly postgres create --name tbf-collective-staging-db
+  fly postgres attach --postgres-app tbf-collective-staging-db --app tbf-collective-staging
   ```
 
   > **Note:** You'll get the same warning for the same reason when attaching the staging database that you did in the `fly set secret` step above. No worries. Proceed!
