@@ -34,6 +34,7 @@
     "/public/build"
   ],
   "dependencies": {
+    "@mui/icons-material": "^5.8.4",
     "@prisma/client": "3.15.2",
     "@remix-run/express": "1.6.1",
     "@remix-run/node": "1.6.1",
@@ -51,6 +52,8 @@
     "tiny-invariant": "1.2.0"
   },
   "devDependencies": {
+    "@emotion/react": "11.9.3",
+    "@emotion/styled": "11.9.3",
     "@faker-js/faker": "7.3.0",
     "@justinwaite/prettier-config": "1.0.0",
     "@remix-run/dev": "1.6.1",
