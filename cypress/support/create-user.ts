@@ -5,7 +5,7 @@
 // as that new user.
 
 import { parse } from 'cookie';
-import { installGlobals } from '@remix-run/node/globals';
+import { installGlobals } from '@remix-run/node';
 import { commitSession, getSession } from '~/session.server';
 import type { User } from '~/models/user.server';
 import { findOrCreateUser } from '~/models/user.server';
