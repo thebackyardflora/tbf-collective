@@ -21,8 +21,13 @@ const auth0Strategy = new Auth0Strategy(
     domain: domain,
   },
   async ({ profile }) => {
-    // Get the user data from your DB or API using the tokens and profile
-    return findOrCreateUser({ externalId: profile.id, email: profile.emails[0].value });
+    try {
+      // Get the user data from your DB or API using the tokens and profile
+      return await findOrCreateUser({ externalId: profile.id, email: profile.emails[0].value });
+    } catch (error) {
+      console.error('Error in auth strategy:', error);
+      throw error;
+    }
   }
 );
 

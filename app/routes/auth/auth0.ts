@@ -3,7 +3,7 @@ import { redirect } from '@remix-run/node';
 import { authenticator } from '~/auth.server';
 
 export const loader: LoaderFunction = async () => {
-  return redirect('/login');
+  return redirect('/');
 };
 
 export const action: ActionFunction = async ({ request }) => {
