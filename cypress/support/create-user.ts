@@ -6,28 +6,12 @@
 
 import { parse } from 'cookie';
 import { installGlobals } from '@remix-run/node';
-import { commitSession, getSession } from '~/session.server';
-import type { User } from '~/models/user.server';
-import { findOrCreateUser } from '~/models/user.server';
-import { faker } from '@faker-js/faker';
-import { redirect } from '@remix-run/server-runtime';
+import { createUserSession } from '~/session.server';
+import { createUser } from '~/models/user.server';
 
 installGlobals();
 
-async function createUserSession({ request, user, redirectTo }: { request: Request; user: User; redirectTo: string }) {
-  const session = await getSession(request.headers.get('Cookie'));
-  session.set('user', user);
-
-  return redirect(redirectTo, {
-    headers: {
-      'Set-Cookie': await commitSession(session),
-    },
-  });
-}
-
 async function createAndLogin(email: string) {
-  console.log('2', process.env);
-
   if (!email) {
     throw new Error('email required for login');
   }
@@ -35,11 +19,12 @@ async function createAndLogin(email: string) {
     throw new Error('All test emails must end in @example.com');
   }
 
-  const user = await findOrCreateUser({ email, externalId: faker.datatype.string() });
+  const user = await createUser(email, 'myreallystrongpassword');
 
   const response = await createUserSession({
     request: new Request('test://test'),
-    user,
+    userId: user.id,
+    remember: false,
     redirectTo: '/',
   });
 
