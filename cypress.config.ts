@@ -25,6 +25,7 @@ export default defineConfig({
     },
     env: {
       SESSION_SECRET: 'super-secret-session-secret',
+      NODE_ENV: 'scoop',
     },
   },
 });
