@@ -1,6 +1,8 @@
 # base node image
 FROM node:16-bullseye-slim as base
 
+ARG TAILWIND_UI_TOKEN
+
 # set for base and all layer that inherit from it
 ENV NODE_ENV production
 
@@ -12,7 +14,9 @@ FROM base as deps
 
 WORKDIR /myapp
 
-ADD package.json package-lock.json ./
+ADD package.json package-lock.json .npmrc ./
+RUN sed -i '1s/^/\/\/npm.pkg.github.com\/:_authToken=${TAILWIND_UI_TOKEN}\n/' .npmrc
+RUN cat .npmrc
 RUN npm install --production=false
 
 # Setup production node_modules
@@ -21,7 +25,7 @@ FROM base as production-deps
 WORKDIR /myapp
 
 COPY --from=deps /myapp/node_modules /myapp/node_modules
-ADD package.json package-lock.json ./
+ADD package.json package-lock.json .npmrc ./
 RUN npm prune --production
 
 # Build the app
