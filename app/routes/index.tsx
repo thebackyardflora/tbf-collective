@@ -17,7 +17,7 @@ export default function Index() {
             have access to a weekly wholesale floor.
           </p>
           <div className="mx-auto mt-5 max-w-md sm:flex sm:justify-center md:mt-8">
-            <Link to="#">
+            <Link to="apply">
               <Button className="w-full" size="xl">
                 Apply now
               </Button>
