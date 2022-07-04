@@ -1,5 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
-const { faker } = require('@faker-js/faker');
+const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
@@ -11,10 +11,16 @@ async function seed() {
     // no worries if it doesn't exist yet
   });
 
+  const hashedPassword = await bcrypt.hash('racheliscool', 10);
+
   await prisma.user.create({
     data: {
       email,
-      externalId: faker.datatype.string(),
+      password: {
+        create: {
+          hash: hashedPassword,
+        },
+      },
     },
   });
 

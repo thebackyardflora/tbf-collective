@@ -2,7 +2,7 @@ const colors = require('tailwindcss/colors');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./app/**/*.{ts,tsx,jsx,js}'],
+  content: ['./app/**/*.{ts,tsx,jsx,js}', './node_modules/@mando-collabs/tailwind-ui/dist/**.*.js'],
   theme: {
     extend: {
       colors: {
@@ -23,5 +23,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography'), require('@tailwindcss/forms'), require('@tailwindcss/aspect-ratio')],
 };
