@@ -1,10 +1,4 @@
 import { RemixBrowser } from '@remix-run/react';
-import { hydrateRoot } from 'react-dom/client';
+import { hydrate } from 'react-dom';
 
-console.log('Hydrating in env:', process.env.NODE_ENV);
-
-if (process.env.NODE_ENV === 'test') {
-  require('react-dom').hydrate(<RemixBrowser />, document);
-} else {
-  hydrateRoot(document, <RemixBrowser />);
-}
+hydrate(<RemixBrowser />, document);
