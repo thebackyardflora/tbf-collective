@@ -8,10 +8,10 @@ on:
 permissions:
   actions: write
   contents: read
-env:
-  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-  NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-  NPM_TOKEN: ${{secrets.GITHUB_TOKEN}}
+#env:
+#  GITHUB_TOKEN: ${{secrets.TAILWIND_UI_TOKEN}}
+#  NODE_AUTH_TOKEN: ${{secrets.TAILWIND_UI_TOKEN}}
+#  NPM_TOKEN: ${{secrets.TAILWIND_UI_TOKEN}}
 
 jobs:
   lint:
@@ -28,9 +28,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@mando-collabs'
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.TAILWIND_UI_TOKEN}}
 
       - name: 🔬 Lint
         run: npm run lint
@@ -49,9 +53,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@mando-collabs'
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.TAILWIND_UI_TOKEN}}
 
       - name: 🔎 Type check
         run: npm run typecheck --if-present
@@ -70,9 +78,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@mando-collabs'
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.TAILWIND_UI_TOKEN}}
 
       - name: ⚡ Run vitest
         run: npm run test -- --coverage
@@ -94,9 +106,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@mando-collabs'
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.TAILWIND_UI_TOKEN}}
 
       - name: 🐳 Docker compose
         # the sleep is just there to give time for postgres to get started
