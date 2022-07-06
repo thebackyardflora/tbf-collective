@@ -16,11 +16,27 @@ describe('smoke tests', () => {
     cy.visit('/login');
     cy.findByRole('link', { name: /sign up/i }).click();
 
-    cy.findByRole('textbox', { name: /email/i }).type(loginForm.email);
     cy.findByRole('textbox', { name: /name/i }).type(loginForm.name);
+    cy.findByRole('textbox', { name: /email/i }).type(loginForm.email);
     cy.findByLabelText(/password/i).type(loginForm.password);
     cy.findByRole('button', { name: /create account/i }).click();
 
     // cy.findByRole('button', { name: /logout/i }).click();
+  });
+
+  it('should allow you to navigate to the florist application', () => {
+    cy.login();
+
+    cy.visit('/');
+    cy.findByRole('link', { name: /apply now/i }).click();
+    cy.findByRole('link', { name: /florist/i }).click();
+  });
+
+  it('should allow you to navigate to the grower application', () => {
+    cy.login();
+
+    cy.visit('/');
+    cy.findByRole('link', { name: /apply now/i }).click();
+    cy.findByRole('link', { name: /grower/i }).click();
   });
 });
