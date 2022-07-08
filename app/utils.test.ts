@@ -1,4 +1,5 @@
-import { validateEmail, validateName } from './utils';
+import { formDataFromObject, validateEmail, validateName } from './utils';
+import { faker } from '@faker-js/faker';
 
 test('validateEmail returns false for non-emails', () => {
   expect(validateEmail(undefined)).toBe(false);
@@ -22,4 +23,15 @@ test('validateName returns false for names that are too short', () => {
   expect(validateName(null)).toBe(false);
   expect(validateName(undefined)).toBe(false);
   expect(validateName('')).toBe(false);
+});
+
+test('formDataFromObject returns a FormData object', () => {
+  const data = {
+    name: faker.name.findName(),
+  };
+
+  const formData = formDataFromObject(data);
+
+  expect(formData.has('name')).toBe(true);
+  expect(formData.get('name')).toBe(data.name);
 });

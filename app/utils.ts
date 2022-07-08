@@ -68,3 +68,13 @@ export function validateEmail(email: unknown): email is string {
 export function validateName(name: unknown): name is string {
   return typeof name === 'string' && name.length > 3;
 }
+
+export function formDataFromObject(object: Record<string, any>): FormData {
+  const formData = new FormData();
+
+  Object.entries(object).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+
+  return formData;
+}

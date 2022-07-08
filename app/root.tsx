@@ -2,7 +2,7 @@ import type { LinksFunction, LoaderFunction, MetaFunction } from '@remix-run/nod
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 
 import tailwindStylesheetUrl from './styles/tailwind.css';
-import { getUser } from './session.server';
+import { getUser } from '~/session.server';
 import { json } from '@remix-run/node';
 
 export const links: LinksFunction = () => {
@@ -11,7 +11,7 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
-  title: 'Remix Notes',
+  title: 'The Backyard Flora Collective',
   viewport: 'width=device-width,initial-scale=1',
 });
 
