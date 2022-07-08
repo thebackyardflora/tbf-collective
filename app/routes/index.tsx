@@ -1,11 +1,30 @@
 import Header from '~/components/Header';
-import { Link } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
 import { Button } from '@mando-collabs/tailwind-ui';
+import type { User } from '@prisma/client';
+import type { LoaderFunction } from '@remix-run/node';
+import { getUser } from '~/session.server';
+
+interface LoaderData {
+  user: User | null;
+}
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const user = await getUser(request);
+
+  const data: LoaderData = {
+    user,
+  };
+
+  return data;
+};
 
 export default function Index() {
+  const { user } = useLoaderData<LoaderData>();
+
   return (
     <>
-      <Header />
+      <Header user={user} />
       <main className="mx-auto mt-16 max-w-7xl px-4 sm:mt-24">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">

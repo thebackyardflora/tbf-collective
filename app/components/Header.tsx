@@ -13,7 +13,7 @@ import type { User } from '@prisma/client';
 import { Button } from '@mando-collabs/tailwind-ui';
 
 export type HeaderProps = {
-  user?: User;
+  user: User | null;
   hideLogoOnMobile?: boolean;
 };
 
@@ -131,7 +131,7 @@ export default function Header(props: HeaderProps) {
               </Popover.Group>
               <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
                 {!props.user ? (
-                  <Form method="post" action="/auth/authorize">
+                  <Form action="/login">
                     <button
                       type="submit"
                       className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900"
@@ -216,7 +216,7 @@ export default function Header(props: HeaderProps) {
                     </Link>
                   </div>
                   {!props.user ? (
-                    <Form method="post" action="/auth/authorize">
+                    <Form action="/login">
                       <button
                         type="submit"
                         className="flex w-full items-center justify-center rounded-md border border-transparent bg-primary-600 py-2 px-4 text-base font-medium text-white shadow-sm hover:bg-primary-700"

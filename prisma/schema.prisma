@@ -14,6 +14,7 @@ model User {
   updatedAt   DateTime     @updatedAt
   password    Password?
   application Application?
+  isAdmin     Boolean      @default(false)
 }
 
 model Password {
