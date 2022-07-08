@@ -24,19 +24,11 @@ describe('smoke tests', () => {
     // cy.findByRole('button', { name: /logout/i }).click();
   });
 
-  it('should allow you to navigate to the florist application', () => {
+  it('should allow you to navigate to the application page', () => {
     cy.login();
 
     cy.visit('/');
     cy.findByRole('link', { name: /apply now/i }).click();
-    cy.findByRole('link', { name: /florist/i }).click();
-  });
-
-  it('should allow you to navigate to the grower application', () => {
-    cy.login();
-
-    cy.visit('/');
-    cy.findByRole('link', { name: /apply now/i }).click();
-    cy.findByRole('link', { name: /grower/i }).click();
+    cy.url().should('include', '/apply');
   });
 });

@@ -6,18 +6,19 @@ import { Steps } from '~/components/Steps';
 export default function Apply() {
   const location = useLocation();
 
-  const isApplyRoot = location.pathname.endsWith('/apply');
+  const isTypeStep = location.pathname.endsWith('/apply/type');
+  const isReviewStep = location.pathname.endsWith('/apply/review');
 
   const steps: Step[] = [
-    { id: '01', name: 'Select type', href: '', status: isApplyRoot ? 'current' : 'complete' },
+    { id: '01', name: 'Select type', href: '', status: isTypeStep ? 'current' : 'complete' },
     {
       id: '02',
       name: 'Application form',
-      href: location.pathname.endsWith('florist') ? 'florist' : 'grower',
-      disabled: isApplyRoot,
-      status: isApplyRoot ? 'upcoming' : 'current',
+      href: `application${location.search}`,
+      disabled: isTypeStep,
+      status: isTypeStep ? 'upcoming' : isReviewStep ? 'complete' : 'current',
     },
-    { id: '03', name: 'Review', href: '#', status: 'upcoming', disabled: true },
+    { id: '03', name: 'Review', href: '#', status: isReviewStep ? 'current' : 'upcoming', disabled: true },
   ];
 
   return (
