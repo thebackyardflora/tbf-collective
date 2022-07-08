@@ -10,9 +10,10 @@ import { ChevronDownIcon } from '@heroicons/react/solid';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import type { User } from '@prisma/client';
+import { Button } from '@mando-collabs/tailwind-ui';
 
 export type HeaderProps = {
-  user?: User;
+  user: User | null;
   hideLogoOnMobile?: boolean;
 };
 
@@ -129,20 +130,28 @@ export default function Header(props: HeaderProps) {
                 </Popover>
               </Popover.Group>
               <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
-                <Form method="post" action="/auth/authorize">
-                  <button
-                    type="submit"
-                    className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900"
-                  >
-                    Sign in
-                  </button>
-                  <button
-                    type="submit"
-                    className="ml-8 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-primary-600 py-2 px-4 text-base font-medium text-white shadow-sm hover:bg-primary-700"
-                  >
-                    Sign up
-                  </button>
-                </Form>
+                {!props.user ? (
+                  <Form action="/login">
+                    <button
+                      type="submit"
+                      className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900"
+                    >
+                      Sign in
+                    </button>
+                    <button
+                      type="submit"
+                      className="ml-8 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-primary-600 py-2 px-4 text-base font-medium text-white shadow-sm hover:bg-primary-700"
+                    >
+                      Sign up
+                    </button>
+                  </Form>
+                ) : (
+                  <Form method="post" action="/logout">
+                    <Button type="submit" kind="white">
+                      Logout
+                    </Button>
+                  </Form>
+                )}
               </div>
             </div>
           </div>
@@ -156,7 +165,7 @@ export default function Header(props: HeaderProps) {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Popover.Panel focus className="absolute inset-x-0 top-0 origin-top-right p-2 transition md:hidden">
+            <Popover.Panel focus className="absolute inset-x-0 top-0 z-50 origin-top-right p-2 transition md:hidden">
               <div className="divide-y-2 divide-gray-50 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
                 <div className="px-5 pt-5 pb-6">
                   <div className="flex items-center justify-between">
@@ -206,19 +215,27 @@ export default function Header(props: HeaderProps) {
                       Privacy
                     </Link>
                   </div>
-                  <Form method="post" action="/auth/authorize">
-                    <button
-                      type="submit"
-                      className="flex w-full items-center justify-center rounded-md border border-transparent bg-primary-600 py-2 px-4 text-base font-medium text-white shadow-sm hover:bg-primary-700"
-                    >
-                      Sign up
-                    </button>
-                    <p className="mt-6 text-center text-base font-medium text-gray-500">
-                      <button type="submit" className="text-primary-600 hover:text-primary-500">
-                        Sign in
+                  {!props.user ? (
+                    <Form action="/login">
+                      <button
+                        type="submit"
+                        className="flex w-full items-center justify-center rounded-md border border-transparent bg-primary-600 py-2 px-4 text-base font-medium text-white shadow-sm hover:bg-primary-700"
+                      >
+                        Sign up
                       </button>
-                    </p>
-                  </Form>
+                      <p className="mt-6 text-center text-base font-medium text-gray-500">
+                        <button type="submit" className="text-primary-600 hover:text-primary-500">
+                          Sign in
+                        </button>
+                      </p>
+                    </Form>
+                  ) : (
+                    <Form method="post" action="/logout">
+                      <Button type="submit" kind="white">
+                        Logout
+                      </Button>
+                    </Form>
+                  )}
                 </div>
               </div>
             </Popover.Panel>
