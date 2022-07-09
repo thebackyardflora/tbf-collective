@@ -4,27 +4,36 @@ import { Button } from '@mando-collabs/tailwind-ui';
 import type { User } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { getUser } from '~/session.server';
+import { getApplicationByUserId } from '~/models/application.server';
+import type { Application } from '@prisma/client';
+import { InlineNotification } from '~/components/InlineNotification';
+import { ApplicationStatus } from '@prisma/client';
 
 interface LoaderData {
   user: User | null;
+  application: Application | null;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUser(request);
+  const application = user ? await getApplicationByUserId(user.id) : null;
 
   const data: LoaderData = {
     user,
+    application,
   };
 
   return data;
 };
 
 export default function Index() {
-  const { user } = useLoaderData<LoaderData>();
+  const { user, application } = useLoaderData<LoaderData>();
 
   return (
     <>
-      <Header user={user} />
+      <Header user={user} application={application} />
+      {application?.status === ApplicationStatus.PENDING ? <InlineNotification className="my-4 sm:my-8" /> : null}
+
       <main className="mx-auto mt-16 max-w-7xl px-4 sm:mt-24">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">

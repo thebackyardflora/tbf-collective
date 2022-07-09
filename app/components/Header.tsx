@@ -9,11 +9,13 @@ import Logo from '~/components/Logo';
 import { ChevronDownIcon } from '@heroicons/react/solid';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
-import type { User } from '@prisma/client';
+import type { User, Application } from '@prisma/client';
 import { Button } from '@mando-collabs/tailwind-ui';
+import { ApplicationStatus, ApplicationType } from '@prisma/client';
 
 export type HeaderProps = {
   user: User | null;
+  application?: Application | null;
   hideLogoOnMobile?: boolean;
 };
 
@@ -28,14 +30,14 @@ export default function Header(props: HeaderProps) {
     description: string;
   }[] = [
     {
-      title: 'Growers',
+      title: 'Our growers',
       href: '/growers',
       active: pathname.startsWith('/growers'),
       Icon: AgricultureIcon,
       description: 'Local farms that supply flowers',
     },
     {
-      title: 'Florists',
+      title: 'Our florists',
       href: '/florists',
       active: pathname.startsWith('/florists'),
       Icon: LocalFloristIcon,
@@ -146,11 +148,19 @@ export default function Header(props: HeaderProps) {
                     </button>
                   </Form>
                 ) : (
-                  <Form method="post" action="/logout">
-                    <Button type="submit" kind="white">
-                      Logout
-                    </Button>
-                  </Form>
+                  <div className="flex space-x-2">
+                    <Form method="post" action="/logout">
+                      <Button type="submit" kind="white">
+                        Logout
+                      </Button>
+                    </Form>
+
+                    {props.application?.status === ApplicationStatus.APPROVED ? (
+                      <Link to={props.application.type === ApplicationType.GROWER ? '/growers/dashboard' : '#'}>
+                        <Button>Dashboard</Button>
+                      </Link>
+                    ) : null}
+                  </div>
                 )}
               </div>
             </div>
@@ -230,11 +240,18 @@ export default function Header(props: HeaderProps) {
                       </p>
                     </Form>
                   ) : (
-                    <Form method="post" action="/logout">
-                      <Button type="submit" kind="white">
-                        Logout
-                      </Button>
-                    </Form>
+                    <div className="flex justify-end space-x-2">
+                      <Form method="post" action="/logout">
+                        <Button type="submit" kind="white">
+                          Logout
+                        </Button>
+                      </Form>
+                      {props.application?.status === ApplicationStatus.APPROVED ? (
+                        <Link to={props.application.type === ApplicationType.GROWER ? '/growers/dashboard' : '#'}>
+                          <Button>Dashboard</Button>
+                        </Link>
+                      ) : null}
+                    </div>
                   )}
                 </div>
               </div>
