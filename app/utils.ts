@@ -78,3 +78,7 @@ export function formDataFromObject(object: Record<string, any>): FormData {
 
   return formData;
 }
+
+export function payloadIsObject(payload: unknown): payload is Record<string, string | number> {
+  return typeof payload === 'object' && payload !== null;
+}
