@@ -1,4 +1,6 @@
 import { faker } from '@faker-js/faker';
+import type { Application, ApplicationType } from '@prisma/client';
+import any from '@travi/any';
 
 declare global {
   namespace Cypress {
@@ -26,6 +28,28 @@ declare global {
        *    cy.cleanupUser({ email: 'whatever@example.com' })
        */
       cleanupUser: typeof cleanupUser;
+
+      /**
+       * Creates a test application with a new applicant user
+       *
+       * @returns {typeof createApplication}
+       * @memberof Chainable
+       * @example
+       *    cy.createApplication({ type: 'FLORIST' })
+       * @example
+       *    cy.createApplication({ type: 'GROWER' })
+       */
+      createApplication: typeof createApplication;
+
+      /**
+       * Deletes the applicant of the application
+       *
+       * @returns {typeof cleanupApplication}
+       * @memberof Chainable
+       * @example
+       *    cy.cleanupApplication()
+       */
+      cleanupApplication: typeof cleanupApplication;
     }
   }
 }
@@ -39,7 +63,7 @@ function login({
 } = {}) {
   cy.then(() => ({ email })).as('user');
   cy.exec(
-    `npx ts-node --require tsconfig-paths/register ./cypress/support/create-user.ts "${email}" "${isAdmin}"`
+    `npx ts-node --require tsconfig-paths/register ./cypress/support/create-user.ts "true" "${email}" "${isAdmin}"`
   ).then(({ stdout }) => {
     const cookieValue = stdout.replace(/.*<cookie>(?<cookieValue>.*)<\/cookie>.*/s, '$<cookieValue>').trim();
     cy.setCookie('__session', cookieValue);
@@ -61,6 +85,50 @@ function cleanupUser({ email }: { email?: string } = {}) {
   cy.clearCookie('__session');
 }
 
+function createApplication({ type }: { type: ApplicationType }) {
+  const email = faker.internet.email(undefined, undefined, 'example.com');
+
+  cy.exec(`npx ts-node --require tsconfig-paths/register ./cypress/support/create-user.ts "false" "${email}" "false"`)
+    .then(({ stdout }) => {
+      const userId = stdout.replace(/.*<id>(?<userId>.*)<\/id>.*/s, '$<userId>').trim();
+      return { email, id: userId };
+    })
+    .as('applicant');
+
+  cy.get('@applicant')
+    .then((applicant) => {
+      const params: Pick<Application, 'type' | 'userId' | 'payloadJson'> = {
+        type,
+        userId: (applicant as unknown as { id: string }).id,
+        payloadJson: any.objectWithKeys(['businessName', 'businessOwnerName'], { factory: () => any.word() }),
+      };
+
+      return cy.exec(
+        `npx ts-node --require tsconfig-paths/register ./cypress/support/create-application.ts '${JSON.stringify(
+          params
+        )}'`
+      );
+    })
+    .then(({ stdout }) => {
+      const applicationJson = stdout
+        .replace(/.*<application>(?<applicationJson>.*)<\/application>.*/s, '$<applicationJson>')
+        .trim();
+      return JSON.parse(applicationJson);
+    })
+    .as('application');
+
+  return cy.get('@application');
+}
+
+function cleanupApplication() {
+  cy.get('@applicant').then((user) => {
+    const email = (user as { email?: string }).email;
+    if (email) {
+      deleteUserByEmail(email);
+    }
+  });
+}
+
 function deleteUserByEmail(email: string) {
   cy.exec(`npx ts-node --require tsconfig-paths/register ./cypress/support/delete-user.ts "${email}"`);
   cy.clearCookie('__session');
@@ -68,6 +136,8 @@ function deleteUserByEmail(email: string) {
 
 Cypress.Commands.add('login', login);
 Cypress.Commands.add('cleanupUser', cleanupUser);
+Cypress.Commands.add('createApplication', createApplication);
+Cypress.Commands.add('cleanupApplication', cleanupApplication);
 
 /*
 eslint

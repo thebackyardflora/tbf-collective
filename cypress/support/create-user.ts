@@ -11,7 +11,7 @@ import { createUser } from '~/models/user.server';
 
 installGlobals();
 
-async function createAndLogin(email: string, isAdmin: boolean) {
+async function create(email: string, isAdmin: boolean) {
   if (!email) {
     throw new Error('email required for login');
   }
@@ -19,7 +19,11 @@ async function createAndLogin(email: string, isAdmin: boolean) {
     throw new Error('All test emails must end in @example.com');
   }
 
-  const user = await createUser(email, 'myreallystrongpassword', isAdmin);
+  return await createUser(email, 'myreallystrongpassword', isAdmin);
+}
+
+async function createAndLogin(email: string, isAdmin: boolean) {
+  const user = await create(email, isAdmin);
 
   const response = await createUserSession({
     request: new Request('test://test'),
@@ -44,4 +48,26 @@ async function createAndLogin(email: string, isAdmin: boolean) {
   );
 }
 
-createAndLogin(process.argv[2], process.argv[3] === 'true');
+async function createOnly(email: string, isAdmin: boolean) {
+  const user = await create(email, isAdmin);
+
+  console.log(
+    `
+<id>
+  ${user.id}
+</id>
+  `.trim()
+  );
+}
+
+const login = process.argv[2] === 'true';
+const email = process.argv[3];
+const isAdmin = process.argv[4] === 'true';
+
+console.log('login', process.argv[2]);
+
+if (login) {
+  createAndLogin(email, isAdmin);
+} else {
+  createOnly(email, isAdmin);
+}
