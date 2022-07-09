@@ -5,12 +5,13 @@ const { faker } = require('@faker-js/faker');
 
 const prisma = new PrismaClient();
 
-async function createUser({ email, isAdmin }) {
+async function createUser({ email, isAdmin, name }) {
   const hashedPassword = await bcrypt.hash('password', 10);
 
   return await prisma.user.upsert({
     create: {
       email,
+      name,
       isAdmin,
       password: {
         create: {
@@ -20,6 +21,7 @@ async function createUser({ email, isAdmin }) {
     },
     update: {
       email,
+      name,
       isAdmin,
     },
     where: {
@@ -61,9 +63,9 @@ async function createApplication({ type, userId }) {
 }
 
 async function seed() {
-  await createUser({ email: 'admin@example.com', isAdmin: true });
-  const florist1 = await createUser({ email: 'florist1@example.com' });
-  const grower1 = await createUser({ email: 'grower1@example.com' });
+  await createUser({ email: 'admin@example.com', isAdmin: true, name: faker.name.findName() });
+  const florist1 = await createUser({ email: 'florist1@example.com', name: faker.name.findName() });
+  const grower1 = await createUser({ email: 'grower1@example.com', name: faker.name.findName() });
 
   await createApplication({ type: 'FLORIST', userId: florist1.id });
   await createApplication({ type: 'GROWER', userId: grower1.id });
