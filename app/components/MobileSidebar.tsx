@@ -91,7 +91,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ sidebarOpen, setSi
                 </nav>
               </div>
               <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
-                <Link to="#" className="group block flex-shrink-0">
+                <Link to="profile" className="group block flex-shrink-0" onClick={() => setSidebarOpen(false)}>
                   <div className="flex items-center">
                     <div className="inline-block h-10 w-10 overflow-hidden rounded-full">
                       <Avatar
