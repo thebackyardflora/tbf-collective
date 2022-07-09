@@ -31,7 +31,7 @@
   "dependencies": {
     "@headlessui/react": "1.6.6",
     "@heroicons/react": "1.0.6",
-    "@mando-collabs/tailwind-ui": "^1.17.1",
+    "@mando-collabs/tailwind-ui": "^1.17.2",
     "@mui/icons-material": "5.8.4",
     "@prisma/client": "4.0.0",
     "@remix-run/express": "1.6.4",

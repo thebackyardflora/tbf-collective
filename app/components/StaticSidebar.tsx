@@ -44,7 +44,7 @@ export const StaticSidebar: React.FC<StaticSidebarProps> = ({ navigation, user }
           </nav>
         </div>
         <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
-          <Link to="#" className="group block w-full flex-shrink-0">
+          <Link to="profile" className="group block w-full flex-shrink-0">
             <div className="flex items-center">
               <div>
                 <div className="inline-block h-9 w-9 rounded-full">
