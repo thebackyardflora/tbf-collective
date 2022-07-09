@@ -1,16 +1,17 @@
 import type { FC } from 'react';
-import type { ApplicationType } from '@prisma/client';
 import { PageWrapper } from '~/components/PageWrapper';
 import { Form } from '@remix-run/react';
 import { Button, Input, TextArea } from '@mando-collabs/tailwind-ui';
 import { LogoutIcon } from '@heroicons/react/outline';
 import Avatar from 'boring-avatars';
+import type { Application, User } from '@prisma/client';
 
 export interface ProfilePageProps {
-  type: ApplicationType | null;
+  user: User;
+  application: Application | null;
 }
 
-export const ProfilePage: FC<ProfilePageProps> = () => {
+export const ProfilePage: FC<ProfilePageProps> = ({ user, application }) => {
   return (
     <>
       <PageWrapper title="Public Profile">
@@ -30,7 +31,7 @@ export const ProfilePage: FC<ProfilePageProps> = () => {
           <div className="mt-4 flex flex-col items-center lg:mt-0 lg:items-start">
             <div className="mb-4 text-sm font-medium text-gray-700">Profile Image</div>
             <div className="h-40 w-40 overflow-hidden rounded-full">
-              <Avatar size={160} />
+              <Avatar name={user.name} colors={['#78866B', '#8f9779', '#ffe8d6', '#cb997e', '#b98b73']} size={160} />
             </div>
           </div>
         </div>
