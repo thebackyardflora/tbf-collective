@@ -51,7 +51,7 @@ export const action: ActionFunction = async ({ request }) => {
     return json<ActionData>({ errors: { email: 'A user already exists with this email' } }, { status: 400 });
   }
 
-  const user = await createUser(email, password);
+  const user = await createUser({ email, password, name });
 
   return createUserSession({
     request,

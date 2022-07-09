@@ -9,6 +9,7 @@ export function createTestUser(options?: Partial<User>) {
       createdAt: faker.date.past(),
       updatedAt: faker.date.past(),
       isAdmin: false,
+      name: faker.name.findName(),
     },
     options
   );

@@ -8,6 +8,7 @@ import { parse } from 'cookie';
 import { installGlobals } from '@remix-run/node';
 import { createUserSession } from '~/session.server';
 import { createUser } from '~/models/user.server';
+import { faker } from '@faker-js/faker';
 
 installGlobals();
 
@@ -19,7 +20,7 @@ async function create(email: string, isAdmin: boolean) {
     throw new Error('All test emails must end in @example.com');
   }
 
-  return await createUser(email, 'myreallystrongpassword', isAdmin);
+  return await createUser({ email, password: 'myreallystrongpassword', isAdmin, name: faker.name.findName() });
 }
 
 async function createAndLogin(email: string, isAdmin: boolean) {
