@@ -31,7 +31,7 @@
   "dependencies": {
     "@headlessui/react": "1.6.6",
     "@heroicons/react": "1.0.6",
-    "@mando-collabs/tailwind-ui": "1.15.2",
+    "@mando-collabs/tailwind-ui": "^1.17.1",
     "@mui/icons-material": "5.8.4",
     "@prisma/client": "4.0.0",
     "@remix-run/express": "1.6.4",
@@ -47,6 +47,7 @@
     "morgan": "1.10.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "tailwind-merge": "^1.3.0",
     "tiny-invariant": "1.2.0",
     "zod": "3.17.3",
     "zod-form-data": "1.2.0"
@@ -66,6 +67,7 @@
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "13.3.0",
     "@testing-library/user-event": "14.2.1",
+    "@travi/any": "^2.1.5",
     "@types/bcryptjs": "2.4.2",
     "@types/compression": "1.7.2",
     "@types/eslint": "8.4.5",
