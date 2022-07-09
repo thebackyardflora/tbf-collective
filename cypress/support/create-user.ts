@@ -45,6 +45,9 @@ async function createAndLogin(email: string, isAdmin: boolean) {
 <cookie>
   ${parsedCookie.__session}
 </cookie>
+<id>
+  ${user.id}
+</id>
   `.trim()
   );
 }

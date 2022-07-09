@@ -13,6 +13,10 @@ export async function getUserByEmail(email: User['email']) {
   return prisma.user.findUnique({ where: { email } });
 }
 
+export async function getUserWithApplication(id: User['id']) {
+  return prisma.user.findUnique({ where: { id }, include: { application: true } });
+}
+
 interface CreateUserParams {
   email: Prisma.UserCreateInput['email'];
   password: string;

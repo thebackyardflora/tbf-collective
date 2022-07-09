@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, ApplicationStatus } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const any = require('@travi/any');
 const { faker } = require('@faker-js/faker');
@@ -44,17 +44,19 @@ function getFakeApplicationData() {
   };
 }
 
-async function createApplication({ type, userId }) {
+async function createApplication({ type, userId, status }) {
   await prisma.application.upsert({
     create: {
       userId,
       type,
       payloadJson: getFakeApplicationData(),
+      status,
     },
     update: {
       userId,
       type,
       payloadJson: getFakeApplicationData(),
+      status,
     },
     where: {
       userId,
@@ -68,7 +70,7 @@ async function seed() {
   const grower1 = await createUser({ email: 'grower1@example.com', name: faker.name.findName() });
 
   await createApplication({ type: 'FLORIST', userId: florist1.id });
-  await createApplication({ type: 'GROWER', userId: grower1.id });
+  await createApplication({ type: 'GROWER', userId: grower1.id, status: ApplicationStatus.APPROVED });
 
   console.log(`Database has been seeded. 🌱`);
 }
