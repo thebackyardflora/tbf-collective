@@ -28,9 +28,7 @@ describe('admin portal', () => {
         cy.findByRole('link', { name: new RegExp(`${payloadJson.businessName}`, 'i') }).click();
       });
 
-      cy.findByRole('button', { name: /approve/i })
-        .should('be.visible')
-        .click({ force: true });
+      cy.findByRole('button', { name: /approve application/i }).click({ force: true });
       cy.findByText('APPROVED');
     });
 
