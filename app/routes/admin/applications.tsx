@@ -1,4 +1,4 @@
-import { AdminPageWrapper } from '~/components/AdminPageWrapper';
+import { PageWrapper } from '~/components/PageWrapper';
 import type { LoaderFunction } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
 import { getAllApplicationsByStatus, isApplicationStatus } from '~/models/application.server';
@@ -38,7 +38,7 @@ export default function Applications() {
   const statusParam = searchParams.get('status') ?? ApplicationStatus.PENDING;
 
   return (
-    <AdminPageWrapper title="Applications">
+    <PageWrapper title="Applications">
       <ButtonGroup className="mt-4">
         {Object.values(ApplicationStatus).map((status) => (
           <ButtonGroup.Button
@@ -62,6 +62,6 @@ export default function Applications() {
           </div>
         </div>
       )}
-    </AdminPageWrapper>
+    </PageWrapper>
   );
 }

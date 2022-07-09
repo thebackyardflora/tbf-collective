@@ -4,14 +4,17 @@ import { XIcon } from '@heroicons/react/outline';
 import Logo from '~/components/Logo';
 import { Link } from '@remix-run/react';
 import classNames from 'classnames';
+import type { User } from '@prisma/client';
+import Avatar from 'boring-avatars';
 
 export interface MobileSidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (value: boolean) => void;
   navigation: { name: string; href: string; current?: boolean; icon: React.ComponentType<{ className?: string }> }[];
+  user: User;
 }
 
-export const MobileSidebar: React.FC<MobileSidebarProps> = ({ sidebarOpen, setSidebarOpen, navigation }) => {
+export const MobileSidebar: React.FC<MobileSidebarProps> = ({ sidebarOpen, setSidebarOpen, navigation, user }) => {
   return (
     <Transition.Root show={sidebarOpen} as={Fragment}>
       <Dialog as="div" className="relative z-40 md:hidden" onClose={setSidebarOpen}>
@@ -90,15 +93,16 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ sidebarOpen, setSi
               <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
                 <Link to="#" className="group block flex-shrink-0">
                   <div className="flex items-center">
-                    <div>
-                      <img
-                        className="inline-block h-10 w-10 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
+                    <div className="inline-block h-10 w-10 overflow-hidden rounded-full">
+                      <Avatar
+                        size={40}
+                        name={user.name}
+                        variant="marble"
+                        colors={['#78866B', '#8f9779', '#ffe8d6', '#cb997e', '#b98b73']}
                       />
                     </div>
                     <div className="ml-3">
-                      <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">Tom Cook</p>
+                      <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">{user.name}</p>
                       <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">View profile</p>
                     </div>
                   </div>

@@ -5,7 +5,7 @@ type AdminPageWrapperProps = PropsWithChildren<{
   title?: string;
 }>;
 
-export const AdminPageWrapper: React.FC<AdminPageWrapperProps> = ({ title, children }) => {
+export const PageWrapper: React.FC<AdminPageWrapperProps> = ({ title, children }) => {
   return (
     <>
       {title ? (

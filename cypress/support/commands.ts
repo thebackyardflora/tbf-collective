@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
-import type { Application, ApplicationType } from '@prisma/client';
+import type { Application, User } from '@prisma/client';
+import { ApplicationStatus, ApplicationType } from '@prisma/client';
 import any from '@travi/any';
 
 declare global {
@@ -16,6 +17,16 @@ declare global {
        *    cy.login({ email: 'whatever@example.com' })
        */
       login: typeof login;
+
+      /**
+       * Logs in with a random user that has an approved grower's application Yields the user and adds an alias to the user
+       *
+       * @returns {typeof loginGrower}
+       * @memberof Chainable
+       * @example
+       *    cy.loginGrower()
+       */
+      loginGrower: typeof loginGrower;
 
       /**
        * Deletes the current @user
@@ -61,12 +72,39 @@ function login({
   email?: string;
   isAdmin?: boolean;
 } = {}) {
-  cy.then(() => ({ email })).as('user');
   cy.exec(
     `npx ts-node --require tsconfig-paths/register ./cypress/support/create-user.ts "true" "${email}" "${isAdmin}"`
-  ).then(({ stdout }) => {
-    const cookieValue = stdout.replace(/.*<cookie>(?<cookieValue>.*)<\/cookie>.*/s, '$<cookieValue>').trim();
-    cy.setCookie('__session', cookieValue);
+  )
+    .then(({ stdout }) => {
+      const cookieValue = stdout.replace(/.*<cookie>(?<cookieValue>.*)<\/cookie>.*/s, '$<cookieValue>').trim();
+      const userId = stdout.replace(/.*<id>(?<userId>.*)<\/id>.*/s, '$<userId>').trim();
+
+      return cy.setCookie('__session', cookieValue).then(() => ({ email, id: userId }));
+    })
+    .as('user');
+
+  return cy.get('@user');
+}
+
+function loginGrower() {
+  cy.login().then((user) => {
+    const { id } = user as unknown as { email: User['email']; id: User['id'] };
+
+    const params: Pick<Application, 'type' | 'userId' | 'payloadJson' | 'status'> = {
+      type: ApplicationType.GROWER,
+      userId: id,
+      status: ApplicationStatus.APPROVED,
+      payloadJson: {
+        businessName: faker.company.companyName(),
+        businessOwnerName: faker.name.findName(),
+      },
+    };
+
+    return cy.exec(
+      `npx ts-node --require tsconfig-paths/register ./cypress/support/create-application.ts '${JSON.stringify(
+        params
+      )}'`
+    );
   });
   return cy.get('@user');
 }
@@ -135,6 +173,7 @@ function deleteUserByEmail(email: string) {
 }
 
 Cypress.Commands.add('login', login);
+Cypress.Commands.add('loginGrower', loginGrower);
 Cypress.Commands.add('cleanupUser', cleanupUser);
 Cypress.Commands.add('createApplication', createApplication);
 Cypress.Commands.add('cleanupApplication', cleanupApplication);

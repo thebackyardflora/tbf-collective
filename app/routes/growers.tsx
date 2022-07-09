@@ -1,21 +1,20 @@
 import type { LoaderFunction } from '@remix-run/node';
-import { requireAdmin, requireUser } from '~/session.server';
-import { redirect } from '@remix-run/node';
+import { requireApprovedApplication } from '~/session.server';
 import type { User } from '@prisma/client';
 
-/* This example requires Tailwind CSS v2.0+ */
 import { useState } from 'react';
-import { ClipboardIcon, HomeIcon, MenuIcon } from '@heroicons/react/outline';
+import { HomeIcon, MenuIcon } from '@heroicons/react/outline';
 import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { StaticSidebar } from '~/components/StaticSidebar';
 import { MobileSidebar } from '~/components/MobileSidebar';
+import { ApplicationType } from '@prisma/client';
 
 interface LoaderData {
   user: User;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await requireAdmin(request);
+  const user = await requireApprovedApplication(request, ApplicationType.GROWER);
 
   const data: LoaderData = {
     user,
@@ -24,18 +23,17 @@ export const loader: LoaderFunction = async ({ request }) => {
   return data;
 };
 
-export default function AdminRoot() {
+export default function GrowerRoot() {
   const { user } = useLoaderData<LoaderData>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
   const navigation = [
-    { name: 'Dashboard', href: 'dashboard', icon: HomeIcon, current: location.pathname.startsWith('/admin/dashboard') },
     {
-      name: 'Applications',
-      href: 'applications',
-      icon: ClipboardIcon,
-      current: location.pathname.startsWith('/admin/applications'),
+      name: 'Dashboard',
+      href: 'dashboard',
+      icon: HomeIcon,
+      current: location.pathname.startsWith('/growers/dashboard'),
     },
   ];
 
@@ -43,10 +41,10 @@ export default function AdminRoot() {
     <>
       <div>
         {/* Mobile sidebar for mobile */}
-        <MobileSidebar user={user} navigation={navigation} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <MobileSidebar navigation={navigation} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} user={user} />
 
         {/* Static sidebar for desktop */}
-        <StaticSidebar user={user} navigation={navigation} />
+        <StaticSidebar navigation={navigation} user={user} />
 
         <div className="flex flex-1 flex-col md:pl-64">
           <div className="sticky top-0 z-10 bg-white pl-1 pt-1 sm:pl-3 sm:pt-3 md:hidden">

@@ -1,4 +1,4 @@
-import { AdminPageWrapper } from '~/components/AdminPageWrapper';
+import { PageWrapper } from '~/components/PageWrapper';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
 import invariant from 'tiny-invariant';
@@ -60,7 +60,7 @@ export default function ApplicationReview() {
   const createdAt = useLocalDate(application.createdAt);
 
   return (
-    <AdminPageWrapper>
+    <PageWrapper>
       <div className="md:flex md:items-center md:justify-between md:space-x-5">
         <div className="flex items-start space-x-5">
           {/*
@@ -105,6 +105,6 @@ export default function ApplicationReview() {
       <div className="prose mt-4 sm:order-2 sm:max-w-7xl">
         <pre className="bg-primary-800">{JSON.stringify(application.payloadJson, null, 2)}</pre>
       </div>
-    </AdminPageWrapper>
+    </PageWrapper>
   );
 }
