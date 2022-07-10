@@ -1,6 +1,5 @@
 const { PrismaClient, ApplicationStatus } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
-const any = require('@travi/any');
 const { faker } = require('@faker-js/faker');
 
 const prisma = new PrismaClient();

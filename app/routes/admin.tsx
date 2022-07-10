@@ -1,6 +1,5 @@
 import type { LoaderFunction } from '@remix-run/node';
-import { requireAdmin, requireUser } from '~/session.server';
-import { redirect } from '@remix-run/node';
+import { requireAdmin } from '~/session.server';
 import type { User } from '@prisma/client';
 
 /* This example requires Tailwind CSS v2.0+ */

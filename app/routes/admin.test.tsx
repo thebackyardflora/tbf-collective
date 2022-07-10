@@ -1,6 +1,5 @@
 import { loader } from './admin';
 import { faker } from '@faker-js/faker';
-import { redirect } from '@remix-run/node';
 import { sessionMock } from '~/test/session-mock';
 import { createTestUser } from '~/test/utils';
 

@@ -1,4 +1,4 @@
-import { requireAdmin, requireApprovedApplication } from '~/session.server';
+import { requireApprovedApplication } from '~/session.server';
 import type { LoaderFunction } from '@remix-run/node';
 import { getApplicationByUserId } from '~/models/application.server';
 import type { Application, User } from '@prisma/client';
