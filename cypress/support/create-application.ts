@@ -1,10 +1,12 @@
 import { prisma } from '~/db.server';
-import { ApplicationType } from '@prisma/client';
+import type { ApplicationStatus } from '@prisma/client';
+import { CompanyType } from '@prisma/client';
 
 interface CreateApplicationParams {
   userId: string;
-  type: ApplicationType;
+  type: CompanyType;
   payloadJson: Record<string, any>;
+  status?: ApplicationStatus;
 }
 
 async function createApplication(params: CreateApplicationParams) {
@@ -13,6 +15,7 @@ async function createApplication(params: CreateApplicationParams) {
       userId: params.userId,
       type: params.type,
       payloadJson: params.payloadJson,
+      status: params.status,
     },
   });
 
@@ -36,7 +39,7 @@ function isCreateApplicationParams(obj: unknown): obj is CreateApplicationParams
     !params.userId ||
     typeof params.userId !== 'string' ||
     !params.type ||
-    !Object.values(ApplicationType).includes(params.type) ||
+    !Object.values(CompanyType).includes(params.type) ||
     !params.payloadJson ||
     typeof params.payloadJson !== 'object'
   ) {
