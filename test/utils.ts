@@ -52,14 +52,20 @@ export function createTestFloristApplicationFormData(): Omit<
   };
 }
 
-export function createTestCompanyCreateData(): Parameters<typeof upsertCompany>[0] {
+export function createTestCompanyCreateData(
+  { active, type = CompanyType.FLORIST }: { active?: boolean; type?: CompanyType } = {
+    active: false,
+    type: CompanyType.FLORIST,
+  }
+): Parameters<typeof upsertCompany>[0] {
   return {
+    active,
     name: faker.company.companyName(),
     ownerName: faker.name.findName(),
     email: faker.internet.email(),
     phone: faker.phone.number(),
     einTin: faker.finance.bic(),
-    type: CompanyType.FLORIST,
+    type,
     ownerId: faker.datatype.uuid(),
     address: faker.address.streetAddress(true),
     website: faker.internet.url(),

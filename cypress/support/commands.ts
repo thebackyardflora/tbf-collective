@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import type { Application, User } from '@prisma/client';
 import { ApplicationStatus, CompanyType } from '@prisma/client';
-import { createTestFloristApplication } from '../../test/utils';
+import { createTestCompanyCreateData, createTestFloristApplication } from '../../test/utils';
 
 declare global {
   namespace Cypress {
@@ -97,11 +97,22 @@ function loginGrower() {
       payloadJson: createTestFloristApplication(),
     };
 
-    return cy.exec(
-      `npx ts-node --require tsconfig-paths/register ./cypress/support/create-application.ts '${JSON.stringify(
-        params
-      ).replace("'", '')}'`
-    );
+    return cy
+      .exec(
+        `npx ts-node --require tsconfig-paths/register ./cypress/support/create-application.ts '${JSON.stringify(
+          params
+        ).replace("'", '')}'`
+      )
+      .then(() => {
+        const companyParams = {
+          params: { ...createTestCompanyCreateData({ type: CompanyType.GROWER, active: true }), ownerId: id },
+        };
+        return cy.exec(
+          `npx ts-node --require tsconfig-paths/register ./cypress/support/create-company.ts '${JSON.stringify(
+            companyParams
+          ).replace("'", '')}'`
+        );
+      });
   });
   return cy.get('@user');
 }
@@ -132,9 +143,10 @@ function createApplication({ type }: { type: CompanyType }) {
 
   cy.get('@applicant')
     .then((applicant) => {
+      const userId = (applicant as unknown as { id: string }).id;
       const params: Pick<Application, 'type' | 'userId' | 'payloadJson'> = {
         type,
-        userId: (applicant as unknown as { id: string }).id,
+        userId,
         payloadJson: createTestFloristApplication(),
       };
 
@@ -151,6 +163,25 @@ function createApplication({ type }: { type: CompanyType }) {
       return JSON.parse(applicationJson);
     })
     .as('application');
+
+  cy.get('@applicant')
+    .then((applicant) => {
+      const userId = (applicant as unknown as { id: string }).id;
+
+      const companyParams = {
+        params: { ...createTestCompanyCreateData({ type }), ownerId: userId },
+      };
+      return cy.exec(
+        `npx ts-node --require tsconfig-paths/register ./cypress/support/create-company.ts '${JSON.stringify(
+          companyParams
+        ).replace("'", '')}'`
+      );
+    })
+    .then(({ stdout }) => {
+      const companyJson = stdout.replace(/.*<company>(?<companyJson>.*)<\/company>.*/s, '$<companyJson>').trim();
+      return JSON.parse(companyJson);
+    })
+    .as('company');
 
   return cy.get('@application');
 }

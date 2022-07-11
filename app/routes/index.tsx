@@ -1,25 +1,32 @@
 import Header from '~/components/Header';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Button } from '@mando-collabs/tailwind-ui';
-import type { User } from '@prisma/client';
+import type { User, Company } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { getUser } from '~/session.server';
 import { getApplicationByUserId } from '~/models/application.server';
 import type { Application } from '@prisma/client';
 import { InlineNotification } from '~/components/InlineNotification';
 import { ApplicationStatus } from '@prisma/client';
+import { getCompanyByOwnerId } from '~/models/company.server';
 
 interface LoaderData {
   user: User | null;
   application: Application | null;
+  company: Company | null;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUser(request);
-  const application = user ? await getApplicationByUserId(user.id) : null;
+
+  const [application, company] = await Promise.all([
+    user ? await getApplicationByUserId(user.id) : null,
+    user ? await getCompanyByOwnerId(user.id) : null,
+  ]);
 
   const data: LoaderData = {
     user,
+    company,
     application,
   };
 
@@ -27,11 +34,11 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Index() {
-  const { user, application } = useLoaderData<LoaderData>();
+  const { user, application, company } = useLoaderData<LoaderData>();
 
   return (
     <>
-      <Header user={user} application={application} />
+      <Header user={user} company={company} />
       {application?.status === ApplicationStatus.PENDING ? <InlineNotification className="my-4 sm:my-8" /> : null}
 
       <main className="mx-auto mt-16 max-w-7xl px-4 sm:mt-24">

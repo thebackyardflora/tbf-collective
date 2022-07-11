@@ -9,13 +9,13 @@ import Logo from '~/components/Logo';
 import { ChevronDownIcon } from '@heroicons/react/solid';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
-import type { User, Application } from '@prisma/client';
+import type { User, Company } from '@prisma/client';
 import { Button } from '@mando-collabs/tailwind-ui';
-import { ApplicationStatus, CompanyType } from '@prisma/client';
+import { CompanyType } from '@prisma/client';
 
 export type HeaderProps = {
   user: User | null;
-  application?: Application | null;
+  company?: Company | null;
   hideLogoOnMobile?: boolean;
 };
 
@@ -155,8 +155,8 @@ export default function Header(props: HeaderProps) {
                       </Button>
                     </Form>
 
-                    {props.application?.status === ApplicationStatus.APPROVED ? (
-                      <Link to={props.application.type === CompanyType.GROWER ? '/growers/dashboard' : '#'}>
+                    {props.company?.active ? (
+                      <Link to={props.company.type === CompanyType.GROWER ? '/growers/dashboard' : '#'}>
                         <Button>Dashboard</Button>
                       </Link>
                     ) : null}
@@ -246,8 +246,8 @@ export default function Header(props: HeaderProps) {
                           Logout
                         </Button>
                       </Form>
-                      {props.application?.status === ApplicationStatus.APPROVED ? (
-                        <Link to={props.application.type === CompanyType.GROWER ? '/growers/dashboard' : '#'}>
+                      {props.company?.active ? (
+                        <Link to={props.company.type === CompanyType.GROWER ? '/growers/dashboard' : '#'}>
                           <Button>Dashboard</Button>
                         </Link>
                       ) : null}
