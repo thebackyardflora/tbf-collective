@@ -11,7 +11,7 @@ import AgricultureIcon from '@mui/icons-material/Agriculture';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import type { User, Application } from '@prisma/client';
 import { Button } from '@mando-collabs/tailwind-ui';
-import { ApplicationStatus, ApplicationType } from '@prisma/client';
+import { ApplicationStatus, CompanyType } from '@prisma/client';
 
 export type HeaderProps = {
   user: User | null;
@@ -156,7 +156,7 @@ export default function Header(props: HeaderProps) {
                     </Form>
 
                     {props.application?.status === ApplicationStatus.APPROVED ? (
-                      <Link to={props.application.type === ApplicationType.GROWER ? '/growers/dashboard' : '#'}>
+                      <Link to={props.application.type === CompanyType.GROWER ? '/growers/dashboard' : '#'}>
                         <Button>Dashboard</Button>
                       </Link>
                     ) : null}
@@ -247,7 +247,7 @@ export default function Header(props: HeaderProps) {
                         </Button>
                       </Form>
                       {props.application?.status === ApplicationStatus.APPROVED ? (
-                        <Link to={props.application.type === ApplicationType.GROWER ? '/growers/dashboard' : '#'}>
+                        <Link to={props.application.type === CompanyType.GROWER ? '/growers/dashboard' : '#'}>
                           <Button>Dashboard</Button>
                         </Link>
                       ) : null}

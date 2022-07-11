@@ -1,5 +1,5 @@
 import type { LoaderFunction } from '@remix-run/node';
-import { requireApprovedApplication } from '~/session.server';
+import { requireActiveCompany } from '~/session.server';
 import type { User } from '@prisma/client';
 
 import { useState } from 'react';
@@ -7,14 +7,14 @@ import { HomeIcon, MenuIcon } from '@heroicons/react/outline';
 import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { StaticSidebar } from '~/components/StaticSidebar';
 import { MobileSidebar } from '~/components/MobileSidebar';
-import { ApplicationType } from '@prisma/client';
+import { CompanyType } from '@prisma/client';
 
 interface LoaderData {
   user: User;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await requireApprovedApplication(request, ApplicationType.GROWER);
+  const { user } = await requireActiveCompany(request, CompanyType.GROWER);
 
   const data: LoaderData = {
     user,

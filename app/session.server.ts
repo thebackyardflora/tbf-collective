@@ -2,8 +2,8 @@ import { createCookieSessionStorage, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
 
 import type { User } from '~/models/user.server';
-import { getUserById, getUserWithApplication } from '~/models/user.server';
-import type { ApplicationType } from '@prisma/client';
+import { getUserById, getUserWithCompany } from '~/models/user.server';
+import type { CompanyType } from '@prisma/client';
 
 invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set');
 
@@ -66,13 +66,13 @@ export async function requireAdmin(request: Request) {
   throw redirect('/');
 }
 
-export async function requireApprovedApplication(request: Request, type: ApplicationType) {
+export async function requireActiveCompany(request: Request, type: CompanyType) {
   const userId = await requireUserId(request);
 
-  const user = await getUserWithApplication(userId);
-  if (user && user.application?.type === type) {
-    const { application, ...userDetails } = user;
-    return userDetails;
+  const user = await getUserWithCompany(userId);
+  if (user && user.company?.type === type && user.company?.active) {
+    const { company, ...userDetails } = user;
+    return { user: userDetails, company };
   }
 
   throw redirect('/');

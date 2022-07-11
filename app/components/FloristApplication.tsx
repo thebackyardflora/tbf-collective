@@ -3,7 +3,7 @@ import { ValidatedForm } from 'remix-validated-form';
 import { z } from 'zod';
 import { withZod } from '@remix-validated-form/with-zod';
 import { zfd } from 'zod-form-data';
-import { ApplicationType } from '@prisma/client';
+import { CompanyType } from '@prisma/client';
 
 export const floristApplicationSchema = z.object({
   businessOwnerName: zfd.text(z.string()),
@@ -15,6 +15,7 @@ export const floristApplicationSchema = z.object({
   phone: zfd.text(z.string()),
   businessAddress: zfd.text(z.string()),
   yearsInBusiness: zfd.text(z.string()),
+  accessToCooler: zfd.checkbox({ trueValue: 'on' }),
 });
 
 export const floristApplicationValidator = withZod(floristApplicationSchema);
@@ -22,7 +23,7 @@ export const floristApplicationValidator = withZod(floristApplicationSchema);
 export default function FloristApplication() {
   return (
     <div className="mx-auto mt-8">
-      <ValidatedForm method="post" action={`?type=${ApplicationType.FLORIST}`} validator={floristApplicationValidator}>
+      <ValidatedForm method="post" action={`?type=${CompanyType.FLORIST}`} validator={floristApplicationValidator}>
         <div className="grid-cols-2 gap-8 space-y-4 pb-8 lg:grid lg:space-y-0">
           <RVFInput
             type="text"

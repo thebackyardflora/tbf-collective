@@ -29,36 +29,70 @@ async function createUser({ email, isAdmin, name }) {
   });
 }
 
-function getFakeApplicationData() {
+function getFakeApplicationData(company) {
   return {
-    businessName: faker.company.companyName(),
-    businessOwnerName: faker.name.findName(),
-    einTin: faker.finance.bic(),
+    businessName: company.name,
+    businessOwnerName: company.ownerName,
+    einTin: company.einTin,
     website: faker.internet.url(),
     instagramHandle: faker.internet.userName(),
-    email: faker.internet.email(),
-    phone: faker.phone.number(),
-    businessAddress: faker.address.streetAddress(true),
-    yearsInBusiness: faker.random.numeric(1),
+    email: company.email,
+    phone: company.phone,
+    businessAddress: company.address,
+    yearsInBusiness: faker.random.numeric(1).toString(),
   };
 }
 
-async function createApplication({ type, userId, status }) {
+function getFakeCompanyData() {
+  return {
+    address: faker.address.streetAddress(true),
+    name: faker.company.companyName(),
+    ownerName: faker.name.findName(),
+    einTin: faker.finance.bic(),
+    email: faker.internet.email(),
+    phone: faker.phone.number(),
+  };
+}
+
+async function createApplication({ type, userId, status, company }) {
   await prisma.application.upsert({
     create: {
       userId,
       type,
-      payloadJson: getFakeApplicationData(),
+      payloadJson: getFakeApplicationData(company),
       status,
     },
     update: {
       userId,
       type,
-      payloadJson: getFakeApplicationData(),
+      payloadJson: getFakeApplicationData(company),
       status,
     },
     where: {
       userId,
+    },
+  });
+}
+
+async function createCompany({ type, ownerId, active, company }) {
+  await prisma.company.upsert({
+    create: {
+      owner: {
+        connect: {
+          id: ownerId,
+        },
+      },
+      type,
+      active,
+      ...company,
+    },
+    update: {
+      type,
+      active,
+      ...company,
+    },
+    where: {
+      ownerId,
     },
   });
 }
@@ -68,8 +102,18 @@ async function seed() {
   const florist1 = await createUser({ email: 'florist1@example.com', name: faker.name.findName() });
   const grower1 = await createUser({ email: 'grower1@example.com', name: faker.name.findName() });
 
-  await createApplication({ type: 'FLORIST', userId: florist1.id });
-  await createApplication({ type: 'GROWER', userId: grower1.id, status: ApplicationStatus.APPROVED });
+  const floristCompany = getFakeCompanyData();
+  await createApplication({ type: 'FLORIST', userId: florist1.id, company: floristCompany });
+  await createCompany({ type: 'FLORIST', ownerId: florist1.id, active: false, company: floristCompany });
+
+  const growerCompany = getFakeCompanyData();
+  await createApplication({
+    type: 'GROWER',
+    userId: grower1.id,
+    status: ApplicationStatus.APPROVED,
+    company: growerCompany,
+  });
+  await createCompany({ type: 'GROWER', ownerId: grower1.id, active: true, company: growerCompany });
 
   console.log(`Database has been seeded. 🌱`);
 }

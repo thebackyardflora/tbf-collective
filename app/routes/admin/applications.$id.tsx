@@ -13,6 +13,8 @@ import { useLocalDate } from '~/hooks/use-local-date';
 import { ApplicationStatus } from '@prisma/client';
 import classNames from 'classnames';
 import React from 'react';
+import { updateCompanyActiveStatus } from '~/models/company.server';
+import { prisma } from '~/db.server';
 
 interface LoaderData<A = Application> {
   application: A;
@@ -41,11 +43,21 @@ export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
 
   invariant(typeof params.id === 'string');
+  const id = params.id;
+
+  const application = await getApplicationById(params.id);
+  if (!application) throw new Error('Application not found');
 
   if (formData.has('accept')) {
-    await setApplicationStatus({ id: params.id, status: ApplicationStatus.APPROVED });
+    await prisma.$transaction(async (t) => {
+      await setApplicationStatus({ id, status: ApplicationStatus.APPROVED }, t);
+      await updateCompanyActiveStatus({ ownerId: application.userId, active: true }, t);
+    });
   } else if (formData.has('reject')) {
-    await setApplicationStatus({ id: params.id, status: ApplicationStatus.REJECTED });
+    await prisma.$transaction(async (t) => {
+      await setApplicationStatus({ id, status: ApplicationStatus.REJECTED }, t);
+      await updateCompanyActiveStatus({ ownerId: application.userId, active: false }, t);
+    });
   }
 
   return null;

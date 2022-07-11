@@ -1,9 +1,9 @@
-import { ApplicationType } from '@prisma/client';
+import { CompanyType } from '@prisma/client';
 
 describe('admin portal', () => {
   beforeEach(() => {
     cy.login({ isAdmin: true });
-    cy.createApplication({ type: ApplicationType.FLORIST });
+    cy.createApplication({ type: CompanyType.FLORIST });
   });
 
   it('should allow an admin to review an application', () => {

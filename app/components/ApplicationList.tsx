@@ -3,7 +3,7 @@ import { CalendarIcon } from '@heroicons/react/solid';
 import React from 'react';
 import { Link } from '@remix-run/react';
 import type { Application } from '@prisma/client';
-import { ApplicationStatus, ApplicationType } from '@prisma/client';
+import { ApplicationStatus, CompanyType } from '@prisma/client';
 import type { SerializedEntity } from '~/types';
 import { Agriculture, LocalFlorist } from '@mui/icons-material';
 import { useLocalDate } from '~/hooks/use-local-date';
@@ -59,7 +59,7 @@ function ApplicationListItem(props: { application: SerializedEntity<Application>
           <div className="mt-2 sm:flex sm:justify-between">
             <div className="sm:flex">
               <p className="flex items-center text-sm capitalize text-gray-500">
-                {props.application.type === ApplicationType.FLORIST ? (
+                {props.application.type === CompanyType.FLORIST ? (
                   <LocalFlorist className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                 ) : (
                   <Agriculture className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />

@@ -1,27 +1,28 @@
 import { requireAdmin } from '~/session.server';
 import type { LoaderFunction } from '@remix-run/node';
-import { getApplicationByUserId } from '~/models/application.server';
-import type { Application, User } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { ProfilePage } from '~/components/ProfilePage';
 import { useLoaderData } from '@remix-run/react';
+import { getCompanyByOwnerId } from '~/models/company.server';
+import type { Company } from '@prisma/client';
 
 interface LoaderData {
-  application: Application | null;
+  company: Company | null;
   user: User;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await requireAdmin(request);
 
-  const application = await getApplicationByUserId(user.id);
+  const company = await getCompanyByOwnerId(user.id);
 
-  const data: LoaderData = { application, user };
+  const data: LoaderData = { company, user };
 
   return data;
 };
 
 export default function Profile() {
-  const { user, application } = useLoaderData<LoaderData>();
+  const { user, company } = useLoaderData<LoaderData>();
 
-  return <ProfilePage application={application} user={user} />;
+  return <ProfilePage company={company} user={user} />;
 }

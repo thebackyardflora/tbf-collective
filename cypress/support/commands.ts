@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import type { Application, User } from '@prisma/client';
-import { ApplicationStatus, ApplicationType } from '@prisma/client';
-import any from '@travi/any';
+import { ApplicationStatus, CompanyType } from '@prisma/client';
+import { createTestFloristApplication } from '../../test/utils';
 
 declare global {
   namespace Cypress {
@@ -91,19 +91,16 @@ function loginGrower() {
     const { id } = user as unknown as { email: User['email']; id: User['id'] };
 
     const params: Pick<Application, 'type' | 'userId' | 'payloadJson' | 'status'> = {
-      type: ApplicationType.GROWER,
+      type: CompanyType.GROWER,
       userId: id,
       status: ApplicationStatus.APPROVED,
-      payloadJson: {
-        businessName: faker.company.companyName(),
-        businessOwnerName: faker.name.findName(),
-      },
+      payloadJson: createTestFloristApplication(),
     };
 
     return cy.exec(
       `npx ts-node --require tsconfig-paths/register ./cypress/support/create-application.ts '${JSON.stringify(
         params
-      )}'`
+      ).replace("'", '')}'`
     );
   });
   return cy.get('@user');
@@ -123,7 +120,7 @@ function cleanupUser({ email }: { email?: string } = {}) {
   cy.clearCookie('__session');
 }
 
-function createApplication({ type }: { type: ApplicationType }) {
+function createApplication({ type }: { type: CompanyType }) {
   const email = faker.internet.email(undefined, undefined, 'example.com');
 
   cy.exec(`npx ts-node --require tsconfig-paths/register ./cypress/support/create-user.ts "false" "${email}" "false"`)
@@ -138,13 +135,13 @@ function createApplication({ type }: { type: ApplicationType }) {
       const params: Pick<Application, 'type' | 'userId' | 'payloadJson'> = {
         type,
         userId: (applicant as unknown as { id: string }).id,
-        payloadJson: any.objectWithKeys(['businessName', 'businessOwnerName'], { factory: () => any.word() }),
+        payloadJson: createTestFloristApplication(),
       };
 
       return cy.exec(
         `npx ts-node --require tsconfig-paths/register ./cypress/support/create-application.ts '${JSON.stringify(
           params
-        )}'`
+        ).replace("'", '')}'`
       );
     })
     .then(({ stdout }) => {

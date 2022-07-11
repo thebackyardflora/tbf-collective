@@ -4,14 +4,14 @@ import { Form } from '@remix-run/react';
 import { Button, Input, TextArea } from '@mando-collabs/tailwind-ui';
 import { LogoutIcon } from '@heroicons/react/outline';
 import Avatar from 'boring-avatars';
-import type { Application, User } from '@prisma/client';
+import type { Company, User } from '@prisma/client';
 
 export interface ProfilePageProps {
   user: User;
-  application: Application | null;
+  company: Company | null;
 }
 
-export const ProfilePage: FC<ProfilePageProps> = ({ user, application }) => {
+export const ProfilePage: FC<ProfilePageProps> = ({ user, company }) => {
   return (
     <>
       <PageWrapper title="Public Profile">

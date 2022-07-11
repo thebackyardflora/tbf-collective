@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -11,11 +12,12 @@ model User {
   id          String       @id @default(cuid())
   email       String       @unique
   name        String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  isAdmin     Boolean      @default(false)
   password    Password?
   application Application?
-  isAdmin     Boolean      @default(false)
+  company     Company?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Password {
@@ -27,7 +29,7 @@ model Password {
 model Application {
   id          String            @id @default(cuid())
   payloadJson Json
-  type        ApplicationType
+  type        CompanyType
   status      ApplicationStatus @default(PENDING)
   userId      String            @unique
   user        User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -35,13 +37,49 @@ model Application {
   updatedAt   DateTime          @updatedAt
 }
 
-enum ApplicationType {
-  FLORIST
-  GROWER
+model Company {
+  id          String       @id @default(cuid())
+  active      Boolean      @default(false)
+  type        CompanyType
+  name        String
+  ownerName   String
+  phone       String?
+  email       String?
+  address     String?
+  einTin      String
+  bio         String?
+  socialSites SocialSite[]
+  ownerId     String       @unique
+  owner       User         @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model SocialSite {
+  id        String         @id @default(cuid())
+  type      SocialSiteType
+  url       String
+  companyId String
+  company   Company        @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 enum ApplicationStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum CompanyType {
+  FLORIST
+  GROWER
+}
+
+enum SocialSiteType {
+  FACEBOOK
+  TWITTER
+  INSTAGRAM
+  LINKEDIN
+  WEBSITE
 }

@@ -1,10 +1,10 @@
 import type { LoaderFunction } from '@remix-run/node';
-import { requireApprovedApplication } from '~/session.server';
-import { ApplicationType } from '@prisma/client';
+import { requireActiveCompany } from '~/session.server';
+import { CompanyType } from '@prisma/client';
 import { PageWrapper } from '~/components/PageWrapper';
 
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireApprovedApplication(request, ApplicationType.GROWER);
+  await requireActiveCompany(request, CompanyType.GROWER);
 
   return null;
 };

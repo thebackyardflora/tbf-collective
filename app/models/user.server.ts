@@ -13,8 +13,8 @@ export async function getUserByEmail(email: User['email']) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-export async function getUserWithApplication(id: User['id']) {
-  return prisma.user.findUnique({ where: { id }, include: { application: true } });
+export async function getUserWithCompany(id: User['id']) {
+  return prisma.user.findUnique({ where: { id }, include: { company: true } });
 }
 
 interface CreateUserParams {
