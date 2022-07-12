@@ -34,6 +34,12 @@ export default function GrowerApplication() {
           <RVFInput type="tel" name="phone" label="Contact Phone Number" autoComplete="tel" />
           <RVFInput type="text" name="businessAddress" label="Business Address" />
           <RVFInput type="text" name="yearsInBusiness" label="How many years have you been in business?" />
+          <RVFInput
+            type="text"
+            name="totalCultivatedSpace"
+            label="How much total cultivated space do you have?"
+            placeholder="e.g. 1 acre"
+          />
         </div>
         <div className="justify-end lg:flex">
           <RVFButton>Submit application</RVFButton>
