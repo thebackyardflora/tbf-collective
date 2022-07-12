@@ -50,7 +50,7 @@ function getFakeCompanyData() {
     ownerName: faker.name.findName(),
     einTin: faker.finance.bic(),
     email: faker.internet.email(),
-    phone: faker.phone.number(),
+    phone: faker.phone.number('208-5##-1###'),
   };
 }
 

@@ -5,7 +5,7 @@ describe('growers dashboard tests', () => {
     cy.loginGrower();
   });
 
-  it('should allow a grower to update their company profile', () => {
+  it('should allow a grower to update their profile', () => {
     cy.intercept('POST', '/growers/profile*').as('profilePost');
 
     cy.visit('/growers');
@@ -40,6 +40,21 @@ describe('growers dashboard tests', () => {
     cy.findByLabelText(/about/i).should('have.value', newBio);
     cy.findByLabelText(/instagram/i).should('have.value', newInstagram);
     cy.findByLabelText(/website/i).should('have.value', newWebsite);
+
+    const newEmail = faker.internet.email();
+    const newPhone = faker.phone.number('208-5##-1###');
+    const newEinTin = faker.finance.bic();
+
+    cy.findByLabelText(/email/i).clear().type(newEmail);
+    cy.findByLabelText(/phone/i).clear().type(newPhone);
+    cy.findByLabelText(/ein/i).clear().type(newEinTin);
+    cy.get('button[name="accountSettings"]').click();
+
+    cy.wait('@profilePost').its('response.statusCode').should('eq', 200);
+
+    cy.findByLabelText(/email/i).should('have.value', newEmail);
+    cy.findByLabelText(/phone/i).should('have.value', newPhone);
+    cy.findByLabelText(/ein\/tin/i).should('have.value', newEinTin);
   });
 
   afterEach(() => {

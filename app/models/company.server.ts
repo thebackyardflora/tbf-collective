@@ -97,3 +97,18 @@ export async function updateCompanyProfile(
     data,
   });
 }
+
+export async function updateCompanyPrivateInfo(
+  { email, phone, einTin }: { email: string; phone: string; einTin: string },
+  ownerId: string,
+  client: PrismaClient | Prisma.TransactionClient = prisma
+): Promise<Company> {
+  return await client.company.update({
+    where: { ownerId },
+    data: {
+      email,
+      phone,
+      einTin,
+    },
+  });
+}

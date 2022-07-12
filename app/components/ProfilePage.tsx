@@ -9,6 +9,7 @@ import { SocialSiteType } from '@prisma/client';
 import { ValidatedForm } from 'remix-validated-form';
 import { companyProfileValidator } from '~/forms/company-profile';
 import { parseInstagramHandleFromUrl } from '~/utils';
+import { accountSettingsValidator } from '~/forms/account-settings';
 
 export interface ProfilePageProps {
   user: User;
@@ -64,14 +65,24 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
       </PageWrapper>
       <PageWrapper title="Account" titleClassName="mt-8 sm:mt-12 border-t pt-8 sm:pt-12">
         <p className="text-gray-500">This information is kept private</p>
-        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <Input type="text" name="einTin" label="EIN/TIN" helpText="This is used for tax purposes" />
-          <Input type="email" name="email" label="Email" />
-          <Input type="tel" name="phone" label="Phone Number" />
-        </div>
-        <div className="mt-4 flex justify-end space-x-2">
-          <Button>Save</Button>
-        </div>
+        <ValidatedForm
+          method="post"
+          validator={accountSettingsValidator}
+          defaultValues={{
+            phone: company.phone ?? undefined,
+            email: company.email ?? undefined,
+            einTin: company.einTin,
+          }}
+        >
+          <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <RVFInput type="email" name="email" label="Email" />
+            <RVFInput type="tel" name="phone" label="Phone Number" />
+            <RVFInput type="text" name="einTin" label="EIN/TIN" helpText="This is used for tax purposes" />
+          </div>
+          <div className="mt-4 flex justify-end space-x-2">
+            <RVFButton name="accountSettings">Save</RVFButton>
+          </div>
+        </ValidatedForm>
       </PageWrapper>
       <PageWrapper title="Security" titleClassName="mt-8 sm:mt-12 border-t pt-8 sm:pt-12">
         <p className="text-gray-500">Keep your account secure</p>

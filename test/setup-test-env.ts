@@ -21,7 +21,7 @@ function resetMocksDeep(mocks: any) {
 }
 
 beforeEach(() => {
-  mockReset(prismaMock.user);
+  mockReset(prismaMock);
   resetMocksDeep(sessionMock);
 });
 

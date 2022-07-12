@@ -1,4 +1,4 @@
-import { updateCompanyProfile, upsertCompany } from '~/models/company.server';
+import { updateCompanyProfile, upsertCompany, updateCompanyPrivateInfo } from '~/models/company.server';
 import { prismaMock } from '~/test/prisma-mock';
 import { createTestCompanyCreateData } from '~/test/utils';
 import { SocialSiteType } from '@prisma/client';
@@ -67,4 +67,26 @@ test('updateCompanyProfile calls prisma with the right parameters', async () => 
   });
 
   expect(result).toBe(returnValue);
+});
+
+test('updateCompanyPrivateInfo calls prisma with the right parameters', async () => {
+  prismaMock.company.update.mockResolvedValue({ test: true } as never);
+  const ownerId = faker.datatype.uuid();
+  const data = {
+    email: faker.internet.email(),
+    phone: faker.phone.number('208-5##-1###'),
+    einTin: faker.finance.bic(),
+  };
+
+  const result = await updateCompanyPrivateInfo(data, ownerId);
+
+  expect(prismaMock.company.update).toHaveBeenCalledOnce();
+  expect(prismaMock.company.update).toHaveBeenCalledWith({
+    where: {
+      ownerId,
+    },
+    data,
+  });
+
+  expect(result).toStrictEqual({ test: true });
 });
