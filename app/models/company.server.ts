@@ -1,6 +1,7 @@
 import type { Company, PrismaClient, Prisma, User } from '@prisma/client';
 import { prisma } from '~/db.server';
 import { SocialSiteType } from '@prisma/client';
+import { getInstagramUrl } from '~/utils';
 
 export async function upsertCompany(
   {
@@ -48,7 +49,7 @@ function createSocialSitesArray({
   if (instagramHandle) {
     socialSites.push({
       type: SocialSiteType.INSTAGRAM,
-      url: `https://instagram.com/${instagramHandle}`,
+      url: getInstagramUrl(instagramHandle),
     });
   }
 
@@ -75,5 +76,24 @@ export async function updateCompanyActiveStatus(
     data: {
       active,
     },
+  });
+}
+
+interface UpdateCompanyProfileParams {
+  ownerId: User['id'];
+  name: string;
+  ownerName: string;
+  bio?: string | null;
+  instagramHandle?: string | null;
+  website?: string | null;
+}
+
+export async function updateCompanyProfile(
+  { ownerId, instagramHandle, website, ...data }: UpdateCompanyProfileParams,
+  client: PrismaClient | Prisma.TransactionClient = prisma
+): Promise<Company> {
+  return await client.company.update({
+    where: { ownerId },
+    data,
   });
 }

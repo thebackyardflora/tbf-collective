@@ -1,43 +1,66 @@
 import type { FC } from 'react';
 import { PageWrapper } from '~/components/PageWrapper';
 import { Form } from '@remix-run/react';
-import { Button, Input, TextArea } from '@mando-collabs/tailwind-ui';
+import { Button, Input, RVFButton, RVFInput, RVFTextArea } from '@mando-collabs/tailwind-ui';
 import { LogoutIcon } from '@heroicons/react/outline';
 import Avatar from 'boring-avatars';
-import type { Company, User } from '@prisma/client';
+import type { Company, User, SocialSite } from '@prisma/client';
+import { SocialSiteType } from '@prisma/client';
+import { ValidatedForm } from 'remix-validated-form';
+import { companyProfileValidator } from '~/forms/company-profile';
+import { parseInstagramHandleFromUrl } from '~/utils';
 
 export interface ProfilePageProps {
   user: User;
-  company: Company | null;
+  company: Company;
+  socialSites: SocialSite[];
 }
 
-export const ProfilePage: FC<ProfilePageProps> = ({ user, company }) => {
+export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }) => {
+  const instagramUrl = socialSites.find((site) => site.type === SocialSiteType.INSTAGRAM)?.url ?? undefined;
+  const instagramHandle = instagramUrl ? parseInstagramHandleFromUrl(instagramUrl) : undefined;
+
+  const websiteUrl = socialSites.find((site) => site.type === SocialSiteType.WEBSITE)?.url ?? undefined;
+
   return (
     <>
       <PageWrapper title="Public Profile">
         <p className="mb-4 text-gray-500">This information will be displayed on your public profile</p>
-        <div className="flex flex-col lg:flex-row">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mr-8 lg:flex-1">
-            <Input type="text" name="businessName" label="Business Name" />
-            <Input type="text" name="businessOwnerName" label="Business Owner Name" />
-            <TextArea
-              className="my-2 sm:col-span-2"
-              label="About"
-              helpText="Give a brief description of your company"
-            />
-            <Input type="text" name="instagramHandle" label="Instagram" />
-            <Input type="url" name="website" label="Website" />
-          </div>
-          <div className="mt-4 flex flex-col items-center lg:mt-0 lg:items-start">
-            <div className="mb-4 text-sm font-medium text-gray-700">Profile Image</div>
-            <div className="h-40 w-40 overflow-hidden rounded-full">
-              <Avatar name={user.name} colors={['#78866B', '#8f9779', '#ffe8d6', '#cb997e', '#b98b73']} size={160} />
+        <ValidatedForm
+          method="post"
+          validator={companyProfileValidator}
+          defaultValues={{
+            name: company.name,
+            ownerName: company.ownerName,
+            bio: company.bio ?? undefined,
+            instagramHandle: instagramHandle ?? undefined,
+            website: websiteUrl,
+          }}
+        >
+          <div className="flex flex-col lg:flex-row">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mr-8 lg:flex-1">
+              <RVFInput type="text" name="name" label="Business Name" />
+              <RVFInput type="text" name="ownerName" label="Business Owner Name" />
+              <RVFTextArea
+                name="bio"
+                className="my-2 sm:col-span-2"
+                label="About"
+                helpText="Give a brief description of your company"
+              />
+              <RVFInput type="text" name="instagramHandle" label="Instagram" />
+              <RVFInput type="url" name="website" label="Website" />
+            </div>
+            <div className="mt-4 flex flex-col items-center lg:mt-0 lg:items-start">
+              <div className="mb-4 text-sm font-medium text-gray-700">Profile Image</div>
+              <div className="h-40 w-40 overflow-hidden rounded-full">
+                <Avatar name={user.name} colors={['#78866B', '#8f9779', '#ffe8d6', '#cb997e', '#b98b73']} size={160} />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="mt-4 flex justify-end space-x-2">
-          <Button>Save</Button>
-        </div>
+          <div className="mt-4 flex justify-end space-x-2">
+            <RVFButton name="companyProfile">Save</RVFButton>
+          </div>
+        </ValidatedForm>
       </PageWrapper>
       <PageWrapper title="Account" titleClassName="mt-8 sm:mt-12 border-t pt-8 sm:pt-12">
         <p className="text-gray-500">This information is kept private</p>

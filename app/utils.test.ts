@@ -1,4 +1,4 @@
-import { formDataFromObject, validateEmail, validateName } from './utils';
+import { formDataFromObject, validateEmail, validateName, getInstagramUrl, parseInstagramHandleFromUrl } from './utils';
 import { faker } from '@faker-js/faker';
 
 test('validateEmail returns false for non-emails', () => {
@@ -34,4 +34,20 @@ test('formDataFromObject returns a FormData object', () => {
 
   expect(formData.has('name')).toBe(true);
   expect(formData.get('name')).toBe(data.name);
+});
+
+test('getInstagramUrl returns a valid instagram url', () => {
+  const username = faker.internet.userName();
+
+  const result = getInstagramUrl(username);
+
+  expect(result).toBe(`https://instagram.com/${username}`);
+});
+
+test('parseInstagramHandleFromUrl returns a valid instagram handle', () => {
+  const url = 'https://instagram.com/justinwaite';
+
+  const result = parseInstagramHandleFromUrl(url);
+
+  expect(result).toBe('justinwaite');
 });

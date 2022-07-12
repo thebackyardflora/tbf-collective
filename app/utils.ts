@@ -73,7 +73,9 @@ export function formDataFromObject(object: Record<string, any>): FormData {
   const formData = new FormData();
 
   Object.entries(object).forEach(([key, value]) => {
-    formData.append(key, value);
+    if (value !== null && value !== undefined) {
+      formData.append(key, value);
+    }
   });
 
   return formData;
@@ -81,4 +83,13 @@ export function formDataFromObject(object: Record<string, any>): FormData {
 
 export function payloadIsObject(payload: unknown): payload is Record<string, string | number> {
   return typeof payload === 'object' && payload !== null;
+}
+
+export function getInstagramUrl(username: string): string {
+  return `https://instagram.com/${username}`;
+}
+
+export function parseInstagramHandleFromUrl(url: string): string | null {
+  const match = url.match(/^https?:\/\/instagram\.com\/([^\/]+)$/);
+  return match ? match[1] : null;
 }
