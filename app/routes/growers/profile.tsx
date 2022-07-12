@@ -6,6 +6,7 @@ import { useLoaderData } from '@remix-run/react';
 import { CompanyType } from '@prisma/client';
 import { handleCompanyProfileForm } from '~/forms/company-profile';
 import { getSocialSitesByCompanyId } from '~/models/social-site.server';
+import { handleAccountSettingsForm } from '~/forms/account-settings';
 
 interface LoaderData {
   company: Company;
@@ -29,6 +30,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (formData.has('companyProfile')) {
     await handleCompanyProfileForm(formData, user.id);
+  } else if (formData.has('accountSettings')) {
+    await handleAccountSettingsForm(formData, user.id);
   }
 
   return null;
