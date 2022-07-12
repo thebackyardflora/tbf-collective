@@ -1,4 +1,4 @@
-import { RVFButton, RVFInput } from '@mando-collabs/tailwind-ui';
+import { RVFButton, RVFCheckbox, RVFInput } from '@mando-collabs/tailwind-ui';
 import { ValidatedForm } from 'remix-validated-form';
 import { z } from 'zod';
 import { withZod } from '@remix-validated-form/with-zod';
@@ -22,7 +22,7 @@ export const floristApplicationValidator = withZod(floristApplicationSchema);
 
 export default function FloristApplication() {
   return (
-    <div className="mx-auto mt-8">
+    <div className="mx-auto mt-8 pb-8">
       <ValidatedForm method="post" action={`?type=${CompanyType.FLORIST}`} validator={floristApplicationValidator}>
         <div className="grid-cols-2 gap-8 space-y-4 pb-8 lg:grid lg:space-y-0">
           <RVFInput
@@ -57,6 +57,11 @@ export default function FloristApplication() {
             placeholder="123 Easy Street, Rexburg, ID 83440"
           />
           <RVFInput type="text" name="yearsInBusiness" label="How many years have you been in business?" />
+          <RVFCheckbox
+            name="accessToCooler"
+            label="Cooler access"
+            description="Do you have access to a floral cooler?"
+          />
         </div>
         <div className="justify-end lg:flex">
           <RVFButton>Submit application</RVFButton>
