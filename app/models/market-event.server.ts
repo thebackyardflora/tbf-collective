@@ -18,8 +18,7 @@ interface MarketEventParams {
   marketDate: Date;
   addressId?: string;
   address?: {
-    street1: string;
-    street2?: string;
+    street: string;
     city: string;
     state: string;
     zip: string;

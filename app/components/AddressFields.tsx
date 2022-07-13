@@ -14,8 +14,8 @@ export const AddressFields: FC<AddressFieldsProps> = ({ className, namePrefix, .
       <RVFInput
         className="lg:col-span-full"
         type="text"
-        name={`${prefix}street1`}
-        label="Address line 1"
+        name={`${prefix}street`}
+        label="Street address"
         autoComplete="street-address"
       />
       <RVFInput type="text" name={`${prefix}city`} label="City" autoComplete="address-level2" />

@@ -18,14 +18,23 @@ export const MarketEventForm: FC<MarketEventFormProps> = ({ defaultValues, addre
   const [addressId, setAddressId] = useState<string | undefined>(defaultValues?.addressId);
 
   return (
-    <ValidatedForm method="post" validator={marketEventValidator} defaultValues={defaultValues} className="mt-4">
+    <ValidatedForm
+      id="market-event-form"
+      method="post"
+      validator={marketEventValidator}
+      defaultValues={defaultValues}
+      className="mt-4"
+    >
       <fieldset>
         <input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
         <RVFInput type="datetime-local" label="Market date" name="marketDate" />
         <RVFSelectNative
           className="mt-4"
           value={addressId}
-          onChange={(e) => setAddressId(e.target.value)}
+          onChange={(e) => {
+            console.log('change', e);
+            setAddressId(e.target.value);
+          }}
           label="Address"
           options={addressOptions}
           placeholder="Create new"

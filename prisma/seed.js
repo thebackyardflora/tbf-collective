@@ -56,7 +56,7 @@ function getFakeCompanyData() {
 
 function getFakeAddressData() {
   return {
-    street1: faker.address.streetAddress(true),
+    street: faker.address.streetAddress(true),
     city: faker.address.city(),
     state: faker.address.state(),
     zip: faker.address.zipCode(),

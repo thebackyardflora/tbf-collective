@@ -5,13 +5,7 @@ import { validationError } from 'remix-validated-form';
 import { createMarketEvent, updateMarketEvent } from '~/models/market-event.server';
 import { redirect } from '@remix-run/node';
 import type { MarketEvent } from '@prisma/client';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
 import { parseDateFromTimezone } from '~/utils';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 export const marketEventSchema = z
   .object({
@@ -20,8 +14,7 @@ export const marketEventSchema = z
     addressId: zfd.text(z.string().optional()),
     address: z
       .object({
-        street1: zfd.text(z.string()),
-        street2: zfd.text(z.string().optional()),
+        street: zfd.text(z.string()),
         city: zfd.text(z.string()),
         state: zfd.text(z.string()),
         zip: zfd.text(z.string()),

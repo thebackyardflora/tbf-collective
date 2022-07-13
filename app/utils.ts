@@ -3,6 +3,11 @@ import { useMemo } from 'react';
 
 import type { User } from '~/models/user.server';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const DEFAULT_REDIRECT = '/';
 

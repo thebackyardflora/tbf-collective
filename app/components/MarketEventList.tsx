@@ -33,7 +33,7 @@ function MarketEventListItem(props: { marketEvent: SerializedEntity<MarketEventW
 
   return (
     <li>
-      <Link to={props.marketEvent.id} className="block hover:bg-gray-50" data-testid="application-link">
+      <Link to={props.marketEvent.id} className="block hover:bg-gray-50" data-testid="market-event-link">
         <div className="px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between">
             <p className="truncate text-sm font-medium text-primary-600">{formattedDate}</p>
@@ -53,7 +53,7 @@ function MarketEventListItem(props: { marketEvent: SerializedEntity<MarketEventW
             <div className="sm:flex">
               <p className="flex items-center text-sm capitalize text-gray-500">
                 <LocationMarkerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                {props.marketEvent.address.street1}
+                {props.marketEvent.address.street}
               </p>
             </div>
             <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">

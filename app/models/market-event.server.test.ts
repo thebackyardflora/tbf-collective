@@ -22,7 +22,7 @@ test('createMarketEvent calls prisma.marketEvent.create with an existing address
 test('createMarketEvent calls prisma.marketEvent.create with a new address object', async () => {
   const marketDate = faker.date.future();
   const address = {
-    street1: faker.address.streetAddress(),
+    street: faker.address.streetAddress(),
     city: faker.address.city(),
     state: faker.address.state(),
     zip: faker.address.zipCode(),
@@ -65,7 +65,7 @@ test('updateMarketEvent calls prisma.marketEvent.update with an existing address
 test('updateMarketEvent calls prisma.marketEvent.update with a new address object', async () => {
   const marketDate = faker.date.future();
   const address = {
-    street1: faker.address.streetAddress(),
+    street: faker.address.streetAddress(),
     city: faker.address.city(),
     state: faker.address.state(),
     zip: faker.address.zipCode(),
