@@ -54,6 +54,26 @@ function getFakeCompanyData() {
   };
 }
 
+function getFakeAddressData() {
+  return {
+    street1: faker.address.streetAddress(true),
+    city: faker.address.city(),
+    state: faker.address.state(),
+    zip: faker.address.zipCode(),
+  };
+}
+
+function getFakeMarketEventData() {
+  return {
+    marketDate: Math.random() > 0.5 ? faker.date.future() : faker.date.past(),
+    address: {
+      create: getFakeAddressData(),
+    },
+    isCanceled: Math.random() > 0.7,
+    notes: faker.lorem.paragraph(),
+  };
+}
+
 async function createApplication({ type, userId, status, company }) {
   await prisma.application.upsert({
     create: {
@@ -97,6 +117,12 @@ async function createCompany({ type, ownerId, active, company }) {
   });
 }
 
+async function createMarketEvent() {
+  await prisma.marketEvent.create({
+    data: getFakeMarketEventData(),
+  });
+}
+
 async function seed() {
   await createUser({ email: 'admin@example.com', isAdmin: true, name: faker.name.findName() });
   const florist1 = await createUser({ email: 'florist1@example.com', name: faker.name.findName() });
@@ -114,6 +140,11 @@ async function seed() {
     company: growerCompany,
   });
   await createCompany({ type: 'GROWER', ownerId: grower1.id, active: true, company: growerCompany });
+
+  await prisma.marketEvent.deleteMany();
+  for (let i = 0; i < 10; i++) {
+    await createMarketEvent();
+  }
 
   console.log(`Database has been seeded. 🌱`);
 }
