@@ -1,8 +1,8 @@
 import { PageWrapper } from '~/components/PageWrapper';
 import type { LoaderFunction } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
+import type { MarketEventWithAddress } from '~/models/market-event.server';
 import { getMarketEvents } from '~/models/market-event.server';
-import type { MarketEventWithAddress } from '~/components/MarketEventList';
 import { MarketEventList } from '~/components/MarketEventList';
 import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import type { SerializedEntity } from '~/types';

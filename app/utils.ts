@@ -2,6 +2,7 @@ import { useMatches } from '@remix-run/react';
 import { useMemo } from 'react';
 
 import type { User } from '~/models/user.server';
+import dayjs from 'dayjs';
 
 const DEFAULT_REDIRECT = '/';
 
@@ -96,4 +97,8 @@ export function parseInstagramHandleFromUrl(url: string): string | null {
 
 export function validatePassword(password: unknown): password is string {
   return typeof password === 'string' && password.length >= 8;
+}
+
+export function parseDateFromTimezone({ date, timezone }: { date: string; timezone: string }): Date {
+  return dayjs.tz(date, timezone).toDate();
 }

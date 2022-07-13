@@ -2,16 +2,12 @@
 import { CalendarIcon } from '@heroicons/react/solid';
 import React from 'react';
 import { Link } from '@remix-run/react';
-import type { MarketEvent, Address } from '@prisma/client';
 import type { SerializedEntity } from '~/types';
 import { useLocalDate } from '~/hooks/use-local-date';
 import { twMerge } from 'tailwind-merge';
 import classNames from 'classnames';
 import { LocationMarkerIcon } from '@heroicons/react/outline';
-
-export type MarketEventWithAddress = MarketEvent & {
-  address: Address;
-};
+import type { MarketEventWithAddress } from '~/models/market-event.server';
 
 export interface StackedListProps {
   marketEvents: SerializedEntity<MarketEventWithAddress>[];

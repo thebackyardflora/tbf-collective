@@ -1,5 +1,10 @@
 import { prisma } from '~/db.server';
 import type { MarketEvent } from '@prisma/client';
+import type { Address } from '@prisma/client';
+
+export type MarketEventWithAddress = MarketEvent & {
+  address: Address;
+};
 
 export async function getMarketEvents(marketDateFilter: 'upcoming' | 'past' = 'upcoming') {
   return await prisma.marketEvent.findMany({
@@ -9,7 +14,7 @@ export async function getMarketEvents(marketDateFilter: 'upcoming' | 'past' = 'u
   });
 }
 
-interface CreateMarketEventParams {
+interface MarketEventParams {
   marketDate: Date;
   addressId?: string;
   address?: {
@@ -22,11 +27,7 @@ interface CreateMarketEventParams {
   notes?: string;
 }
 
-export async function createMarketEvent({
-  address,
-  addressId,
-  ...params
-}: CreateMarketEventParams): Promise<MarketEvent> {
+export async function createMarketEvent({ address, addressId, ...params }: MarketEventParams): Promise<MarketEvent> {
   if (!addressId && !address) {
     throw new Error('addressId or address is required');
   }
@@ -37,4 +38,32 @@ export async function createMarketEvent({
       ...(address ? { address: { create: address } } : { addressId: addressId! }),
     },
   });
+}
+
+export async function updateMarketEvent(
+  id: MarketEvent['id'],
+  { address, addressId, ...params }: MarketEventParams
+): Promise<MarketEvent> {
+  if (!addressId && !address) {
+    throw new Error('addressId or address is required');
+  }
+
+  return await prisma.marketEvent.update({
+    where: { id },
+    data: {
+      ...params,
+      ...(address ? { address: { create: address } } : { addressId: addressId! }),
+    },
+  });
+}
+
+export async function getMarketEventById({ id }: { id: string }): Promise<MarketEventWithAddress | null> {
+  return await prisma.marketEvent.findUnique({
+    where: { id },
+    include: { address: true },
+  });
+}
+
+export async function setMarketCancelState({ id, isCanceled }: { id: string; isCanceled: boolean }): Promise<void> {
+  await prisma.marketEvent.update({ where: { id }, data: { isCanceled } });
 }

@@ -11,11 +11,16 @@ export const AddressFields: FC<AddressFieldsProps> = ({ className, namePrefix, .
 
   return (
     <fieldset className={twMerge('grid gap-4 lg:grid-cols-3', className)} {...fieldsetProps}>
-      <RVFInput className="lg:col-span-full" type="text" name={`${prefix}street1`} label="Address line 1" />
-      <RVFInput className="lg:col-span-full" type="text" name={`${prefix}street2`} label="Address line 2" />
-      <RVFInput type="text" name={`${prefix}city`} label="City" />
-      <RVFInput type="text" name={`${prefix}state`} label="State" />
-      <RVFInput type="text" name={`${prefix}zip`} label="Zip" />
+      <RVFInput
+        className="lg:col-span-full"
+        type="text"
+        name={`${prefix}street1`}
+        label="Address line 1"
+        autoComplete="street-address"
+      />
+      <RVFInput type="text" name={`${prefix}city`} label="City" autoComplete="address-level2" />
+      <RVFInput type="text" name={`${prefix}state`} label="State" autoComplete="address-level1" />
+      <RVFInput type="text" name={`${prefix}zip`} label="Zip" autoComplete="postal-code" />
     </fieldset>
   );
 };

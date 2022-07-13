@@ -142,6 +142,7 @@ async function seed() {
   await createCompany({ type: 'GROWER', ownerId: grower1.id, active: true, company: growerCompany });
 
   await prisma.marketEvent.deleteMany();
+  await prisma.address.deleteMany();
   for (let i = 0; i < 10; i++) {
     await createMarketEvent();
   }
