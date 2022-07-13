@@ -2,6 +2,12 @@ import { useMatches } from '@remix-run/react';
 import { useMemo } from 'react';
 
 import type { User } from '~/models/user.server';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const DEFAULT_REDIRECT = '/';
 
@@ -90,10 +96,14 @@ export function getInstagramUrl(username: string): string {
 }
 
 export function parseInstagramHandleFromUrl(url: string): string | null {
-  const match = url.match(/^https?:\/\/instagram\.com\/([^\/]+)$/);
+  const match = url.match(/^https?:\/\/instagram\.com\/([^/]+)$/);
   return match ? match[1] : null;
 }
 
 export function validatePassword(password: unknown): password is string {
   return typeof password === 'string' && password.length >= 8;
+}
+
+export function parseDateFromTimezone({ date, timezone }: { date: string; timezone: string }): Date {
+  return dayjs.tz(date, timezone).toDate();
 }

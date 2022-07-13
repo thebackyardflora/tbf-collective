@@ -1,6 +1,7 @@
 import type { LoaderFunction } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
 import type { User } from '@prisma/client';
+import { StorefrontOutlined } from '@mui/icons-material';
 
 /* This example requires Tailwind CSS v2.0+ */
 import { useState } from 'react';
@@ -35,6 +36,12 @@ export default function AdminRoot() {
       href: 'applications',
       icon: ClipboardIcon,
       current: location.pathname.startsWith('/admin/applications'),
+    },
+    {
+      name: 'Market Events',
+      href: 'market-events',
+      icon: StorefrontOutlined,
+      current: location.pathname.startsWith('/admin/market-events'),
     },
   ];
 

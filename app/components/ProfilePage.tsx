@@ -3,7 +3,6 @@ import { PageWrapper } from '~/components/PageWrapper';
 import { Form, useActionData, useTransition } from '@remix-run/react';
 import { Button, Input, RVFButton, RVFInput, RVFTextArea } from '@mando-collabs/tailwind-ui';
 import { CheckCircleIcon, LogoutIcon } from '@heroicons/react/outline';
-import Avatar from 'boring-avatars';
 import type { Company, User, SocialSite } from '@prisma/client';
 import { SocialSiteType } from '@prisma/client';
 import { ValidatedForm } from 'remix-validated-form';
@@ -33,8 +32,6 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
   const { state, submission } = useTransition();
   const isUpdatingPassword = state === 'submitting' && submission?.formData.has('changePassword');
   const formRef = useRef<HTMLFormElement | null>(null);
-
-  console.log(submission);
 
   useEffect(() => {
     if (!isUpdatingPassword) {
@@ -71,12 +68,6 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
               <RVFInput type="text" name="instagramHandle" label="Instagram" />
               <RVFInput type="url" name="website" label="Website" />
             </div>
-            {/*<div className="mt-4 flex flex-col items-center lg:mt-0 lg:items-start">*/}
-            {/*  <div className="mb-4 text-sm font-medium text-gray-700">Profile Image</div>*/}
-            {/*  <div className="h-40 w-40 overflow-hidden rounded-full">*/}
-            {/*    <Avatar name={user.name} colors={['#78866B', '#8f9779', '#ffe8d6', '#cb997e', '#b98b73']} size={160} />*/}
-            {/*  </div>*/}
-            {/*</div>*/}
           </div>
           <div className="mt-4 flex justify-end space-x-2">
             <RVFButton name="companyProfile">Save</RVFButton>
