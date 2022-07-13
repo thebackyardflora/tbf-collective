@@ -7,6 +7,7 @@ import { CompanyType } from '@prisma/client';
 import { handleCompanyProfileForm } from '~/forms/company-profile';
 import { getSocialSitesByCompanyId } from '~/models/social-site.server';
 import { handleAccountSettingsForm } from '~/forms/account-settings';
+import { handleChangePasswordForm } from '~/forms/change-password';
 
 interface LoaderData {
   company: Company;
@@ -29,9 +30,11 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
   if (formData.has('companyProfile')) {
-    await handleCompanyProfileForm(formData, user.id);
+    return await handleCompanyProfileForm(formData, user.id);
   } else if (formData.has('accountSettings')) {
-    await handleAccountSettingsForm(formData, user.id);
+    return await handleAccountSettingsForm(formData, user.id);
+  } else if (formData.has('changePassword')) {
+    return await handleChangePasswordForm(formData, user.id);
   }
 
   return null;

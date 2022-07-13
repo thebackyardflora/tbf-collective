@@ -18,8 +18,10 @@ export async function handleAccountSettingsForm(formData: FormData, ownerId: Com
   const validationResult = await accountSettingsValidator.validate(formData);
 
   if (validationResult.error) {
-    throw validationError(validationResult.error);
+    return validationError(validationResult.error);
   }
 
   await updateCompanyPrivateInfo({ ...validationResult.data }, ownerId);
+
+  return null;
 }
