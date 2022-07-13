@@ -90,7 +90,7 @@ export function getInstagramUrl(username: string): string {
 }
 
 export function parseInstagramHandleFromUrl(url: string): string | null {
-  const match = url.match(/^https?:\/\/instagram\.com\/([^\/]+)$/);
+  const match = url.match(/^https?:\/\/instagram\.com\/([^/]+)$/);
   return match ? match[1] : null;
 }
 

@@ -1,4 +1,4 @@
-import type { User, Company } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import type { z } from 'zod';
 import type { floristApplicationSchema } from '~/components/FloristApplication';
