@@ -55,6 +55,27 @@ describe('growers dashboard tests', () => {
     cy.findByLabelText(/email/i).should('have.value', newEmail);
     cy.findByLabelText(/phone/i).should('have.value', newPhone);
     cy.findByLabelText(/ein\/tin/i).should('have.value', newEinTin);
+
+    const currentPassword = 'myreallystrongpassword';
+    const newPassword = faker.internet.password();
+
+    cy.findByLabelText(/current password/i)
+      .clear()
+      .type(currentPassword);
+    cy.findByLabelText(/^new password/i)
+      .clear()
+      .type(newPassword);
+    cy.findByLabelText(/confirm new password/i)
+      .clear()
+      .type(newPassword);
+    cy.get('button[name="changePassword"]').click();
+
+    cy.wait('@profilePost').its('response.statusCode').should('eq', 200);
+
+    cy.findByLabelText(/current password/i).should('have.value', '');
+    cy.findByLabelText(/^new password/i).should('have.value', '');
+    cy.findByLabelText(/confirm new password/i).should('have.value', '');
+    cy.findByText(/your password was successfully updated/i);
   });
 
   afterEach(() => {

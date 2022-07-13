@@ -93,3 +93,7 @@ export function parseInstagramHandleFromUrl(url: string): string | null {
   const match = url.match(/^https?:\/\/instagram\.com\/([^\/]+)$/);
   return match ? match[1] : null;
 }
+
+export function validatePassword(password: unknown): password is string {
+  return typeof password === 'string' && password.length >= 8;
+}

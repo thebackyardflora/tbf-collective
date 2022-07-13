@@ -5,11 +5,14 @@ import * as companyModel from '~/models/company.server';
 import { validationError } from 'remix-validated-form';
 
 vi.mock('~/models/company.server');
-vi.mock('remix-validated-form', () => ({
-  __esModule: true,
-  ...vi.importActual('remix-validated-form'),
-  validationError: vi.fn(),
-}));
+vi.mock('remix-validated-form', async () => {
+  const actual = (await vi.importActual('remix-validated-form')) as Object;
+  return {
+    __esModule: true,
+    ...actual,
+    validationError: vi.fn(),
+  };
+});
 
 const { updateCompanyPrivateInfo } = vi.mocked(companyModel);
 const mockedValidationError = vi.mocked(validationError);
@@ -32,11 +35,12 @@ test('handleAccountSettingsForm should call prisma.company.update with the corre
 
   expect(updateCompanyPrivateInfo).toHaveBeenCalledOnce();
 
-  expect(result).toBeUndefined();
+  expect(result).toBeNull();
 });
 
-test('throws a validationError object if the formData is invalid', async () => {
-  mockedValidationError.mockReturnValue({ test: true } as never);
+test('returns a validationError object if the formData is invalid', async () => {
+  const fakeResult = faker.datatype.json();
+  mockedValidationError.mockReturnValue(fakeResult as never);
 
   const ownerId = faker.datatype.uuid();
 
@@ -44,7 +48,7 @@ test('throws a validationError object if the formData is invalid', async () => {
     fail: true,
   });
 
-  await expect(async () => await handleAccountSettingsForm(formData, ownerId)).rejects.toStrictEqual({ test: true });
+  await expect(handleAccountSettingsForm(formData, ownerId)).resolves.toBe(fakeResult);
 
   expect(updateCompanyPrivateInfo).not.toHaveBeenCalled();
 });
