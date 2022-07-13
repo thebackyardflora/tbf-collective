@@ -47,7 +47,9 @@ describe('admin portal', () => {
       cy.wait('@newMarketPost').its('response.statusCode').should('eq', 204);
 
       cy.findAllByTestId('market-event-link').first().click();
-      cy.findByRole('button', { name: /cancel market/i }).click({ force: true });
+      cy.findByRole('button', { name: /cancel market/i })
+        .should('be.visible')
+        .click({ force: true });
 
       cy.wait('@updateMarketPost').its('response.statusCode').should('eq', 200);
     });
