@@ -4,10 +4,11 @@ import { requireAdmin } from '~/session.server';
 import { getMarketEvents } from '~/models/market-event.server';
 import type { MarketEventWithAddress } from '~/components/MarketEventList';
 import { MarketEventList } from '~/components/MarketEventList';
-import { useLoaderData, useLocation, useNavigate } from '@remix-run/react';
+import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import type { SerializedEntity } from '~/types';
-import { ButtonGroup } from '@mando-collabs/tailwind-ui';
+import { Button, ButtonGroup } from '@mando-collabs/tailwind-ui';
 import { StorefrontOutlined } from '@mui/icons-material';
+import { PlusIcon } from '@heroicons/react/outline';
 
 interface LoaderData<M = MarketEventWithAddress> {
   marketEvents: M[];
@@ -43,20 +44,27 @@ export default function MarketEvents() {
 
   return (
     <PageWrapper title="Market Events">
-      <ButtonGroup className="mt-4">
-        <ButtonGroup.Button
-          active={!searchParams.has('filter') || searchParams.get('filter') === 'upcoming'}
-          onClick={() => navigate({ search: '?filter=upcoming' })}
-        >
-          Upcoming
-        </ButtonGroup.Button>
-        <ButtonGroup.Button
-          active={searchParams.get('filter') === 'past'}
-          onClick={() => navigate({ search: '?filter=past' })}
-        >
-          Past
-        </ButtonGroup.Button>
-      </ButtonGroup>
+      <div className="flex items-end justify-between">
+        <ButtonGroup className="mt-4">
+          <ButtonGroup.Button
+            active={!searchParams.has('filter') || searchParams.get('filter') === 'upcoming'}
+            onClick={() => navigate({ search: '?filter=upcoming' })}
+          >
+            Upcoming
+          </ButtonGroup.Button>
+          <ButtonGroup.Button
+            active={searchParams.get('filter') === 'past'}
+            onClick={() => navigate({ search: '?filter=past' })}
+          >
+            Past
+          </ButtonGroup.Button>
+        </ButtonGroup>
+        <div>
+          <Link to="new">
+            <Button leadingIcon={PlusIcon}>New Event</Button>
+          </Link>
+        </div>
+      </div>
       {marketEvents.length ? (
         <MarketEventList className="mt-4" marketEvents={marketEvents} />
       ) : (
