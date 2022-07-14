@@ -48,14 +48,14 @@ describe('admin portal', () => {
 
       cy.findAllByTestId('market-event-link').first().click();
 
-      // cy.findByLabelText(/market date/i)
-      //   .clear()
-      //   .type(dayjs(faker.date.future()).format('YYYY-MM-DDThh:mm'));
-      // cy.findByLabelText(/notes/i).clear().type(faker.lorem.paragraph());
-      //
-      // cy.findByRole('button', { name: /update market/i }).click({ force: true });
-      //
-      // cy.wait('@updateMarketPost').its('response.statusCode').should('eq', 200);
+      cy.findByLabelText(/market date/i)
+        .clear()
+        .type(dayjs(faker.date.future()).format('YYYY-MM-DDThh:mm'));
+      cy.findByLabelText(/notes/i).clear().type(faker.lorem.paragraph());
+
+      cy.findByRole('button', { name: /update market/i }).click({ force: true });
+
+      cy.wait('@updateMarketPost').its('response.statusCode').should('eq', 200);
 
       cy.findByRole('button', { name: /cancel market/i })
         .should('be.visible')
