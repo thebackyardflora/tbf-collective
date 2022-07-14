@@ -134,7 +134,7 @@ jobs:
         env:
           PORT: '8811'
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-screenshots
