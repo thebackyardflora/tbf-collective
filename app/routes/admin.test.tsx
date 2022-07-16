@@ -2,7 +2,6 @@ import { loader } from './admin';
 import { faker } from '@faker-js/faker';
 import { sessionMock } from '~/test/session-mock';
 import { createTestUser } from '~/test/utils';
-import { json } from '@remix-run/node';
 
 describe('Admin', () => {
   test('loader returns loader data if user is admin', async () => {
