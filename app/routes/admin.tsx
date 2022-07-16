@@ -1,6 +1,5 @@
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
-import type { User } from '@prisma/client';
 import { StorefrontOutlined } from '@mui/icons-material';
 
 /* This example requires Tailwind CSS v2.0+ */
@@ -9,23 +8,16 @@ import { ClipboardIcon, HomeIcon, MenuIcon } from '@heroicons/react/outline';
 import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { StaticSidebar } from '~/components/StaticSidebar';
 import { MobileSidebar } from '~/components/MobileSidebar';
+import { json } from '@remix-run/node';
 
-interface LoaderData {
-  user: User;
-}
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const user = await requireAdmin(request);
 
-  const data: LoaderData = {
-    user,
-  };
-
-  return data;
-};
+  return json({ user });
+}
 
 export default function AdminRoot() {
-  const { user } = useLoaderData<LoaderData>();
+  const { user } = useLoaderData<typeof loader>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 

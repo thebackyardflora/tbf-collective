@@ -1,22 +1,15 @@
 import Header from '~/components/Header';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Button } from '@mando-collabs/tailwind-ui';
-import type { User, Company } from '@prisma/client';
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { getUser } from '~/session.server';
 import { getApplicationByUserId } from '~/models/application.server';
-import type { Application } from '@prisma/client';
 import { InlineNotification } from '~/components/InlineNotification';
 import { ApplicationStatus } from '@prisma/client';
 import { getCompanyByOwnerId } from '~/models/company.server';
+import { json } from '@remix-run/node';
 
-interface LoaderData {
-  user: User | null;
-  application: Application | null;
-  company: Company | null;
-}
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
 
   const [application, company] = await Promise.all([
@@ -24,17 +17,11 @@ export const loader: LoaderFunction = async ({ request }) => {
     user ? await getCompanyByOwnerId(user.id) : null,
   ]);
 
-  const data: LoaderData = {
-    user,
-    company,
-    application,
-  };
-
-  return data;
-};
+  return json({ user, company, application });
+}
 
 export default function Index() {
-  const { user, application, company } = useLoaderData<LoaderData>();
+  const { user, application, company } = useLoaderData<typeof loader>();
 
   return (
     <>

@@ -1,27 +1,20 @@
 import { PageWrapper } from '~/components/PageWrapper';
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
-import type { MarketEventWithAddress } from '~/models/market-event.server';
 import { setMarketCancelState, getMarketEventById } from '~/models/market-event.server';
-import type { SerializedEntity } from '~/types';
 import { Form, useLoaderData, useTransition } from '@remix-run/react';
 import { useLocalDate } from '~/hooks/use-local-date';
 import { MarketEventForm } from '~/components/MarketEventForm';
 import { getAddressOptions } from '~/models/address.server';
-import type { OptionLike } from '@mando-collabs/tailwind-ui';
 import { Button } from '@mando-collabs/tailwind-ui';
 import { requireAdmin } from '~/session.server';
 import { handleUpdateMarketEventForm } from '~/forms/market-event';
 import classNames from 'classnames';
 import React from 'react';
 
-interface LoaderData<T = MarketEventWithAddress> {
-  marketEvent: T;
-  addressOptions: OptionLike[];
-}
-
-export const loader: LoaderFunction = async ({ request, params }) => {
+export async function loader({ request, params }: LoaderArgs) {
+  await requireAdmin(request);
   invariant(params.id, 'id is required');
 
   const [marketEvent, addresses] = await Promise.all([getMarketEventById({ id: params.id }), getAddressOptions()]);
@@ -30,15 +23,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     return redirect('/admin/market-events');
   }
 
-  const data: LoaderData = {
-    marketEvent,
-    addressOptions: addresses,
-  };
+  return json({ marketEvent, addressOptions: addresses });
+}
 
-  return data;
-};
-
-export const action: ActionFunction = async ({ request, params }) => {
+export async function action({ request, params }: ActionArgs) {
   await requireAdmin(request);
 
   invariant(params.id, 'id is required');
@@ -54,11 +42,11 @@ export const action: ActionFunction = async ({ request, params }) => {
   } else {
     return await handleUpdateMarketEventForm(params.id, formData);
   }
-};
+}
 
 export default function MarketEvent() {
   const { state, submission } = useTransition();
-  const { marketEvent, addressOptions } = useLoaderData<LoaderData<SerializedEntity<MarketEventWithAddress>>>();
+  const { marketEvent, addressOptions } = useLoaderData<typeof loader>();
 
   const marketDate = useLocalDate(marketEvent.marketDate, { format: 'dddd, MMMM D, YYYY' });
   const marketDateDefaultValue = useLocalDate(marketEvent.marketDate, { format: 'YYYY-MM-DDThh:mm' });

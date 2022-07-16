@@ -1,6 +1,6 @@
 import type { ValidationResult } from 'remix-validated-form';
 import { validationError } from 'remix-validated-form';
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { prisma } from '~/db.server';
 import { requireUserId } from '~/session.server';
@@ -18,10 +18,6 @@ function isCompanyType(value: unknown): value is CompanyType {
   return Object.values(CompanyType).includes(value as never);
 }
 
-interface LoaderData {
-  companyType: CompanyType;
-}
-
 function assertCompanyType(url: URL) {
   const companyType = url.searchParams.get('type');
 
@@ -32,7 +28,7 @@ function assertCompanyType(url: URL) {
   return companyType;
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
   const url = new URL(request.url);
 
@@ -44,14 +40,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const companyType = assertCompanyType(url);
 
-  const data: LoaderData = {
-    companyType,
-  };
+  return json({ companyType });
+}
 
-  return data;
-};
-
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
   const url = new URL(request.url);
 
@@ -89,10 +81,10 @@ export const action: ActionFunction = async ({ request }) => {
   });
 
   return redirect(`${url.pathname.replace('application', 'review')}`);
-};
+}
 
 export default function ApplicationPage() {
-  const { companyType } = useLoaderData<LoaderData>();
+  const { companyType } = useLoaderData<typeof loader>();
 
   return (
     <>

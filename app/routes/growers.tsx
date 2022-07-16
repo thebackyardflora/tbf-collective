@@ -1,6 +1,5 @@
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { requireActiveCompany } from '~/session.server';
-import type { User } from '@prisma/client';
 
 import { useState } from 'react';
 import { HomeIcon, MenuIcon } from '@heroicons/react/outline';
@@ -8,23 +7,16 @@ import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { StaticSidebar } from '~/components/StaticSidebar';
 import { MobileSidebar } from '~/components/MobileSidebar';
 import { CompanyType } from '@prisma/client';
+import { json } from '@remix-run/node';
 
-interface LoaderData {
-  user: User;
-}
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const { user } = await requireActiveCompany(request, CompanyType.GROWER);
 
-  const data: LoaderData = {
-    user,
-  };
-
-  return data;
-};
+  return json({ user });
+}
 
 export default function GrowerRoot() {
-  const { user } = useLoaderData<LoaderData>();
+  const { user } = useLoaderData<typeof loader>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 

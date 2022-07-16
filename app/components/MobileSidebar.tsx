@@ -6,12 +6,13 @@ import { Link } from '@remix-run/react';
 import classNames from 'classnames';
 import type { User } from '@prisma/client';
 import Avatar from 'boring-avatars';
+import type { SerializedEntity } from '~/types';
 
 export interface MobileSidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (value: boolean) => void;
   navigation: { name: string; href: string; current?: boolean; icon: React.ComponentType<{ className?: string }> }[];
-  user: User;
+  user: SerializedEntity<User>;
 }
 
 export const MobileSidebar: React.FC<MobileSidebarProps> = ({ sidebarOpen, setSidebarOpen, navigation, user }) => {
