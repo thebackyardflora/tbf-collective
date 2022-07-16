@@ -1,12 +1,10 @@
 import { PageWrapper } from '~/components/PageWrapper';
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
 import invariant from 'tiny-invariant';
 import { getApplicationById, setApplicationStatus } from '~/models/application.server';
-import { redirect } from '@remix-run/node';
-import type { Application } from '@prisma/client';
+import { json, redirect } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
-import type { SerializedEntity } from '~/types';
 import { payloadIsObject } from '~/utils';
 import { Button } from '@mando-collabs/tailwind-ui';
 import { useLocalDate } from '~/hooks/use-local-date';
@@ -16,11 +14,7 @@ import React from 'react';
 import { updateCompanyActiveStatus } from '~/models/company.server';
 import { prisma } from '~/db.server';
 
-interface LoaderData<A = Application> {
-  application: A;
-}
-
-export const loader: LoaderFunction = async ({ request, params }) => {
+export async function loader({ request, params }: LoaderArgs) {
   await requireAdmin(request);
 
   invariant(typeof params.id === 'string');
@@ -31,14 +25,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     return redirect('/admin/applications');
   }
 
-  const data: LoaderData = {
-    application,
-  };
+  return json({ application });
+}
 
-  return data;
-};
-
-export const action: ActionFunction = async ({ request, params }) => {
+export async function action({ request, params }: ActionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
@@ -61,10 +51,10 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   return null;
-};
+}
 
 export default function ApplicationReview() {
-  const { application } = useLoaderData<LoaderData<SerializedEntity<Application>>>();
+  const { application } = useLoaderData<typeof loader>();
 
   const businessName =
     (payloadIsObject(application.payloadJson) ? application.payloadJson.businessName : null) ?? 'Company Unknown';

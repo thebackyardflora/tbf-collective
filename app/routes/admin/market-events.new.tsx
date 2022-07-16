@@ -1,36 +1,30 @@
 import { PageWrapper } from '~/components/PageWrapper';
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { handleNewMarketEventForm } from '~/forms/market-event';
 import { MarketEventForm } from '~/components/MarketEventForm';
-import type { OptionLike } from '@mando-collabs/tailwind-ui';
 import { getAddressOptions } from '~/models/address.server';
 import { useLoaderData } from '@remix-run/react';
 import { requireAdmin } from '~/session.server';
+import { json } from '@remix-run/node';
 
-interface LoaderData {
-  addressOptions: OptionLike[];
-}
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const addressOptions = await getAddressOptions();
 
-  const data: LoaderData = {
+  return json({
     addressOptions,
-  };
+  });
+}
 
-  return data;
-};
-
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   await requireAdmin(request);
 
   const formData = await request.formData();
 
   return await handleNewMarketEventForm(formData);
-};
+}
 
 export default function NewMarketEvent() {
-  const { addressOptions } = useLoaderData<LoaderData>();
+  const { addressOptions } = useLoaderData<typeof loader>();
 
   return (
     <PageWrapper title="New Market Event">

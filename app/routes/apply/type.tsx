@@ -1,12 +1,12 @@
 import { Link } from '@remix-run/react';
 import { Agriculture, LocalFlorist } from '@mui/icons-material';
 import { CompanyType } from '@prisma/client';
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { requireUserId } from '~/session.server';
 import { getApplicationByUserId } from '~/models/application.server';
 import { redirect } from '@remix-run/node';
 
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
 
   const application = await getApplicationByUserId(userId);
@@ -16,7 +16,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   return null;
-};
+}
 
 export default function ApplyIndex() {
   return (

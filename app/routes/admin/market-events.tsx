@@ -1,24 +1,19 @@
 import { PageWrapper } from '~/components/PageWrapper';
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
-import type { MarketEventWithAddress } from '~/models/market-event.server';
 import { getMarketEvents } from '~/models/market-event.server';
 import { MarketEventList } from '~/components/MarketEventList';
 import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
-import type { SerializedEntity } from '~/types';
 import { Button, ButtonGroup } from '@mando-collabs/tailwind-ui';
 import { StorefrontOutlined } from '@mui/icons-material';
 import { PlusIcon } from '@heroicons/react/outline';
-
-interface LoaderData<M = MarketEventWithAddress> {
-  marketEvents: M[];
-}
+import { json } from '@remix-run/node';
 
 function isMarketDateFilter(filter: unknown): filter is 'upcoming' | 'past' {
   return filter === 'upcoming' || filter === 'past';
 }
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export async function loader({ request }: LoaderArgs) {
   await requireAdmin(request);
 
   const url = new URL(request.url);
@@ -29,15 +24,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const marketEvents = await getMarketEvents(filter);
 
-  const data: LoaderData = {
-    marketEvents,
-  };
-
-  return data;
-};
+  return json({ marketEvents });
+}
 
 export default function MarketEvents() {
-  const { marketEvents } = useLoaderData<LoaderData<SerializedEntity<MarketEventWithAddress>>>();
+  const { marketEvents } = useLoaderData<typeof loader>();
   const { search } = useLocation();
   const searchParams = new URLSearchParams(search.replace('?', ''));
   const navigate = useNavigate();

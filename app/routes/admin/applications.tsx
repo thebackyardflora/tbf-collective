@@ -1,20 +1,15 @@
 import { PageWrapper } from '~/components/PageWrapper';
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
 import { getAllApplicationsByStatus, isApplicationStatus } from '~/models/application.server';
-import type { Application } from '@prisma/client';
 import { ApplicationStatus } from '@prisma/client';
 import { useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { ApplicationList } from '~/components/ApplicationList';
-import type { SerializedEntity } from '~/types';
 import { ButtonGroup } from '@mando-collabs/tailwind-ui';
 import { FolderOpenIcon } from '@heroicons/react/outline';
+import { json } from '@remix-run/node';
 
-interface LoaderData<A = Application> {
-  applications: A[];
-}
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   await requireAdmin(request);
 
   const url = new URL(request.url);
@@ -24,13 +19,11 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const applications = await getAllApplicationsByStatus(status);
 
-  const data: LoaderData = { applications };
-
-  return data;
-};
+  return json({ applications });
+}
 
 export default function Applications() {
-  const { applications } = useLoaderData<LoaderData<SerializedEntity<Application>>>();
+  const { applications } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const location = useLocation();
 

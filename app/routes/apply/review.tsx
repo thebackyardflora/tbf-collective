@@ -1,15 +1,11 @@
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { requireUserId } from '~/session.server';
 import { getApplicationByUserId } from '~/models/application.server';
-import { redirect } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 import { ApplicationStatus } from '@prisma/client';
 import { useLoaderData } from '@remix-run/react';
 
-interface LoaderData {
-  status: ApplicationStatus;
-}
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
   const application = await getApplicationByUserId(userId);
 
@@ -17,15 +13,11 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect('/apply/type');
   }
 
-  const data: LoaderData = {
-    status: application.status,
-  };
-
-  return data;
-};
+  return json({ status: application.status });
+}
 
 export default function ApplicationReview() {
-  const { status } = useLoaderData<LoaderData>();
+  const { status } = useLoaderData<typeof loader>();
 
   return (
     <>

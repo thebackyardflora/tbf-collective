@@ -1,12 +1,12 @@
 import { PageWrapper } from '~/components/PageWrapper';
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
 
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   await requireAdmin(request);
 
   return null;
-};
+}
 
 export default function AdminDashboard() {
   return <PageWrapper title="Dashboard">Dashboard page</PageWrapper>;

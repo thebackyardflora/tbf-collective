@@ -1,4 +1,4 @@
-import type { ActionFunction, LoaderFunction, MetaFunction } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs, MetaFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
 import * as React from 'react';
@@ -9,11 +9,13 @@ import { createUser, getUserByEmail } from '~/models/user.server';
 import { safeRedirect, validateEmail, validateName } from '~/utils';
 import { Button, Input } from '@mando-collabs/tailwind-ui';
 
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
+
   if (userId) return redirect('/');
-  return json({});
-};
+
+  return null;
+}
 
 interface ActionData {
   errors: {
@@ -23,7 +25,7 @@ interface ActionData {
   };
 }
 
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get('email');
   const password = formData.get('password');
@@ -59,7 +61,7 @@ export const action: ActionFunction = async ({ request }) => {
     remember: false,
     redirectTo,
   });
-};
+}
 
 export const meta: MetaFunction = () => {
   return {

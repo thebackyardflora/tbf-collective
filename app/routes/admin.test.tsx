@@ -2,6 +2,7 @@ import { loader } from './admin';
 import { faker } from '@faker-js/faker';
 import { sessionMock } from '~/test/session-mock';
 import { createTestUser } from '~/test/utils';
+import { json } from '@remix-run/node';
 
 describe('Admin', () => {
   test('loader returns loader data if user is admin', async () => {
@@ -10,6 +11,6 @@ describe('Admin', () => {
 
     const response = await loader({ request: new Request(faker.internet.url()), context: {}, params: {} });
 
-    expect(response).toStrictEqual({ user: testUser });
+    await expect(response.json()).resolves.toStrictEqual({ user: JSON.parse(JSON.stringify(testUser)) });
   });
 });

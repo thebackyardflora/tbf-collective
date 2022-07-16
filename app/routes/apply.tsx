@@ -2,26 +2,18 @@ import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import Header from '~/components/Header';
 import type { Step } from '~/components/Steps';
 import { Steps } from '~/components/Steps';
-import type { LoaderFunction } from '@remix-run/node';
-import type { User } from '@prisma/client';
+import type { LoaderArgs } from '@remix-run/node';
 import { requireUser } from '~/session.server';
+import { json } from '@remix-run/node';
 
-interface LoaderData {
-  user: User;
-}
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const user = await requireUser(request);
 
-  const data: LoaderData = {
-    user,
-  };
-
-  return data;
-};
+  return json({ user });
+}
 
 export default function Apply() {
-  const { user } = useLoaderData<LoaderData>();
+  const { user } = useLoaderData<typeof loader>();
   const location = useLocation();
 
   const isTypeStep = location.pathname.endsWith('/apply/type');

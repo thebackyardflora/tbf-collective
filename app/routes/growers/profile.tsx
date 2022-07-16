@@ -1,6 +1,5 @@
 import { requireActiveCompany } from '~/session.server';
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
-import type { User, Company, SocialSite } from '@prisma/client';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { ProfilePage } from '~/components/ProfilePage';
 import { useLoaderData } from '@remix-run/react';
 import { CompanyType } from '@prisma/client';
@@ -8,24 +7,17 @@ import { handleCompanyProfileForm } from '~/forms/company-profile';
 import { getSocialSitesByCompanyId } from '~/models/social-site.server';
 import { handleAccountSettingsForm } from '~/forms/account-settings';
 import { handleChangePasswordForm } from '~/forms/change-password';
+import { json } from '@remix-run/node';
 
-interface LoaderData {
-  company: Company;
-  user: User;
-  socialSites: SocialSite[];
-}
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const { user, company } = await requireActiveCompany(request, CompanyType.GROWER);
 
   const socialSites = await getSocialSitesByCompanyId(company.id);
 
-  const data: LoaderData = { company, user, socialSites };
+  return json({ company, user, socialSites });
+}
 
-  return data;
-};
-
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   const { user } = await requireActiveCompany(request, CompanyType.GROWER);
   const formData = await request.formData();
 
@@ -38,10 +30,10 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   return null;
-};
+}
 
 export default function Profile() {
-  const { company, user, socialSites } = useLoaderData<LoaderData>();
+  const { company, user, socialSites } = useLoaderData<typeof loader>();
 
   return <ProfilePage company={company} user={user} socialSites={socialSites} />;
 }

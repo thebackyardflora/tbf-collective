@@ -12,10 +12,11 @@ import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import type { User, Company } from '@prisma/client';
 import { Button } from '@mando-collabs/tailwind-ui';
 import { CompanyType } from '@prisma/client';
+import type { SerializedEntity } from '~/types';
 
 export type HeaderProps = {
-  user: User | null;
-  company?: Company | null;
+  user: SerializedEntity<User> | null;
+  company?: SerializedEntity<Company> | null;
   hideLogoOnMobile?: boolean;
 };
 

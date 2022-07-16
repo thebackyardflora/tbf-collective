@@ -11,11 +11,12 @@ import { parseInstagramHandleFromUrl } from '~/utils';
 import { accountSettingsValidator } from '~/forms/account-settings';
 import { changePasswordFormValidator } from '~/forms/change-password';
 import { useEffect, useRef } from 'react';
+import type { SerializedEntity } from '~/types';
 
 export interface ProfilePageProps {
-  user: User;
-  company: Company;
-  socialSites: SocialSite[];
+  user: SerializedEntity<User>;
+  company: SerializedEntity<Company>;
+  socialSites: SerializedEntity<SocialSite>[];
 }
 
 function isFocusedHtmlElement(element: Element | null): element is HTMLElement {
