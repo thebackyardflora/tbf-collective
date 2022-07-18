@@ -66,3 +66,7 @@ export async function getMarketEventById({ id }: { id: string }): Promise<Market
 export async function setMarketCancelState({ id, isCanceled }: { id: string; isCanceled: boolean }): Promise<void> {
   await prisma.marketEvent.update({ where: { id }, data: { isCanceled } });
 }
+
+export async function getUpcomingMarketEvent() {
+  return await prisma.marketEvent.findFirst({ orderBy: { marketDate: 'asc' }, include: { address: true } });
+}
