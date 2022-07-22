@@ -1,6 +1,9 @@
 import type { EntryContext } from '@remix-run/node';
-import { RemixServer } from '@remix-run/react';
+import { Link, RemixServer } from '@remix-run/react';
 import { renderToString } from 'react-dom/server';
+import { setLinkComponent } from '@mando-collabs/tailwind-ui';
+
+setLinkComponent(Link);
 
 export default function handleRequest(
   request: Request,
