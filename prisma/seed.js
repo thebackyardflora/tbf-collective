@@ -4,9 +4,6 @@ const bcrypt = require('bcryptjs');
 const { faker } = require('@faker-js/faker');
 const algoliaSearch = require('algoliasearch');
 
-console.log('DatabaseURL', process.env.DATABASE_URL);
-console.log('ALGOLIA_APP_ID', process.env.ALGOLIA_APP_ID);
-
 const client = algoliaSearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_API_KEY);
 const index = client.initIndex(process.env.ALGOLIA_INDEX_NAME);
 
