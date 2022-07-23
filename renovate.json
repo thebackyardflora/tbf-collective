@@ -4,6 +4,10 @@
     {
       "packageNames": ["@types/react", "@types/react-dom"],
       "groupName": "react monorepo"
+    },
+    {
+      "packageNames": ["vitest"],
+      "groupName": "vitest"
     }
   ]
 }
