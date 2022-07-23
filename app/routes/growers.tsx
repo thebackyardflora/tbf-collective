@@ -2,7 +2,7 @@ import type { LoaderArgs } from '@remix-run/node';
 import { requireActiveCompany } from '~/session.server';
 
 import { useState } from 'react';
-import { HomeIcon, MenuIcon } from '@heroicons/react/outline';
+import { CollectionIcon, HomeIcon, MenuIcon } from '@heroicons/react/outline';
 import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { StaticSidebar } from '~/components/StaticSidebar';
 import { MobileSidebar } from '~/components/MobileSidebar';
@@ -26,6 +26,12 @@ export default function GrowerRoot() {
       href: 'dashboard',
       icon: HomeIcon,
       current: location.pathname.startsWith('/growers/dashboard'),
+    },
+    {
+      name: 'Catalog',
+      href: 'catalog',
+      icon: CollectionIcon,
+      current: location.pathname.startsWith('/growers/catalog'),
     },
   ];
 
