@@ -43,6 +43,7 @@
     "bcryptjs": "2.4.3",
     "boring-avatars": "1.7.0",
     "classnames": "2.3.1",
+    "cloudinary": "1.30.1",
     "compression": "1.7.4",
     "cross-env": "7.0.3",
     "dayjs": "1.11.4",
@@ -52,9 +53,9 @@
     "morgan": "1.10.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "tailwind-merge": "1.5.1",
     "react-instantsearch-hooks-server": "6.30.2",
     "react-instantsearch-hooks-web": "6.30.2",
+    "tailwind-merge": "1.5.1",
     "tiny-invariant": "1.2.0",
     "zod": "3.17.10",
     "zod-form-data": "1.2.1"
