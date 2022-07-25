@@ -50,6 +50,7 @@ model Company {
   address     String?
   einTin      String
   bio         String?
+  imageKey    String?
   socialSites SocialSite[]
   ownerId     String       @unique
   owner       User         @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)

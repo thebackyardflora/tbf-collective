@@ -97,6 +97,8 @@ jobs:
       ALGOLIA_API_KEY: ${{secrets.ALGOLIA_API_KEY}}
       ALGOLIA_INDEX_NAME: ${{secrets.ALGOLIA_INDEX_NAME}}
       ALGOLIA_SEARCH_ONLY_API_KEY: ${{secrets.ALGOLIA_SEARCH_ONLY_API_KEY}}
+      CLOUDINARY_API_KEY: ${{secrets.CLOUDINARY_API_KEY}}
+      CLOUDINARY_API_SECRET: ${{secrets.CLOUDINARY_API_SECRET}}
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.10.0

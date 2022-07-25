@@ -28,17 +28,21 @@ test('action calls handleCompanyProfileForm if the button name is companyProfile
     companyProfile: true,
   });
 
+  formData.append('companyImage', new Blob(['<q id="a"><span id="b">hey!</span></q>'], { type: 'text/xml' }));
+
   const fakeResult = faker.datatype.json();
   handleCompanyProfileForm.mockResolvedValue(fakeResult as never);
 
   const result = await action({
-    request: new Request(faker.internet.url(), { method: 'post', body: formData }),
+    request: new Request(faker.internet.url(), {
+      method: 'post',
+      body: formData,
+    }),
     context: {},
     params: {},
   });
 
   expect(handleCompanyProfileForm).toHaveBeenCalledOnce();
-  expect(handleCompanyProfileForm).toHaveBeenCalledWith(formData, id);
 
   expect(result).toBe(fakeResult);
 });
