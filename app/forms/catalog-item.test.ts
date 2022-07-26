@@ -31,6 +31,7 @@ test('handleCatalogItemForm creates a new catalog item', async () => {
   expect(createCatalogItem).toHaveBeenCalledOnce();
   expect(createCatalogItem).toHaveBeenCalledWith({
     ...data,
+    imageKeys: [],
     createdById: userId,
   });
 });

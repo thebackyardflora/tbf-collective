@@ -116,6 +116,7 @@ export function parseDateFromTimezone({ date, timezone }: { date: string; timezo
 
 export function createFileUploadHandler(inputName: string, folderName: string): UploadHandler {
   return composeUploadHandlers(async ({ name, data, filename }) => {
+    console.log({ name, filename });
     if (name !== inputName) {
       return undefined;
     }

@@ -9,7 +9,7 @@ export interface CatalogGridProps {
     id: string;
     name: string;
     description: string | null;
-    imageUrl: string | null;
+    thumbnail: string | null;
   }[];
 }
 
@@ -50,11 +50,11 @@ const CatalogItem: FC<
     <div>
       <div className="relative">
         <div className="relative h-72 w-full overflow-hidden rounded-lg">
-          {hit?.imageUrl ? (
-            <img src={hit.imageUrl} alt={hit.name} className="h-full w-full object-cover object-center" />
-          ) : item?.imageUrl ? (
+          {hit?.thumbnail ? (
+            <img src={hit.thumbnail} alt={hit.name} className="h-full w-full object-cover object-center" />
+          ) : item?.thumbnail ? (
             <img
-              src={item.imageUrl ?? undefined}
+              src={item.thumbnail ?? undefined}
               alt={item.name}
               className="h-full w-full object-cover object-center"
             />

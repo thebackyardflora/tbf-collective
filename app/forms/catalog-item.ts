@@ -17,12 +17,13 @@ export const catalogItemFormValidator = withZod(catalogItemSchema);
 
 export async function handleCatalogItemForm(formData: FormData, userId: User['id'], successRedirect: string) {
   const validationResult = await catalogItemFormValidator.validate(formData);
+  const imageKeys = formData.getAll('images') as string[];
 
   if (validationResult.error) {
     return validationError(validationResult.error);
   }
 
-  await createCatalogItem({ ...validationResult.data, createdById: userId });
+  await createCatalogItem({ ...validationResult.data, imageKeys, createdById: userId });
 
   return redirect(successRedirect);
 }
