@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import { Highlight, Hits } from 'react-instantsearch-hooks-web';
 import type { Hit } from 'instantsearch.js';
 import { useSearchBox } from 'react-instantsearch-hooks';
+import { Link } from '@remix-run/react';
 
 export interface CatalogGridProps {
   items: {
@@ -48,20 +49,24 @@ const CatalogItem: FC<
 
   return (
     <div>
-      <div className="relative">
-        <div className="relative h-72 w-full overflow-hidden rounded-lg">
+      <Link to={hit?.objectID ?? item?.id ?? '#'} className="group relative">
+        <div className="relative h-72 w-full overflow-hidden rounded-lg group-focus-within:outline group-focus-within:outline-primary">
           {hit?.thumbnail ? (
-            <img src={hit.thumbnail} alt={hit.name} className="h-full w-full object-cover object-center" />
+            <img
+              src={hit.thumbnail}
+              alt={hit.name}
+              className="h-full w-full object-cover object-center group-hover:opacity-75"
+            />
           ) : item?.thumbnail ? (
             <img
               src={item.thumbnail ?? undefined}
               alt={item.name}
-              className="h-full w-full object-cover object-center"
+              className="h-full w-full object-cover object-center group-hover:opacity-75"
             />
           ) : null}
         </div>
         <div className="relative mt-4">
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 line-clamp-3">
             {hit ? (
               <Highlight hit={hit} attribute="description">
                 {hit.description}
@@ -73,7 +78,7 @@ const CatalogItem: FC<
         </div>
         <div className="absolute inset-x-0 top-0 flex h-72 items-end justify-end overflow-hidden rounded-lg p-4">
           <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black opacity-50" />
-          <p className="relative text-lg font-semibold text-white">
+          <p className="relative text-lg font-semibold text-white line-clamp-3">
             {hit ? (
               <Highlight hit={hit} attribute="name">
                 {hit.name}
@@ -83,7 +88,7 @@ const CatalogItem: FC<
             )}
           </p>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };

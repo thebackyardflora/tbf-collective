@@ -1,4 +1,4 @@
-import { createCatalogItem } from '~/models/catalog-item.server';
+import { upsertCatalogItem } from '~/models/catalog-item.server';
 import { prismaMock } from '~/test/prisma-mock';
 import { faker } from '@faker-js/faker';
 import { algoliaIndexMock } from '~/test/algolia-mock';
@@ -7,7 +7,7 @@ import { getImageUrl } from '~/cloudinary.server';
 vi.mock('~/cloudinary.server');
 const mockGetImageUrl = vi.mocked(getImageUrl);
 
-test('createCatalogItem calls prisma with the right parameters', async () => {
+test('upsertCatalogItem calls prisma with the right parameters', async () => {
   const data = {
     imageUrl: faker.internet.url(),
     name: faker.commerce.productName(),
@@ -19,7 +19,7 @@ test('createCatalogItem calls prisma with the right parameters', async () => {
 
   const createdById = faker.datatype.uuid();
 
-  prismaMock.catalogItem.create.mockResolvedValueOnce(dummyResult as never);
+  prismaMock.catalogItem.upsert.mockResolvedValueOnce(dummyResult as never);
 
   let taskID = faker.datatype.uuid();
   algoliaIndexMock.saveObject.mockResolvedValueOnce({ taskID } as never);
@@ -29,11 +29,11 @@ test('createCatalogItem calls prisma with the right parameters', async () => {
 
   const imageKeys = [faker.word.noun()];
 
-  await expect(createCatalogItem({ ...data, imageKeys, createdById })).resolves.toBe(dummyResult);
+  await expect(upsertCatalogItem({ ...data, imageKeys, createdById })).resolves.toBe(dummyResult);
 
-  expect(prismaMock.catalogItem.create).toHaveBeenCalledOnce();
-  expect(prismaMock.catalogItem.create).toHaveBeenCalledWith({
-    data: {
+  expect(prismaMock.catalogItem.upsert).toHaveBeenCalledOnce();
+  expect(prismaMock.catalogItem.upsert).toHaveBeenCalledWith({
+    create: {
       ...data,
       createdBy: {
         connect: {
@@ -47,6 +47,21 @@ test('createCatalogItem calls prisma with the right parameters', async () => {
       },
       thumbnail: thumbnailUrl,
     },
+    update: {
+      ...data,
+      lastUpdatedBy: {
+        connect: {
+          id: createdById,
+        },
+      },
+      images: {
+        createMany: {
+          data: [{ imageKey: imageKeys[0], createdById }],
+        },
+      },
+      thumbnail: thumbnailUrl,
+    },
+    where: { id: '' },
   });
 
   expect(algoliaIndexMock.saveObject).toHaveBeenCalledOnce();
