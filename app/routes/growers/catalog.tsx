@@ -19,7 +19,10 @@ export async function loader({ request }: LoaderArgs) {
   const url = request.url;
   const catalogItems = await getCatalogItems();
 
-  return json({ catalogItems, url });
+  return json({
+    catalogItems,
+    url,
+  });
 }
 
 export default function Catalog() {

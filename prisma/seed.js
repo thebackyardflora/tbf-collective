@@ -132,7 +132,7 @@ async function createCatalogItem(createdById) {
       },
       name: faker.commerce.productName(),
       description: faker.commerce.productDescription(),
-      imageUrl: `https://picsum.photos/seed/${Math.floor(Math.random() * 1000) + 9000}/300/300`,
+      thumbnail: `https://picsum.photos/seed/${Math.floor(Math.random() * 1000) + 9000}/400/400`,
       basePrice: faker.datatype.number({ min: 10, max: 20 }),
     },
   });

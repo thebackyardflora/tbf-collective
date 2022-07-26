@@ -94,19 +94,30 @@ model MarketEvent {
 }
 
 model CatalogItem {
-  id              String           @id @default(cuid())
+  id              String             @id @default(cuid())
   parentId        String?
   name            String
   description     String?
-  imageUrl        String?
   createdById     String
-  createdBy       User             @relation("catalogItemsCreated", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdBy       User               @relation("catalogItemsCreated", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
   lastUpdatedById String?
-  lastUpdatedBy   User?            @relation("catalogItemsUpdated", fields: [lastUpdatedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  basePrice       Decimal?         @db.Decimal(13, 3)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  CatalogItemTag  CatalogItemTag[]
+  lastUpdatedBy   User?              @relation("catalogItemsUpdated", fields: [lastUpdatedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  basePrice       Decimal?           @db.Decimal(13, 3)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  images          CatalogItemImage[]
+  thumbnail       String?
+  tags            CatalogItemTag[]
+}
+
+model CatalogItemImage {
+  id            String      @id @default(cuid())
+  imageKey      String
+  catalogItemId String
+  catalogItem   CatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdById   String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model CatalogTag {
