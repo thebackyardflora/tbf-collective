@@ -15,18 +15,18 @@ import { useAlgolia } from '~/components/AlgoliaProvider';
 export async function loader({ request }: LoaderArgs) {
   invariant(process.env.ALGOLIA_APP_ID, 'ALGOLIA_APP_ID is required');
   invariant(process.env.ALGOLIA_API_KEY, 'ALGOLIA_API_KEY is required');
+  invariant(process.env.ALGOLIA_INDEX_NAME, 'ALGOLIA_INDEX_NAME is required');
 
-  const url = request.url;
   const catalogItems = await getCatalogItems();
 
   return json({
     catalogItems,
-    url,
+    indexName: process.env.ALGOLIA_INDEX_NAME,
   });
 }
 
 export default function Catalog() {
-  const { catalogItems, url } = useLoaderData<typeof loader>();
+  const { catalogItems, indexName } = useLoaderData<typeof loader>();
 
   return (
     <PageWrapper
@@ -42,7 +42,7 @@ export default function Catalog() {
       }
     >
       <InstantSearchSSRProvider>
-        <CatalogSearch initialCatalogItems={catalogItems} url={url} />
+        <CatalogSearch initialCatalogItems={catalogItems} indexName={indexName} />
       </InstantSearchSSRProvider>
     </PageWrapper>
   );
@@ -50,14 +50,15 @@ export default function Catalog() {
 
 function CatalogSearch({
   initialCatalogItems,
+  indexName,
 }: {
   initialCatalogItems: UseDataFunctionReturn<typeof loader>['catalogItems'];
-  url: string;
+  indexName: string;
 }) {
   const searchClient = useAlgolia();
 
   return (
-    <InstantSearch searchClient={searchClient} indexName="dev_tbf_collective">
+    <InstantSearch searchClient={searchClient} indexName={indexName}>
       <SearchBox className="mt-4" />
       <CatalogGrid items={initialCatalogItems} />
     </InstantSearch>
