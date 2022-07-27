@@ -87,7 +87,7 @@ async function getThumbnailForCatalogItem(id?: string, imagesToRemove: string[] 
     thumbnailImageKey = imageKeys.length ? imageKeys[0] : undefined;
   }
 
-  return thumbnailImageKey ? getImageUrl(thumbnailImageKey, { crop: 'fill', height: 400, width: 400 }) : null;
+  return thumbnailImageKey ? getImageUrl(thumbnailImageKey, { crop: 'fill', height: 600, width: 600 }) : null;
 }
 
 export async function getCatalogItems() {

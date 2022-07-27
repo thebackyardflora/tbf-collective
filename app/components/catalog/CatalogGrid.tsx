@@ -49,7 +49,7 @@ const CatalogItem: FC<
 
   return (
     <div>
-      <Link to={hit?.objectID ?? item?.id ?? '#'} className="group relative">
+      <Link to={hit?.objectID ?? item?.id ?? '#'} className="group relative block">
         <div className="relative h-72 w-full overflow-hidden rounded-lg group-focus-within:outline group-focus-within:outline-primary">
           {hit?.thumbnail ? (
             <img
