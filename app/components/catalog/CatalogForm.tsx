@@ -16,9 +16,10 @@ export interface CatalogFormProps {
     }[];
   };
   mode?: 'CREATE' | 'EDIT';
+  flowerType?: 'Species' | 'Variety';
 }
 
-export const CatalogForm: FC<CatalogFormProps> = ({ initialValues, mode = 'CREATE' }) => {
+export const CatalogForm: FC<CatalogFormProps> = ({ initialValues, mode = 'CREATE', flowerType = 'Species' }) => {
   return (
     <ValidatedForm
       method="post"
@@ -37,11 +38,15 @@ export const CatalogForm: FC<CatalogFormProps> = ({ initialValues, mode = 'CREAT
       <RVFInput
         type="text"
         name="name"
-        label="Flower species name"
-        helpText="Enter the common name of the flower species (e.g. Dahlia)"
+        label={`${flowerType} name`}
+        helpText={`Enter the common name of the flower ${flowerType.toLowerCase()}`}
       />
 
-      <RVFTextArea name="description" helpText="Enter a description of the flower" label="Description" />
+      <RVFTextArea
+        name="description"
+        helpText={`Enter a description of the ${flowerType.toLowerCase()}`}
+        label="Description"
+      />
 
       <ImageList initialImages={initialValues?.images ?? []} />
 

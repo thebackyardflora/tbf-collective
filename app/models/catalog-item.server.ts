@@ -5,7 +5,7 @@ import { getImageUrl } from '~/cloudinary.server';
 
 interface CreateCatalogItemParams {
   id?: CatalogItem['id'];
-  parentId?: CatalogItem['id'];
+  parentId?: CatalogItem['parentId'];
   name: CatalogItem['name'];
   description?: CatalogItem['description'];
   createdById: CatalogItem['createdById'];
@@ -18,6 +18,7 @@ export async function upsertCatalogItem({
   createdById,
   imageKeys,
   imagesToRemove,
+  parentId,
   ...data
 }: CreateCatalogItemParams): Promise<CatalogItem> {
   const thumbnail = await getThumbnailForCatalogItem(id, imagesToRemove, imageKeys);
@@ -39,6 +40,13 @@ export async function upsertCatalogItem({
           })),
         },
       },
+      parent: parentId
+        ? {
+            connect: {
+              id: parentId,
+            },
+          }
+        : undefined,
     },
     update: {
       ...data,
@@ -91,12 +99,34 @@ async function getThumbnailForCatalogItem(id?: string, imagesToRemove: string[] 
 }
 
 export async function getCatalogItems() {
-  return await prisma.catalogItem.findMany({ orderBy: { createdAt: 'desc' } });
+  return await prisma.catalogItem.findMany({ orderBy: { createdAt: 'desc' }, where: { parentId: null } });
 }
 
 export async function getCatalogItemById(id: string) {
   return await prisma.catalogItem.findUnique({
     where: { id },
-    include: { images: { select: { id: true, imageKey: true } } },
+    include: {
+      images: { select: { id: true, imageKey: true } },
+    },
+  });
+}
+
+export async function getCatalogItemByIdWithChildren(id: string) {
+  return await prisma.catalogItem.findUnique({
+    where: { id },
+    include: {
+      images: { select: { id: true, imageKey: true } },
+      children: { select: { name: true, thumbnail: true, id: true } },
+    },
+  });
+}
+
+export async function getCatalogItemByIdWithParent(id: string) {
+  return await prisma.catalogItem.findUnique({
+    where: { id },
+    include: {
+      images: { select: { id: true, imageKey: true } },
+      parent: { select: { id: true, name: true } },
+    },
   });
 }

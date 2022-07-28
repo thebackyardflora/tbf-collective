@@ -19,6 +19,7 @@ interface HandleCatalogItemFormParams {
   userId: User['id'];
   itemId?: CatalogItem['id'];
   successRedirect: string;
+  parentId?: CatalogItem['parentId'];
 }
 
 export async function handleCatalogItemForm({
@@ -26,6 +27,7 @@ export async function handleCatalogItemForm({
   formData,
   userId,
   successRedirect,
+  parentId,
 }: HandleCatalogItemFormParams) {
   const validationResult = await catalogItemFormValidator.validate(formData);
   const imageKeys = (formData.getAll('images') as string[]).filter(Boolean);
@@ -35,7 +37,14 @@ export async function handleCatalogItemForm({
     return validationError(validationResult.error);
   }
 
-  await upsertCatalogItem({ ...validationResult.data, imageKeys, createdById: userId, id: itemId, imagesToRemove });
+  await upsertCatalogItem({
+    ...validationResult.data,
+    imageKeys,
+    createdById: userId,
+    id: itemId,
+    imagesToRemove,
+    parentId,
+  });
 
   return redirect(successRedirect);
 }
