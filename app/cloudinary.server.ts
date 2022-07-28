@@ -39,7 +39,7 @@ async function uploadImage(
   });
 }
 
-export function getImageUrl(publicId: string, options: CommonTransformationOptions): string {
+export function getImageUrl(publicId: string, options?: CommonTransformationOptions): string {
   return cloudinary.v2.url(publicId, options);
 }
 
