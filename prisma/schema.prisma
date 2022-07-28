@@ -96,6 +96,8 @@ model MarketEvent {
 model CatalogItem {
   id              String             @id @default(cuid())
   parentId        String?
+  parent          CatalogItem?       @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  children        CatalogItem[]      @relation("ParentChild")
   name            String
   description     String?
   createdById     String

@@ -4,20 +4,19 @@ import { json, redirect } from '@remix-run/node';
 import { requireActiveCompany } from '~/session.server';
 import { CompanyType } from '@prisma/client';
 import invariant from 'tiny-invariant';
-import { getCatalogItemByIdWithChildren } from '~/models/catalog-item.server';
+import { getCatalogItemByIdWithParent } from '~/models/catalog-item.server';
 import { getImageUrl } from '~/cloudinary.server';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Button } from '@mando-collabs/tailwind-ui';
-import { PlusIcon } from '@heroicons/react/outline';
 import { CatalogPage } from '~/components/catalog/CatalogPage';
 
 export async function loader({ request, params }: LoaderArgs) {
   await requireActiveCompany(request, CompanyType.GROWER);
 
-  const catalogItemId = params.id;
-  invariant(catalogItemId, 'catalogItemId is required');
+  const { varietyId } = params;
+  invariant(varietyId);
 
-  const catalogItem = await getCatalogItemByIdWithChildren(catalogItemId);
+  const catalogItem = await getCatalogItemByIdWithParent(varietyId);
 
   if (!catalogItem) {
     return redirect('/growers/catalog');
@@ -35,31 +34,26 @@ export async function loader({ request, params }: LoaderArgs) {
   });
 }
 
-export default function CatalogItem() {
+export default function VarietyPage() {
   const { catalogItem } = useLoaderData<typeof loader>();
 
   return (
     <PageWrapper
       title={catalogItem.name}
       breadcrumbs={[
-        { name: 'Catalog', href: '../catalog' },
-        { name: `Species: ${catalogItem.name}`, href: '#' },
+        { name: 'Catalog', href: '/growers/catalog' },
+        { name: `Species: ${catalogItem.parent?.name}`, href: `/growers/catalog/${catalogItem.parent?.id}` },
+        { name: `Variety: ${catalogItem.name}`, href: '#' },
       ]}
       actions={
         <>
-          <Link to="varieties/new" className="mr-2">
-            <Button type="button" kind="secondary">
-              <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-              New Variety
-            </Button>
-          </Link>
           <Link to="edit">
             <Button>Edit</Button>
           </Link>
         </>
       }
     >
-      <CatalogPage showVarieties catalogItem={catalogItem} />
+      <CatalogPage catalogItem={catalogItem} />
     </PageWrapper>
   );
 }

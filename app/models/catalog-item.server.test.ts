@@ -12,8 +12,9 @@ test('upsertCatalogItem calls prisma with the right parameters', async () => {
     imageUrl: faker.internet.url(),
     name: faker.commerce.productName(),
     description: faker.lorem.paragraph(),
-    parentId: faker.datatype.uuid(),
   };
+
+  const parentId = faker.datatype.uuid();
 
   const dummyResult = { ...data, id: faker.datatype.uuid() };
 
@@ -29,7 +30,7 @@ test('upsertCatalogItem calls prisma with the right parameters', async () => {
 
   const imageKeys = [faker.word.noun()];
 
-  await expect(upsertCatalogItem({ ...data, imageKeys, createdById })).resolves.toBe(dummyResult);
+  await expect(upsertCatalogItem({ ...data, imageKeys, createdById, parentId })).resolves.toBe(dummyResult);
 
   expect(prismaMock.catalogItem.upsert).toHaveBeenCalledOnce();
   expect(prismaMock.catalogItem.upsert).toHaveBeenCalledWith({
@@ -46,6 +47,11 @@ test('upsertCatalogItem calls prisma with the right parameters', async () => {
         },
       },
       thumbnail: thumbnailUrl,
+      parent: {
+        connect: {
+          id: parentId,
+        },
+      },
     },
     update: {
       ...data,
