@@ -37,8 +37,8 @@ export const CatalogForm: FC<CatalogFormProps> = ({ initialValues, mode = 'CREAT
       <RVFInput
         type="text"
         name="name"
-        label="Flower family name"
-        helpText="Enter the name of the flower family (e.g. Dahlia)"
+        label="Flower species name"
+        helpText="Enter the common name of the flower species (e.g. Dahlia)"
       />
 
       <RVFTextArea name="description" helpText="Enter a description of the flower" label="Description" />
