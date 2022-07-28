@@ -5,5 +5,9 @@
       "packageNames": ["@types/react", "@types/react-dom"],
       "groupName": "react monorepo"
     }
-  ]
+  ],
+  "automerge": true,
+  "automergeType": "pr",
+  "platformAutomerge": true,
+  "pruneBranchAfterAutomerge": true
 }
