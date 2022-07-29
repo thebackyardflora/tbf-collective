@@ -4,18 +4,17 @@ import classNames from 'classnames';
 import { Button } from '@mando-collabs/tailwind-ui';
 import { PlusIcon } from '@heroicons/react/outline';
 
-const inventoryRecords = [
-  { id: '1', itemName: 'Cafe Au Lait', quantity: '1', unit: 'Bunches' },
-  { id: '2', itemName: 'Snapdragons', quantity: '3', unit: 'Bunches' },
-  // More inventoryRecords...
-];
-
 export interface InventoryListTableProps {
   className?: string;
   onAddInventoryRecord?: () => void;
+  inventoryRecords: Array<{ id: string; itemName: string; quantity: number; unit: string }>;
 }
 
-export const InventoryListTable: FC<InventoryListTableProps> = ({ className, onAddInventoryRecord }) => {
+export const InventoryListTable: FC<InventoryListTableProps> = ({
+  className,
+  inventoryRecords,
+  onAddInventoryRecord,
+}) => {
   const checkbox = useRef<HTMLInputElement | null>(null);
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
