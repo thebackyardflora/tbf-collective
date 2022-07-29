@@ -15,10 +15,24 @@
   ```
 */
 import type { FC } from 'react';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { SearchIcon, XIcon } from '@heroicons/react/outline';
-import { Input } from '@mando-collabs/tailwind-ui';
+import { XIcon } from '@heroicons/react/outline';
+import { Button, Input } from '@mando-collabs/tailwind-ui';
+import { UnitOfMeasure } from '@prisma/client';
+import { SearchBox } from '~/components/SearchBox';
+import { useHits, useSearchBox } from 'react-instantsearch-hooks';
+import React from 'react';
+import { useFetcher } from '@remix-run/react';
+import type { UseDataFunctionReturn } from '@remix-run/react/dist/components';
+import type { action } from '~/routes/growers/market.$id.inventory';
+
+type ListCatalogItem = {
+  id: string;
+  name: string;
+  thumbnail: string | null;
+  type: string;
+};
 
 export interface AddInventoryItemFormProps {
   isOpen: boolean;
@@ -36,22 +50,69 @@ export interface AddInventoryItemFormProps {
 export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, setIsOpen, catalogItems }) => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { query, clear } = useSearchBox();
+  const { hits } = useHits();
+  const formRef = useRef<HTMLFormElement | null>(null);
 
-  const alphabetizedList = useCreateAlphabetizedList(catalogItems);
   const catalogItemMap = useCatalogItemMap(catalogItems);
-  const selectedItem = useMemo(
-    () => selectedItemId && catalogItemMap[selectedItemId],
-    [selectedItemId, catalogItemMap]
-  );
+  const selectedItem = useMemo(() => {
+    return selectedItemId && catalogItemMap[selectedItemId];
+  }, [selectedItemId, catalogItemMap]);
 
   const showList = useMemo(() => !selectedItemId || isInputFocused, [selectedItemId, isInputFocused]);
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
     setIsOpen(false);
-  };
+  }, [setIsOpen]);
+
+  const onSelect = useCallback(
+    (id: string | null) => {
+      setSelectedItemId(id);
+      clear();
+    },
+    [clear]
+  );
+
+  const onInputFocus = useCallback(() => setIsInputFocused(true), []);
+  const onInputClear = useCallback(() => setIsInputFocused(false), []);
+
+  const onAfterLeave = useCallback(() => {
+    setTimeout(() => {
+      setErrorMessage(null);
+      setSelectedItemId(null);
+      clear();
+    }, 500);
+  }, [clear]);
+
+  const convertedHits = useMemo<ListCatalogItem[]>(
+    () =>
+      hits.map((hit) => ({
+        id: hit.objectID,
+        name: hit.name as string,
+        type: hit.parentId ? 'Variety of ' + catalogItemMap[hit.parentId as string].name : 'Species',
+        thumbnail: hit.thumbnail as string,
+      })),
+    [hits, catalogItemMap]
+  );
+
+  const alphabetizedList = useCreateAlphabetizedList(query ? convertedHits : catalogItems);
+
+  const fetcher = useFetcher<{ itemAdded?: boolean; itemError?: string }>();
+  const isSubmitting = useMemo(() => fetcher.submission && fetcher.state === 'submitting', [fetcher]);
+
+  useEffect(() => {
+    setErrorMessage(null);
+    if (fetcher.type === 'done' && fetcher.data?.itemAdded) {
+      formRef.current?.reset();
+      onClose();
+    } else if (fetcher.type === 'done' && fetcher.data?.itemError) {
+      setErrorMessage(fetcher.data.itemError);
+    }
+  }, [fetcher, onClose]);
 
   return (
-    <Transition.Root show={isOpen} as={Fragment} afterLeave={() => setSelectedItemId(null)}>
+    <Transition.Root show={isOpen} as={Fragment} afterLeave={onAfterLeave}>
       <Dialog as="div" className="relative z-10" onClose={onClose}>
         <div className="fixed inset-0 bg-black/20 backdrop-blur" />
 
@@ -68,11 +129,11 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                  <form className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
+                  <div className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
                     <div className="h-0 flex-1 overflow-y-auto">
                       <div className="bg-primary-700 py-6 px-4 sm:px-6">
                         <div className="flex items-center justify-between">
-                          <Dialog.Title className="text-lg font-medium text-white"> Add Inventory Record </Dialog.Title>
+                          <Dialog.Title className="text-lg font-medium text-white">Add Inventory Record</Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
@@ -94,15 +155,7 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
                         <div className="divide-y divide-gray-200 px-4 sm:px-6">
                           {/* Search bar */}
                           <div className="space-y-6 pt-6 pb-5">
-                            <Input
-                              type="search"
-                              name="search"
-                              label="Search catalog"
-                              leadingIcon={SearchIcon}
-                              trailingButton={<Input.TrailingButton>Search</Input.TrailingButton>}
-                              onFocus={() => setIsInputFocused(true)}
-                              onBlur={() => setIsInputFocused(false)}
-                            />
+                            <SearchBox onFocus={onInputFocus} onBlur={onInputClear} />
                           </div>
 
                           {!showList && selectedItem ? (
@@ -121,75 +174,55 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
                                 </div>
                               </div>
 
-                              <div className="py-4">
+                              <fetcher.Form ref={formRef} id="add-item" method="post" className="py-4">
+                                <input type="hidden" name="catalogItemId" value={selectedItemId ?? ''} />
                                 <Input
                                   type="number"
                                   name="quantity"
                                   label="Quantity"
                                   helpText="Enter the quantity that you will bring to the market."
+                                  inputClassName="pr-24"
+                                  trailingDropdown={
+                                    <Input.TrailingDropdown
+                                      srLabel="unit"
+                                      name="unitOfMeasure"
+                                      defaultValue={UnitOfMeasure.BUNCH}
+                                      options={[
+                                        { label: 'Bunches', value: UnitOfMeasure.BUNCH },
+                                        {
+                                          label: 'Stems',
+                                          value: UnitOfMeasure.STEM,
+                                        },
+                                      ]}
+                                    />
+                                  }
                                 />
-                              </div>
+                                {errorMessage ? <p className="mt-4 text-red-500">{errorMessage}</p> : null}
+                              </fetcher.Form>
                             </>
                           ) : null}
                         </div>
 
                         {/* List */}
-                        {showList ? (
-                          <div>
-                            {Object.keys(alphabetizedList).map((letter) => (
-                              <div key={letter} className="relative">
-                                <div className="sticky top-0 z-10 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
-                                  <h3>{letter}</h3>
-                                </div>
-                                <ul role="list" className="relative z-0 divide-y divide-gray-200">
-                                  {alphabetizedList[letter].map((catalogItem) => (
-                                    <li key={catalogItem.id} className="bg-white">
-                                      <div className="relative flex items-center space-x-3 px-6 py-5 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary-500 hover:bg-gray-50">
-                                        <div className="flex-shrink-0">
-                                          <img
-                                            className="h-10 w-10 rounded-full"
-                                            src={catalogItem.thumbnail ?? '/images/no-image-placeholder.svg'}
-                                            alt=""
-                                          />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                          <button
-                                            type="button"
-                                            className="text-left focus:outline-none"
-                                            onClick={() => setSelectedItemId(catalogItem.id)}
-                                          >
-                                            {/* Extend touch target to entire panel */}
-                                            <span className="absolute inset-0" aria-hidden="true" />
-                                            <p className="text-sm font-medium text-gray-900">{catalogItem.name}</p>
-                                            <p className="truncate text-sm text-gray-500">{catalogItem.type}</p>
-                                          </button>
-                                        </div>
-                                      </div>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            ))}
-                          </div>
-                        ) : null}
+                        {showList ? <SearchResults list={alphabetizedList} onSelect={onSelect} /> : null}
                       </div>
                     </div>
                     <div className="flex flex-shrink-0 justify-end px-4 py-4">
-                      <button
-                        type="button"
-                        className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                        onClick={onClose}
-                      >
+                      <Button type="button" kind="white" onClick={onClose}>
                         Cancel
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        className="ml-4"
                         type="submit"
-                        className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-primary-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                        form="add-item"
+                        name="_action"
+                        value="add-item"
+                        loading={isSubmitting}
                       >
                         Save
-                      </button>
+                      </Button>
                     </div>
-                  </form>
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -200,9 +233,57 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
   );
 };
 
-function useCreateAlphabetizedList(catalogItems: AddInventoryItemFormProps['catalogItems']) {
+interface SearchResultsProps {
+  list: { [key: string]: { id: string; name: string; type: string; thumbnail: string | null }[] };
+  onSelect: (id: string) => void;
+}
+
+const SearchResults: FC<SearchResultsProps> = React.memo(({ list, onSelect }) => {
+  return (
+    <div>
+      {Object.keys(list).map((letter) => (
+        <div key={letter} className="relative">
+          <div className="sticky top-0 z-10 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
+            <h3>{letter}</h3>
+          </div>
+          <ul className="relative z-0 divide-y divide-gray-200">
+            {list[letter].map((catalogItem) => (
+              <li key={catalogItem.id} className="bg-white">
+                <div className="relative flex items-center space-x-3 px-6 py-5 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary-500 hover:bg-gray-50">
+                  <div className="flex-shrink-0">
+                    <img
+                      className="h-10 w-10 rounded-full"
+                      src={catalogItem.thumbnail ?? '/images/no-image-placeholder.svg'}
+                      alt=""
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <button
+                      type="button"
+                      className="text-left focus:outline-none"
+                      onClick={() => onSelect(catalogItem.id)}
+                    >
+                      {/* Extend touch target to entire panel */}
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      <p className="text-sm font-medium text-gray-900">{catalogItem.name}</p>
+                      <p className="truncate text-sm text-gray-500">{catalogItem.type}</p>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+});
+
+SearchResults.displayName = 'SearchResults';
+
+function useCreateAlphabetizedList(catalogItems: ListCatalogItem[]) {
   return useMemo(() => {
-    const directory: { [key: string]: AddInventoryItemFormProps['catalogItems'] } = {};
+    const directory: { [key: string]: ListCatalogItem[] } = {};
 
     catalogItems.forEach((catalogItem) => {
       const firstLetter = catalogItem.name.charAt(0).toUpperCase();

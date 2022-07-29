@@ -1,4 +1,5 @@
 import { prisma } from '~/db.server';
+import type { Company, MarketEvent } from '@prisma/client';
 
 export async function findOrCreateInventoryListByMarketId({
   companyId,
@@ -22,6 +23,23 @@ export async function findOrCreateInventoryListByMarketId({
     include: {
       marketEvent: true,
       inventoryRecords: true,
+    },
+  });
+}
+
+export function getInventoryListByMarketId({
+  companyId,
+  marketEventId,
+}: {
+  companyId: Company['id'];
+  marketEventId: MarketEvent['id'];
+}) {
+  return prisma.inventoryList.findUnique({
+    where: {
+      marketEventId_companyId: {
+        marketEventId,
+        companyId,
+      },
     },
   });
 }
