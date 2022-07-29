@@ -4,7 +4,7 @@ import { Button } from '@mando-collabs/tailwind-ui';
 import { PlusIcon } from '@heroicons/react/outline';
 import { CatalogGrid } from '~/components/catalog/CatalogGrid';
 import type { LoaderArgs } from '@remix-run/node';
-import { getCatalogItems } from '~/models/catalog-item.server';
+import { getTopLevelCategoryItems } from '~/models/catalog-item.server';
 import { json } from '@remix-run/node';
 import { InstantSearch, InstantSearchSSRProvider } from 'react-instantsearch-hooks-web';
 import type { UseDataFunctionReturn } from '@remix-run/react/dist/components';
@@ -17,7 +17,7 @@ export async function loader({ request }: LoaderArgs) {
   invariant(process.env.ALGOLIA_API_KEY, 'ALGOLIA_API_KEY is required');
   invariant(process.env.ALGOLIA_INDEX_NAME, 'ALGOLIA_INDEX_NAME is required');
 
-  const catalogItems = await getCatalogItems();
+  const catalogItems = await getTopLevelCategoryItems();
 
   return json({
     catalogItems,
