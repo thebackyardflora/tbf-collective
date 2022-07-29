@@ -98,8 +98,12 @@ async function getThumbnailForCatalogItem(id?: string, imagesToRemove: string[] 
   return thumbnailImageKey ? getImageUrl(thumbnailImageKey, { crop: 'fill', height: 600, width: 600 }) : null;
 }
 
-export async function getCatalogItems() {
+export async function getTopLevelCategoryItems() {
   return await prisma.catalogItem.findMany({ orderBy: { createdAt: 'desc' }, where: { parentId: null } });
+}
+
+export async function getAllCategoryItems() {
+  return await prisma.catalogItem.findMany({ orderBy: { createdAt: 'desc' } });
 }
 
 export async function getCatalogItemById(id: string) {

@@ -21,6 +21,7 @@ export default function GrowerDashboard() {
     <PageWrapper title="Dashboard">
       {upcomingMarketEvent ? (
         <UpcomingMarket
+          marketEventId={upcomingMarketEvent.id}
           className="mt-4"
           marketDate={upcomingMarketEvent.marketDate}
           address={upcomingMarketEvent.address}

@@ -40,22 +40,23 @@ model Application {
 }
 
 model Company {
-  id          String       @id @default(cuid())
-  active      Boolean      @default(false)
-  type        CompanyType
-  name        String
-  ownerName   String
-  phone       String?
-  email       String?
-  address     String?
-  einTin      String
-  bio         String?
-  imageKey    String?
-  socialSites SocialSite[]
-  ownerId     String       @unique
-  owner       User         @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id            String          @id @default(cuid())
+  active        Boolean         @default(false)
+  type          CompanyType
+  name          String
+  ownerName     String
+  phone         String?
+  email         String?
+  address       String?
+  einTin        String
+  bio           String?
+  imageKey      String?
+  socialSites   SocialSite[]
+  ownerId       String          @unique
+  owner         User            @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  inventoryList InventoryList[]
 }
 
 model SocialSite {
@@ -79,37 +80,39 @@ model Address {
   country     String        @default("US")
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  MarketEvent MarketEvent[]
+  marketEvent MarketEvent[]
 }
 
 model MarketEvent {
-  id         String   @id @default(cuid())
-  marketDate DateTime
-  addressId  String
-  address    Address  @relation(fields: [addressId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  isCanceled Boolean  @default(false)
-  notes      String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id            String          @id @default(cuid())
+  marketDate    DateTime
+  addressId     String
+  address       Address         @relation(fields: [addressId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  isCanceled    Boolean         @default(false)
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  inventoryList InventoryList[]
 }
 
 model CatalogItem {
-  id              String             @id @default(cuid())
-  parentId        String?
-  parent          CatalogItem?       @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  children        CatalogItem[]      @relation("ParentChild")
-  name            String
-  description     String?
-  createdById     String
-  createdBy       User               @relation("catalogItemsCreated", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  lastUpdatedById String?
-  lastUpdatedBy   User?              @relation("catalogItemsUpdated", fields: [lastUpdatedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
-  basePrice       Decimal?           @db.Decimal(13, 3)
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  images          CatalogItemImage[]
-  thumbnail       String?
-  tags            CatalogItemTag[]
+  id               String             @id @default(cuid())
+  parentId         String?
+  parent           CatalogItem?       @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  children         CatalogItem[]      @relation("ParentChild")
+  name             String
+  description      String?
+  createdById      String
+  createdBy        User               @relation("catalogItemsCreated", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  lastUpdatedById  String?
+  lastUpdatedBy    User?              @relation("catalogItemsUpdated", fields: [lastUpdatedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  basePrice        Decimal?           @db.Decimal(13, 3)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  images           CatalogItemImage[]
+  thumbnail        String?
+  tags             CatalogItemTag[]
+  inventoryRecords InventoryRecord[]
 }
 
 model CatalogItemImage {
@@ -137,6 +140,34 @@ model CatalogItemTag {
   @@unique([tagId, itemId])
 }
 
+model InventoryList {
+  id               String              @id @default(cuid())
+  marketEventId    String
+  marketEvent      MarketEvent         @relation(fields: [marketEventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  companyId        String
+  company          Company             @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  inventoryRecords InventoryRecord[]
+  status           InventoryListStatus @default(PENDING)
+
+  @@unique([marketEventId, companyId])
+}
+
+model InventoryRecord {
+  id              String        @id @default(cuid())
+  inventoryListId String
+  inventoryList   InventoryList @relation(fields: [inventoryListId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  catalogItemId   String
+  catalogItem     CatalogItem   @relation(fields: [catalogItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  quantity        Int
+  unitOfMeasure   UnitOfMeasure
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([inventoryListId, catalogItemId])
+}
+
 enum ApplicationStatus {
   PENDING
   APPROVED
@@ -146,6 +177,16 @@ enum ApplicationStatus {
 enum CompanyType {
   FLORIST
   GROWER
+}
+
+enum InventoryListStatus {
+  PENDING
+  APPROVED
+}
+
+enum UnitOfMeasure {
+  STEM
+  BUNCH
 }
 
 enum SocialSiteType {

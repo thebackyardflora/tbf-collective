@@ -4,13 +4,21 @@ import { Button } from '@mando-collabs/tailwind-ui';
 import type { Address } from '@prisma/client';
 import { twMerge } from 'tailwind-merge';
 import { useLocalDate } from '~/hooks/use-local-date';
+import { Link } from 'react-router-dom';
 
 export interface UpcomingMarketProps extends ComponentPropsWithoutRef<'div'> {
+  marketEventId: string;
   marketDate: string;
   address: Pick<Address, 'street' | 'city' | 'state' | 'zip' | 'country'>;
 }
 
-export const UpcomingMarket: FC<UpcomingMarketProps> = ({ marketDate, address, className, ...divProps }) => {
+export const UpcomingMarket: FC<UpcomingMarketProps> = ({
+  marketDate,
+  address,
+  className,
+  marketEventId,
+  ...divProps
+}) => {
   const date = useLocalDate(marketDate, { format: 'dddd, MMMM D, YYYY @ h:mm A' });
 
   return (
@@ -23,7 +31,9 @@ export const UpcomingMarket: FC<UpcomingMarketProps> = ({ marketDate, address, c
         <LocationMarkerIcon className="mr-2 h-5 w-5 text-primary-500" /> {address.street}
       </div>
       <div className="mt-4">
-        <Button>Update inventory</Button>
+        <Link to={`../market/${marketEventId}/inventory`}>
+          <Button>Update inventory</Button>
+        </Link>
       </div>
     </div>
   );
