@@ -15,6 +15,7 @@ import { useCallback, useState } from 'react';
 import { InstantSearch, InstantSearchSSRProvider } from 'react-instantsearch-hooks-web';
 import { useAlgolia } from '~/components/AlgoliaProvider';
 import { handleInventoryRecordForm } from '~/forms/inventory-record.form';
+import { deleteInventoryRecords } from '~/models/inventory-record.server';
 
 export async function loader({ request, params }: LoaderArgs) {
   const { company } = await requireActiveCompany(request, CompanyType.GROWER);
@@ -79,6 +80,14 @@ export async function action({ request, params }: ActionArgs) {
     }
 
     return await handleInventoryRecordForm(formData, { inventoryListId: inventoryList.id, inventoryRecordId });
+  } else if (method.toLowerCase() === 'delete' && action === 'delete-items') {
+    const inventoryRecordIds = formData
+      .getAll('inventoryRecordId')
+      .filter((id): id is string => typeof id === 'string' && !!id);
+
+    if (!inventoryRecordIds.length) return null;
+
+    await deleteInventoryRecords(inventoryRecordIds);
   }
 
   return null;

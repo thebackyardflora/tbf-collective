@@ -37,3 +37,13 @@ export async function upsertInventoryRecord({
     },
   });
 }
+
+export async function deleteInventoryRecords(ids: string[]): Promise<void> {
+  await prisma.inventoryRecord.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+}
