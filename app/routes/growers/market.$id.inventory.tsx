@@ -2,6 +2,7 @@ import { PageWrapper } from '~/components/PageWrapper';
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { requireActiveCompany } from '~/session.server';
+import type { InventoryRecord } from '@prisma/client';
 import { CompanyType, UnitOfMeasure } from '@prisma/client';
 import { findOrCreateInventoryListByMarketId, getInventoryListByMarketId } from '~/models/inventory-list';
 import invariant from 'tiny-invariant';
@@ -9,8 +10,8 @@ import { getAllCategoryItems } from '~/models/catalog-item.server';
 import { useLoaderData } from '@remix-run/react';
 import { useLocalDate } from '~/hooks/use-local-date';
 import { InventoryListTable } from '~/components/inventory/InventoryListTable';
-import { AddInventoryItemForm } from '~/components/inventory/AddInventoryItemForm';
-import { useState } from 'react';
+import { InventoryRecordForm } from '~/components/inventory/InventoryRecordForm';
+import { useCallback, useState } from 'react';
 import { InstantSearch, InstantSearchSSRProvider } from 'react-instantsearch-hooks-web';
 import { useAlgolia } from '~/components/AlgoliaProvider';
 import { handleInventoryRecordForm } from '~/forms/inventory-record.form';
@@ -70,6 +71,14 @@ export async function action({ request, params }: ActionArgs) {
 
   if (method.toLowerCase() === 'post' && action === 'add-item') {
     return await handleInventoryRecordForm(formData, { inventoryListId: inventoryList.id });
+  } else if (method.toLowerCase() === 'put' && action === 'edit-item') {
+    const inventoryRecordId = formData.get('inventoryRecordId');
+
+    if (!inventoryRecordId || typeof inventoryRecordId !== 'string') {
+      return json({ message: 'Missing inventoryRecordId' }, 400);
+    }
+
+    return await handleInventoryRecordForm(formData, { inventoryListId: inventoryList.id, inventoryRecordId });
   }
 
   return null;
@@ -79,9 +88,26 @@ export default function MarketInventory() {
   const { inventoryList, catalogItems, indexName } = useLoaderData<typeof loader>();
   const searchClient = useAlgolia();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editRecord, setEditRecord] = useState<Pick<
+    InventoryRecord,
+    'id' | 'catalogItemId' | 'quantity' | 'unitOfMeasure'
+  > | null>(null);
 
   const marketDate = useLocalDate(inventoryList.marketEvent.marketDate, { format: 'dddd, MMMM D, YYYY' });
+
+  const onAddRecord = useCallback(() => {
+    setEditRecord(null);
+    setIsFormOpen(true);
+  }, []);
+
+  const onEditRecord = useCallback(
+    (record: Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity' | 'unitOfMeasure'>) => {
+      setEditRecord(record);
+      setIsFormOpen(true);
+    },
+    []
+  );
 
   return (
     <PageWrapper
@@ -90,13 +116,19 @@ export default function MarketInventory() {
     >
       <InstantSearchSSRProvider>
         <InstantSearch indexName={indexName} searchClient={searchClient}>
-          <AddInventoryItemForm isOpen={isOpen} setIsOpen={setIsOpen} catalogItems={catalogItems} />
+          <InventoryRecordForm
+            isOpen={isFormOpen}
+            setIsOpen={setIsFormOpen}
+            catalogItems={catalogItems}
+            editRecord={editRecord}
+          />
         </InstantSearch>
       </InstantSearchSSRProvider>
       <InventoryListTable
         className="mt-4"
         inventoryRecords={inventoryList.inventoryRecords}
-        onAddInventoryRecord={() => setIsOpen(true)}
+        onAddInventoryRecord={onAddRecord}
+        onEditInventoryRecord={onEditRecord}
       />
     </PageWrapper>
   );

@@ -19,13 +19,12 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import { Button, Input } from '@mando-collabs/tailwind-ui';
+import type { InventoryRecord } from '@prisma/client';
 import { UnitOfMeasure } from '@prisma/client';
 import { SearchBox } from '~/components/SearchBox';
 import { useHits, useSearchBox } from 'react-instantsearch-hooks';
 import React from 'react';
 import { useFetcher } from '@remix-run/react';
-import type { UseDataFunctionReturn } from '@remix-run/react/dist/components';
-import type { action } from '~/routes/growers/market.$id.inventory';
 
 type ListCatalogItem = {
   id: string;
@@ -34,7 +33,7 @@ type ListCatalogItem = {
   type: string;
 };
 
-export interface AddInventoryItemFormProps {
+export interface InventoryRecordFormProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   catalogItems: {
@@ -45,22 +44,28 @@ export interface AddInventoryItemFormProps {
     type: string;
     description: string | null;
   }[];
+  editRecord: Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity' | 'unitOfMeasure'> | null;
 }
 
-export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, setIsOpen, catalogItems }) => {
+export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setIsOpen, catalogItems, editRecord }) => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { query, clear } = useSearchBox();
   const { hits } = useHits();
   const formRef = useRef<HTMLFormElement | null>(null);
+  const mode = editRecord ? 'edit' : 'create';
 
   const catalogItemMap = useCatalogItemMap(catalogItems);
   const selectedItem = useMemo(() => {
-    return selectedItemId && catalogItemMap[selectedItemId];
-  }, [selectedItemId, catalogItemMap]);
+    const id = editRecord?.catalogItemId ?? selectedItemId;
+    return (id && catalogItemMap[id]) ?? null;
+  }, [editRecord?.catalogItemId, selectedItemId, catalogItemMap]);
 
-  const showList = useMemo(() => !selectedItemId || isInputFocused, [selectedItemId, isInputFocused]);
+  const showList = useMemo(
+    () => mode === 'create' && (!selectedItemId || isInputFocused),
+    [mode, selectedItemId, isInputFocused]
+  );
 
   const onClose = useCallback(() => {
     setIsOpen(false);
@@ -81,8 +86,9 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
     setTimeout(() => {
       setErrorMessage(null);
       setSelectedItemId(null);
+      formRef.current?.reset();
       clear();
-    }, 500);
+    }, 1000);
   }, [clear]);
 
   const convertedHits = useMemo<ListCatalogItem[]>(
@@ -104,7 +110,6 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
   useEffect(() => {
     setErrorMessage(null);
     if (fetcher.type === 'done' && fetcher.data?.itemAdded) {
-      formRef.current?.reset();
       onClose();
     } else if (fetcher.type === 'done' && fetcher.data?.itemError) {
       setErrorMessage(fetcher.data.itemError);
@@ -133,7 +138,9 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
                     <div className="h-0 flex-1 overflow-y-auto">
                       <div className="bg-primary-700 py-6 px-4 sm:px-6">
                         <div className="flex items-center justify-between">
-                          <Dialog.Title className="text-lg font-medium text-white">Add Inventory Record</Dialog.Title>
+                          <Dialog.Title className="text-lg font-medium text-white">
+                            {mode === 'create' ? 'Add' : 'Edit'} Inventory Record
+                          </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
@@ -147,16 +154,20 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
                         </div>
                         <div className="mt-1">
                           <p className="text-sm text-primary-300">
-                            Get started by searching for the catalog item you would like to add to your inventory.
+                            {mode === 'create'
+                              ? 'Get started by searching for the catalog item you would like to add to your inventory.'
+                              : 'Edit the selected inventory record.'}
                           </p>
                         </div>
                       </div>
                       <div className="flex flex-1 flex-col justify-between">
                         <div className="divide-y divide-gray-200 px-4 sm:px-6">
                           {/* Search bar */}
-                          <div className="space-y-6 pt-6 pb-5">
-                            <SearchBox onFocus={onInputFocus} onBlur={onInputClear} />
-                          </div>
+                          {mode === 'create' ? (
+                            <div className="space-y-6 pt-6 pb-5">
+                              <SearchBox onFocus={onInputFocus} onBlur={onInputClear} />
+                            </div>
+                          ) : null}
 
                           {!showList && selectedItem ? (
                             <>
@@ -174,19 +185,28 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
                                 </div>
                               </div>
 
-                              <fetcher.Form ref={formRef} id="add-item" method="post" className="py-4">
-                                <input type="hidden" name="catalogItemId" value={selectedItemId ?? ''} />
+                              <fetcher.Form
+                                ref={formRef}
+                                id="add-item"
+                                method={editRecord ? 'put' : 'post'}
+                                className="py-4"
+                              >
+                                <input type="hidden" name="catalogItemId" value={selectedItem.id ?? ''} />
+                                {editRecord ? (
+                                  <input type="hidden" name="inventoryRecordId" value={editRecord.id} />
+                                ) : null}
                                 <Input
                                   type="number"
                                   name="quantity"
                                   label="Quantity"
                                   helpText="Enter the quantity that you will bring to the market."
                                   inputClassName="pr-24"
+                                  defaultValue={editRecord?.quantity ?? ''}
                                   trailingDropdown={
                                     <Input.TrailingDropdown
                                       srLabel="unit"
                                       name="unitOfMeasure"
-                                      defaultValue={UnitOfMeasure.BUNCH}
+                                      defaultValue={editRecord?.unitOfMeasure ?? UnitOfMeasure.BUNCH}
                                       options={[
                                         { label: 'Bunches', value: UnitOfMeasure.BUNCH },
                                         {
@@ -216,7 +236,7 @@ export const AddInventoryItemForm: FC<AddInventoryItemFormProps> = ({ isOpen, se
                         type="submit"
                         form="add-item"
                         name="_action"
-                        value="add-item"
+                        value={mode === 'create' ? 'add-item' : 'edit-item'}
                         loading={isSubmitting}
                       >
                         Save
@@ -297,9 +317,9 @@ function useCreateAlphabetizedList(catalogItems: ListCatalogItem[]) {
   }, [catalogItems]);
 }
 
-function useCatalogItemMap(catalogItems: AddInventoryItemFormProps['catalogItems']) {
+function useCatalogItemMap(catalogItems: InventoryRecordFormProps['catalogItems']) {
   return useMemo(() => {
-    const map: { [key: string]: AddInventoryItemFormProps['catalogItems'][number] } = {};
+    const map: { [key: string]: InventoryRecordFormProps['catalogItems'][number] } = {};
 
     catalogItems.forEach((catalogItem) => {
       map[catalogItem.id] = catalogItem;
@@ -309,4 +329,4 @@ function useCatalogItemMap(catalogItems: AddInventoryItemFormProps['catalogItems
   }, [catalogItems]);
 }
 
-AddInventoryItemForm.displayName = 'AddInventoryItemForm';
+InventoryRecordForm.displayName = 'AddInventoryItemForm';
