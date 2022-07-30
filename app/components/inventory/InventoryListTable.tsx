@@ -3,17 +3,30 @@ import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Button } from '@mando-collabs/tailwind-ui';
 import { PlusIcon } from '@heroicons/react/outline';
+import type { InventoryRecord } from '@prisma/client';
+import type { UnitOfMeasure } from '@prisma/client';
 
 export interface InventoryListTableProps {
   className?: string;
   onAddInventoryRecord?: () => void;
-  inventoryRecords: Array<{ id: string; itemName: string; quantity: number; unit: string }>;
+  onEditInventoryRecord?: (
+    record: Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity' | 'unitOfMeasure'>
+  ) => void;
+  inventoryRecords: Array<{
+    id: string;
+    itemName: string;
+    quantity: number;
+    unitOfMeasure: UnitOfMeasure;
+    unit: string;
+    catalogItemId: string;
+  }>;
 }
 
 export const InventoryListTable: FC<InventoryListTableProps> = ({
   className,
   inventoryRecords,
   onAddInventoryRecord,
+  onEditInventoryRecord,
 }) => {
   const checkbox = useRef<HTMLInputElement | null>(null);
   const [checked, setChecked] = useState(false);
@@ -117,9 +130,13 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{record.quantity}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{record.unit}</td>
                       <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <a href="#" className="text-primary-600 hover:text-primary-900">
+                        <button
+                          type="button"
+                          className="text-primary-600 hover:text-primary-900"
+                          onClick={() => onEditInventoryRecord?.(record)}
+                        >
                           Edit<span className="sr-only">, {record.itemName}</span>
-                        </a>
+                        </button>
                       </td>
                     </tr>
                   ))}
