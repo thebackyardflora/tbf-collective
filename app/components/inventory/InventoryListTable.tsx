@@ -5,6 +5,7 @@ import { Button } from '@mando-collabs/tailwind-ui';
 import { PlusIcon } from '@heroicons/react/outline';
 import type { InventoryRecord } from '@prisma/client';
 import type { UnitOfMeasure } from '@prisma/client';
+import { Form } from '@remix-run/react';
 
 export interface InventoryListTableProps {
   className?: string;
@@ -40,7 +41,7 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
     setChecked(selectedRecords.length === inventoryRecords.length);
     setIndeterminate(isIndeterminate);
     checkbox.current.indeterminate = isIndeterminate;
-  }, [selectedRecords]);
+  }, [inventoryRecords.length, selectedRecords]);
 
   function toggleAll() {
     setSelectedRecords(checked || indeterminate ? [] : inventoryRecords);
@@ -64,10 +65,13 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
       <div className="mt-8 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+            <Form
+              method="delete"
+              className="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+            >
               {selectedRecords.length > 0 && (
                 <div className="absolute top-0 left-12 flex h-12 items-center space-x-3 bg-gray-50 sm:left-16">
-                  <Button type="button" size="xs" kind="white">
+                  <Button type="submit" size="xs" kind="white" name="_action" value="delete-items">
                     {selectedRecords.length === inventoryRecords.length ? 'Delete all' : 'Delete selected'}
                   </Button>
                 </div>
@@ -107,6 +111,7 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
                         )}
                         <input
                           type="checkbox"
+                          name="inventoryRecordId"
                           className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 sm:left-6"
                           value={record.id}
                           checked={selectedRecords.includes(record)}
@@ -142,7 +147,7 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
                   ))}
                 </tbody>
               </table>
-            </div>
+            </Form>
           </div>
         </div>
       </div>
