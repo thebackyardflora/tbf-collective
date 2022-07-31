@@ -1,13 +1,22 @@
 {
-  "extends": ["config:base", "group:monorepos"],
+  "extends": [
+    "config:base",
+    "group:monorepos"
+  ],
   "packageRules": [
     {
-      "packageNames": ["@types/react", "@types/react-dom"],
+      "packageNames": [
+        "@types/react",
+        "@types/react-dom"
+      ],
       "groupName": "react monorepo"
     }
   ],
   "automerge": true,
   "automergeType": "pr",
   "platformAutomerge": true,
-  "pruneBranchAfterAutomerge": true
+  "pruneBranchAfterAutomerge": true,
+  "schedule": [
+    "every weekend"
+  ]
 }
