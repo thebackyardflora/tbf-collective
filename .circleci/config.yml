@@ -32,8 +32,6 @@ jobs:
           name: Add GH Packages Token
           command: 'echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc'
 
-      - node/install
-
       - node/install-packages
 
       - run:
