@@ -47,15 +47,15 @@ jobs:
       - restore_cache:
           name: Restore NPM Package Cache
           keys:
-            - v5-deps-{{ checksum "package-lock.json" }}
-            - v5-deps-
+            - v6-deps-{{ checksum "package-lock.json" }}
+            - v6-deps-
 
       - run:
           name: 📥 Download deps
-          command: npm install
+          command: npm install --cache .npm
 
       - save_cache:
-          key: v5-deps-{{ checksum "package-lock.json" }}
+          key: v6-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
             - .npm
