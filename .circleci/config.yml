@@ -23,16 +23,16 @@ orbs:
 
 jobs:
   test:
-    docker:
-      - image: cypress/base:16
-        environment:
-          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/postgres'
+    machine:
+      image: ubuntu-2204:2022.04.1
     steps:
       - checkout
 
       - run:
           name: Add GH Packages Token
           command: 'echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc'
+
+      - node/install
 
       - node/install-packages
 
