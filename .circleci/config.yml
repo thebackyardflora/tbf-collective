@@ -2,25 +2,54 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
-jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+orbs:
+  cypress: cypress-io/cypress@1
+
+executors:
+  postgres:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    steps:
-      - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+      - image: cypress/base:12
+
+      - image: postgres:latest
+        environment:
+          - POSTGRES_USER: postgres
+          - POSTGRES_PASSWORD: postgres
+          - POSTGRES_DB: postgres
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
+  tbf-collective-ci:
     jobs:
-      - say-hello
+      # install and cache dependencies in this job
+      # AND build the library once
+      # then the workspace will be passed to other jobs
+      - cypress/install:
+          name: Install
+          build: npm run transpile
+          pre-steps:
+            - run: 'echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc'
+
+      - cypress/run:
+          name: Test
+          executor: postgres
+          requires:
+            - Install
+          pre-steps:
+            - run:
+                name: 🏄 Copy test env vars
+                command: cp .env.test .env
+            - run:
+                name: 🛠 Setup Database
+                command: npx prisma migrate reset --force
+            - run:
+                name: ⚙️ Build
+                command: npm run build
+          # notice a trick to avoid re-installing dependencies
+          # in this job - a do-nothing "install-command" parameter
+          install-command: echo 'Nothing to install in this job'
+          command: npx cy2 run --record --parallel --key ${{ secrets.CYPRESS_RECORD_KEY }} --ci-build-id "${{ github.repository }}-${{ github.run_id }}-${{ github.run_attempt}}"
+          start: npm run start:mocks
+          wait-on: 'http://localhost:8811'
+          environment:
+            DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/postgres'
