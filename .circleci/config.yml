@@ -6,21 +6,6 @@ orbs:
   node: circleci/node@5.0.2
   cypress: cypress-io/cypress@1
 
-#executors:
-#  cypress:
-#    docker:
-#      - image: cypress/base:16
-#
-#  postgres:
-#    docker:
-#      - image: cypress/base:16
-#
-#      - image: postgres:latest
-#        environment:
-#          - POSTGRES_USER: postgres
-#          - POSTGRES_PASSWORD: postgres
-#          - POSTGRES_DB: postgres
-
 jobs:
   test:
     machine:
@@ -87,46 +72,3 @@ workflows:
   tbf-collective-ci:
     jobs:
       - test
-#      - cypress/run:
-#          requires:
-#            - test
-#          install-command: echo 'Nothing to install in this job'
-#          command: npx cy2 run --record --parallel --key ${CYPRESS_RECORD_KEY} --ci-build-id "testing-commit-${CIRCLE_SHA1}"
-#          start: npm run start:mocks
-#          wait-on: 'http://localhost:8811'
-      # install and cache dependencies in this job
-      # AND build the library once
-      # then the workspace will be passed to other jobs
-#      - cypress/install:
-#          executor: cypress
-#          name: Install
-#          pre-steps:
-#            - run: 'echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc'
-#
-#      - cypress/run:
-#          name: Test
-#          executor: postgres
-#          requires:
-#            - Install
-#          pre-steps:
-#            - run:
-#                name: 🏄 Copy test env vars
-#                command: |
-#                  ls -al
-#                  cp .env.test .env
-#            - run:
-#                name: 🛠 Setup Database
-#                command: npx prisma migrate reset --force
-#                environment:
-#                  DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/postgres'
-#            - run:
-#                name: ⚙️ Build
-#                command: npm run build
-#                environment:
-#                  DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/postgres'
-#          # notice a trick to avoid re-installing dependencies
-#          # in this job - a do-nothing "install-command" parameter
-#          install-command: echo 'Nothing to install in this job'
-#          command: npx cy2 run --record --parallel --key ${{ secrets.CYPRESS_RECORD_KEY }} --ci-build-id "${{ github.repository }}-${{ github.run_id }}-${{ github.run_attempt}}"
-#          start: DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres" npm run start:mocks
-#          wait-on: 'http://localhost:8811'
