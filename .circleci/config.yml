@@ -32,9 +32,6 @@ jobs:
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
 
     steps:
-      - attach_workspace:
-          at: ~/
-
       - checkout
 
       - run:
@@ -72,7 +69,12 @@ jobs:
           name: ⚙️ Build
           command: npm run build
 
-      # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project
+
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   tbf-collective-ci:
     jobs:
