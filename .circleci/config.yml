@@ -25,6 +25,10 @@ jobs:
   test:
     machine:
       image: ubuntu-2204:2022.04.1
+    environment:
+      PORT: '8811'
+      CYPRESS_API_URL: "https://cypress-director.fly.dev"
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
     steps:
       - checkout
 
@@ -48,10 +52,6 @@ jobs:
             - ~/.npm
 
       - run:
-          name: Log npm dir
-          command: ls -al ~/.npm
-
-      - run:
           name: 🏄 Copy test env vars
           command: cp .env.test .env
 
@@ -67,6 +67,11 @@ jobs:
           name: ⚙️ Build
           command: npm run build
 
+      - cypress/run:
+          install-command: echo 'Nothing to install in this job'
+          command: npx cy2 run --record --parallel --key ${CYPRESS_RECORD_KEY} --ci-build-id "testing-commit-${CIRCLE_SHA1}"
+          start: npm run start:mocks
+          wait-on: 'http://localhost:8811'
 
       # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
