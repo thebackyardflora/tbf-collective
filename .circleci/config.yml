@@ -42,7 +42,9 @@ workflows:
           pre-steps:
             - run:
                 name: 🏄 Copy test env vars
-                command: cp .env.test .env
+                command: |
+                  ls -al
+                  cp .env.test .env
             - run:
                 name: 🛠 Setup Database
                 command: npx prisma migrate reset --force
