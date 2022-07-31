@@ -64,12 +64,6 @@ jobs:
             - .cache
 
       - run:
-          name: log cache
-          command: |
-            pwd
-            ls -al .cache
-
-      - run:
           name: 🏄 Copy test env vars
           command: cp .env.test .env
 
@@ -88,8 +82,6 @@ jobs:
       - run:
           name: 🌳 Cypress run
           command: |
-            npx cypress info
-            npx cypress cache path
             npm run test:e2e:run
 
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
