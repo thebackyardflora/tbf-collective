@@ -45,7 +45,7 @@ jobs:
       - save_cache:
           key: v2-deps-{{ checksum "package-lock.json" }}
           paths:
-            - ~/.npmrc
+            - ~/.npm
 
       - run:
           name: Log npm dir
