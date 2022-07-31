@@ -32,6 +32,7 @@ jobs:
       PORT: '8811'
       CYPRESS_API_URL: "https://cypress-director.fly.dev"
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
+      CYPRESS_CACHE_FOLDER: "~/project/.cache"
 
     steps:
       - checkout
@@ -54,13 +55,18 @@ jobs:
 
       - run:
           name: 📥 Download deps
-          command: npm install --cache .npm
+          command: npm install
 
       - save_cache:
           key: v6-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
             - .npm
+            - .cache
+
+      - run:
+          name: log cache
+          command: ls -al .cache
 
       - run:
           name: 🏄 Copy test env vars
@@ -80,7 +86,10 @@ jobs:
 
       - run:
           name: 🌳 Cypress run
-          command: npm run test:e2e:run
+          command: |
+            npx cypress info
+            npx cypress cache path
+            npm run test:e2e:run
 
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
