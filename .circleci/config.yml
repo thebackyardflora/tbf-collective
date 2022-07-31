@@ -32,6 +32,9 @@ jobs:
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
 
     steps:
+      - attach_workspace:
+          at: ~/
+
       - checkout
 
       - run:
@@ -75,6 +78,8 @@ workflows:
     jobs:
       - test
       - cypress/run:
+          requires:
+            - test
           install-command: echo 'Nothing to install in this job'
           command: npx cy2 run --record --parallel --key ${CYPRESS_RECORD_KEY} --ci-build-id "testing-commit-${CIRCLE_SHA1}"
           start: npm run start:mocks
