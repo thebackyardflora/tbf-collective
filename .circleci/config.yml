@@ -41,17 +41,17 @@ jobs:
       - restore_cache:
           name: Restore NPM Package Cache
           keys:
-            - v2-deps-{{ checksum "package-lock.json" }}
-            - v2-deps-
+            - v3-deps-{{ checksum "package-lock.json" }}
+            - v3-deps-
 
       - run:
           name: 📥 Download deps
-          command: npm ci
+          command: npm install
 
       - save_cache:
-          key: v2-deps-{{ checksum "package-lock.json" }}
+          key: v3-deps-{{ checksum "package-lock.json" }}
           paths:
-            - ~/.npm
+            - node_modules
 
       - run:
           name: 🏄 Copy test env vars
@@ -71,7 +71,7 @@ jobs:
 
       - run:
           name: 🌳 Cypress run
-          command: cross-env PORT=8811 start-server-and-test start:mocks http://localhost:8811 "npx cy2 run --record"
+          command: npm run test:e2e:run
 
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
