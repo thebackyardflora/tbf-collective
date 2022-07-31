@@ -59,7 +59,6 @@ jobs:
           key: v8-deps-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
-            - .npm
             - .cache
 
       - run:
