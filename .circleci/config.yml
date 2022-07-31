@@ -44,6 +44,14 @@ jobs:
           name: 🐳 Docker compose
           command: docker-compose up -d && sleep 3
 
+      - run:
+          name: 🛠 Setup Database
+          command: npx prisma migrate reset --force
+
+      - run:
+          name: ⚙️ Build
+          command: npm run build
+
 
       # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
