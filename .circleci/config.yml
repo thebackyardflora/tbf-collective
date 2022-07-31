@@ -31,7 +31,6 @@ workflows:
       - cypress/install:
           executor: cypress
           name: Install
-          build: npm run transpile
           pre-steps:
             - run: 'echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc'
 
