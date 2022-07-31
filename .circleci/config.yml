@@ -42,14 +42,16 @@ workflows:
             - run:
                 name: 🛠 Setup Database
                 command: npx prisma migrate reset --force
+                environment:
+                  DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/postgres'
             - run:
                 name: ⚙️ Build
                 command: npm run build
+                environment:
+                  DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/postgres'
           # notice a trick to avoid re-installing dependencies
           # in this job - a do-nothing "install-command" parameter
           install-command: echo 'Nothing to install in this job'
           command: npx cy2 run --record --parallel --key ${{ secrets.CYPRESS_RECORD_KEY }} --ci-build-id "${{ github.repository }}-${{ github.run_id }}-${{ github.run_attempt}}"
-          start: npm run start:mocks
+          start: DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres" npm run start:mocks
           wait-on: 'http://localhost:8811'
-          environment:
-            DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/postgres'
