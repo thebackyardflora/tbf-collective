@@ -52,7 +52,7 @@
     "express": "4.18.1",
     "google-libphonenumber": "3.2.30",
     "isbot": "3.5.0",
-    "libphonenumber-js": "1.10.10",
+    "libphonenumber-js": "1.10.11",
     "lodash.debounce": "^4.0.8",
     "morgan": "1.10.0",
     "react": "18.2.0",
