@@ -10,7 +10,7 @@ describe('admin portal', () => {
   describe('applications', () => {
     it('should allow an admin to review an application', () => {
       cy.createApplication({ type: CompanyType.FLORIST });
-      cy.visit('/admin');
+      cy.visitAndCheck('/admin');
       cy.findByRole('link', { name: /applications/i }).click();
       cy.url().should('include', '/admin/applications');
 
@@ -32,7 +32,7 @@ describe('admin portal', () => {
       cy.intercept('POST', /\/market-events\/new/i).as('newMarketPost');
       cy.intercept('POST', /\/market-events\/(?!.*(new))/i).as('updateMarketPost');
 
-      cy.visit('/admin');
+      cy.visitAndCheck('/admin');
       cy.findByRole('link', { name: /market events/i }).click();
       cy.findByRole('link', { name: /new event/i }).click();
       cy.findByLabelText(/market date/i).type(dayjs(faker.date.future()).format('YYYY-MM-DDThh:mm'));

@@ -13,7 +13,7 @@ describe('smoke tests', () => {
     };
     cy.then(() => ({ email: loginForm.email })).as('user');
 
-    cy.visit('/login');
+    cy.visitAndCheck('/login');
     cy.findByRole('link', { name: /sign up/i }).click();
 
     cy.findByRole('textbox', { name: /name/i }).type(loginForm.name);
@@ -27,7 +27,7 @@ describe('smoke tests', () => {
   it('should allow you to navigate to the application page', () => {
     cy.login();
 
-    cy.visit('/');
+    cy.visitAndCheck('/');
     cy.findByRole('link', { name: /apply now/i }).click();
     cy.url().should('include', '/apply');
   });

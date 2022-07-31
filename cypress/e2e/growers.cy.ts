@@ -8,7 +8,7 @@ describe('growers dashboard tests', () => {
   it('should allow a grower to update their profile', () => {
     cy.intercept('POST', '/growers/profile*').as('profilePost');
 
-    cy.visit('/growers');
+    cy.visitAndCheck('/growers');
     cy.url().should('include', '/growers/dashboard');
     cy.findByRole('link', { name: /view profile/i }).click();
 
