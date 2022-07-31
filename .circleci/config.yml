@@ -69,23 +69,22 @@ jobs:
           name: ⚙️ Build
           command: npm run build
 
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project
+      - run:
+          name: 🌳 Cypress run
+          command: cross-env PORT=8811 start-server-and-test start:mocks http://localhost:8811 "npx cy2 run --record"
 
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   tbf-collective-ci:
     jobs:
       - test
-      - cypress/run:
-          requires:
-            - test
-          install-command: echo 'Nothing to install in this job'
-          command: npx cy2 run --record --parallel --key ${CYPRESS_RECORD_KEY} --ci-build-id "testing-commit-${CIRCLE_SHA1}"
-          start: npm run start:mocks
-          wait-on: 'http://localhost:8811'
+#      - cypress/run:
+#          requires:
+#            - test
+#          install-command: echo 'Nothing to install in this job'
+#          command: npx cy2 run --record --parallel --key ${CYPRESS_RECORD_KEY} --ci-build-id "testing-commit-${CIRCLE_SHA1}"
+#          start: npm run start:mocks
+#          wait-on: 'http://localhost:8811'
       # install and cache dependencies in this job
       # AND build the library once
       # then the workspace will be passed to other jobs
