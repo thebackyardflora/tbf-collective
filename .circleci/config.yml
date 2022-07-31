@@ -26,6 +26,8 @@ jobs:
     machine:
       image: ubuntu-2204:2022.04.1
 
+    parallelism: 4
+
     environment:
       PORT: '8811'
       CYPRESS_API_URL: "https://cypress-director.fly.dev"
