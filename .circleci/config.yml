@@ -38,7 +38,9 @@ jobs:
 
       - run:
           name: Set NPM Cache
-          command: npm config set cache .npm
+          command: | 
+            npm config set cache .npm
+            npm config get cache
 
       - run:
           name: Add GH Packages Token
