@@ -1,22 +1,14 @@
 import type { PropsWithChildren } from 'react';
 import React from 'react';
-import { twMerge } from 'tailwind-merge';
+import type { PageHeadingProps } from '@mando-collabs/tailwind-ui';
+import { PageHeading } from '@mando-collabs/tailwind-ui';
 
-type PageWrapperProps = PropsWithChildren<{
-  title?: React.ReactNode;
-  titleClassName?: string;
-  actions?: React.ReactNode;
-}>;
+type PageWrapperProps = PropsWithChildren<PageHeadingProps>;
 
-export const PageWrapper: React.FC<PageWrapperProps> = ({ title, titleClassName, children, actions }) => {
+export const PageWrapper: React.FC<PageWrapperProps> = ({ children, ...headingProps }) => {
   return (
     <>
-      {title ? (
-        <div className={twMerge('mx-auto flex max-w-7xl justify-between px-4 sm:px-6 md:px-8', titleClassName)}>
-          <h1 className="flex items-center text-2xl font-semibold text-gray-900">{title}</h1>
-          {actions ? actions : null}
-        </div>
-      ) : null}
+      {headingProps.title ? <PageHeading {...headingProps} /> : null}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">{children}</div>
     </>
   );

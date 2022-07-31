@@ -10,12 +10,13 @@ import { companyProfileValidator } from '~/forms/company-profile';
 import { parseInstagramHandleFromUrl } from '~/utils';
 import { accountSettingsValidator } from '~/forms/account-settings';
 import { changePasswordFormValidator } from '~/forms/change-password';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { SerializedEntity } from '~/types';
+import { ImagePreview } from '~/components/ImagePreview';
 
 export interface ProfilePageProps {
   user: SerializedEntity<User>;
-  company: SerializedEntity<Company>;
+  company: Omit<SerializedEntity<Company>, 'imageKey'> & { imageUrl: string | null };
   socialSites: SerializedEntity<SocialSite>[];
 }
 
@@ -27,6 +28,8 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
   const actionData = useActionData();
   const instagramUrl = socialSites.find((site) => site.type === SocialSiteType.INSTAGRAM)?.url ?? undefined;
   const instagramHandle = instagramUrl ? parseInstagramHandleFromUrl(instagramUrl) : undefined;
+
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
 
   const websiteUrl = socialSites.find((site) => site.type === SocialSiteType.WEBSITE)?.url ?? undefined;
 
@@ -43,8 +46,8 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
 
   return (
     <>
-      <PageWrapper title="Public Profile">
-        <p className="mb-4 text-gray-500">This information will be displayed on your public profile</p>
+      <PageWrapper title="Company Profile">
+        <p className="mb-4 text-gray-500">This information will be displayed on your company's public profile</p>
         <ValidatedForm
           method="post"
           validator={companyProfileValidator}
@@ -55,8 +58,41 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
             instagramHandle: instagramHandle ?? undefined,
             website: websiteUrl,
           }}
+          encType="multipart/form-data"
         >
-          <div className="flex flex-col lg:flex-row">
+          <div className="flex flex-col space-y-4">
+            <div className="flex-grow ">
+              <p className="text-sm font-medium text-gray-700" aria-hidden="true">
+                Photo
+              </p>
+              <div className="mt-1">
+                <div className="flex items-center">
+                  <div className="inline-block h-40 w-40 flex-shrink-0 overflow-hidden rounded-full" aria-hidden="true">
+                    <ImagePreview file={previewFile} imageUrl={company.imageUrl} />
+                  </div>
+                  <div className="ml-5 rounded-md shadow-sm">
+                    <div className="group relative flex items-center justify-center rounded-md border border-gray-300 py-2 px-3 focus-within:ring-2 focus-within:ring-sky-500 focus-within:ring-offset-2 hover:bg-gray-50">
+                      <label
+                        htmlFor="companyImage"
+                        className="pointer-events-none relative text-sm font-medium leading-4 text-gray-700"
+                      >
+                        <span>Change</span>
+                        <span className="sr-only"> user photo</span>
+                      </label>
+                      <input
+                        id="companyImage"
+                        name="companyImage"
+                        accept="image/png, image/jpeg"
+                        type="file"
+                        className="absolute h-full w-full cursor-pointer rounded-md border-gray-300 opacity-0"
+                        onChange={(e) => setPreviewFile(e.target.files?.[0] ?? null)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:flex-1">
               <RVFInput type="text" name="name" label="Business Name" />
               <RVFInput type="text" name="ownerName" label="Business Owner Name" />
@@ -75,6 +111,7 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
           </div>
         </ValidatedForm>
       </PageWrapper>
+
       <PageWrapper title="Account" titleClassName="mt-8 sm:mt-12 border-t pt-8 sm:pt-12">
         <p className="text-gray-500">This information is kept private</p>
         <ValidatedForm
@@ -85,6 +122,7 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
             email: company.email ?? undefined,
             einTin: company.einTin,
           }}
+          encType="multipart/form-data"
         >
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
             <RVFInput type="email" name="email" label="Email" />
@@ -96,6 +134,7 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
           </div>
         </ValidatedForm>
       </PageWrapper>
+
       <PageWrapper title="Security" titleClassName="mt-8 sm:mt-12 border-t pt-8 sm:pt-12">
         <p className="text-gray-500">Keep your account secure</p>
 
@@ -104,6 +143,7 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
           method="post"
           validator={changePasswordFormValidator}
           className="my-6 rounded-lg border p-4 lg:px-8 lg:pt-6 lg:pb-8"
+          encType="multipart/form-data"
         >
           <h3 className="mb-4 font-medium">Reset Password</h3>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

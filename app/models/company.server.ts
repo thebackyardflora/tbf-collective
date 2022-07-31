@@ -86,6 +86,7 @@ interface UpdateCompanyProfileParams {
   bio?: string | null;
   instagramHandle?: string | null;
   website?: string | null;
+  imageKey?: string | null;
 }
 
 export async function updateCompanyProfile(

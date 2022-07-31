@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { prismaMock } from './prisma-mock';
 import { mockReset } from 'vitest-mock-extended';
 import { sessionMock } from './session-mock';
+import { algoliaIndexMock } from '~/test/algolia-mock';
 
 vi.mock('tiny-invariant');
 
@@ -23,6 +24,7 @@ function resetMocksDeep(mocks: any) {
 beforeEach(() => {
   mockReset(prismaMock);
   resetMocksDeep(sessionMock);
+  mockReset(algoliaIndexMock);
 });
 
 installGlobals();

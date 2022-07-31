@@ -32,7 +32,6 @@ export const MarketEventForm: FC<MarketEventFormProps> = ({ defaultValues, addre
           className="mt-4"
           value={addressId}
           onChange={(e) => {
-            console.log('change', e);
             setAddressId(e.target.value);
           }}
           label="Address"

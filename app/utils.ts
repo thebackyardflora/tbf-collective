@@ -5,6 +5,12 @@ import type { User } from '~/models/user.server';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import type { UploadHandler } from '@remix-run/node';
+import {
+  unstable_composeUploadHandlers as composeUploadHandlers,
+  unstable_createMemoryUploadHandler as createMemoryUploadHandler,
+} from '@remix-run/server-runtime';
+import { uploadImage } from '~/cloudinary.server';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -106,4 +112,19 @@ export function validatePassword(password: unknown): password is string {
 
 export function parseDateFromTimezone({ date, timezone }: { date: string; timezone: string }): Date {
   return dayjs.tz(date, timezone).toDate();
+}
+
+export function createFileUploadHandler(inputName: string, folderName: string): UploadHandler {
+  return composeUploadHandlers(async ({ name, data, filename }) => {
+    if (name !== inputName) {
+      return undefined;
+    }
+
+    if (!filename) {
+      return '';
+    }
+
+    const uploadedImage = await uploadImage(data, folderName);
+    return uploadedImage?.public_id;
+  }, createMemoryUploadHandler());
 }

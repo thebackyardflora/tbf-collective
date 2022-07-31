@@ -1,6 +1,11 @@
+require('dotenv').config();
 const { PrismaClient, ApplicationStatus } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const { faker } = require('@faker-js/faker');
+const algoliaSearch = require('algoliasearch');
+
+const client = algoliaSearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_API_KEY);
+const index = client.initIndex(process.env.ALGOLIA_INDEX_NAME);
 
 const prisma = new PrismaClient();
 
@@ -117,6 +122,22 @@ async function createCompany({ type, ownerId, active, company }) {
   });
 }
 
+async function createCatalogItem(createdById) {
+  return await prisma.catalogItem.create({
+    data: {
+      createdBy: {
+        connect: {
+          id: createdById,
+        },
+      },
+      name: faker.commerce.productName(),
+      description: faker.commerce.productDescription(),
+      thumbnail: `https://picsum.photos/seed/${Math.floor(Math.random() * 1000) + 9000}/400/400`,
+      basePrice: faker.datatype.number({ min: 10, max: 20 }),
+    },
+  });
+}
+
 async function createMarketEvent() {
   await prisma.marketEvent.create({
     data: getFakeMarketEventData(),
@@ -146,6 +167,14 @@ async function seed() {
   for (let i = 0; i < 10; i++) {
     await createMarketEvent();
   }
+
+  await index.clearObjects();
+  await prisma.catalogItem.deleteMany();
+  const catalogItems = [];
+  for (let i = 0; i < 10; i++) {
+    catalogItems.push(await createCatalogItem(grower1.id));
+  }
+  await index.saveObjects(catalogItems.map(({ id, ...item }) => ({ ...item, objectID: id })));
 
   console.log(`Database has been seeded. 🌱`);
 }

@@ -17,19 +17,25 @@ export const companyProfileSchema = z.object({
   website: z.string().optional(),
 });
 
+export const companyImageSchema = z.object({
+  companyImage: z.union([z.string().optional(), z.string().url()]),
+});
+
 export const companyProfileValidator = withZod(companyProfileSchema);
 
+export const companyProfileServerValidator = withZod(companyProfileSchema.merge(companyImageSchema));
+
 export async function handleCompanyProfileForm(formData: FormData, ownerId: User['id']) {
-  const validationResult = await companyProfileValidator.validate(await formData);
+  const validationResult = await companyProfileServerValidator.validate(await formData);
 
   if (validationResult.error) {
-    throw validationError(validationResult.error);
+    return validationError(validationResult.error);
   }
 
-  const { instagramHandle, website, ...data } = validationResult.data;
+  const { instagramHandle, website, companyImage: imageKey, ...data } = validationResult.data;
 
   await prisma.$transaction(async (client) => {
-    const company = await updateCompanyProfile({ ownerId, ...data }, client);
+    const company = await updateCompanyProfile({ ownerId, ...data, ...(imageKey ? { imageKey } : {}) }, client);
     if (website) {
       await upsertSocialSite({ companyId: company.id, type: SocialSiteType.WEBSITE, url: website }, client);
     } else {

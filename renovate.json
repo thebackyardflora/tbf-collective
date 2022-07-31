@@ -1,13 +1,13 @@
 {
-  "extends": ["config:base", "group:allNonMajor", "group:monorepos"],
+  "extends": ["config:base", "group:monorepos"],
   "packageRules": [
     {
       "packageNames": ["@types/react", "@types/react-dom"],
       "groupName": "react monorepo"
-    },
-    {
-      "packageNames": ["vitest"],
-      "groupName": "vitest"
     }
-  ]
+  ],
+  "automerge": true,
+  "automergeType": "pr",
+  "platformAutomerge": true,
+  "pruneBranchAfterAutomerge": true
 }
