@@ -35,23 +35,27 @@ jobs:
       - checkout
 
       - run:
+          name: Set NPM Cache
+          command: npm set cache .npm
+
+      - run:
           name: Add GH Packages Token
           command: 'echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc'
 
       - restore_cache:
           name: Restore NPM Package Cache
           keys:
-            - v3-deps-{{ checksum "package-lock.json" }}
-            - v3-deps-
+            - v4-deps-{{ checksum "package-lock.json" }}
+            - v4-deps-
 
       - run:
           name: 📥 Download deps
           command: npm install
 
       - save_cache:
-          key: v3-deps-{{ checksum "package-lock.json" }}
+          key: v4-deps-{{ checksum "package-lock.json" }}
           paths:
-            - node_modules
+            - .npm
 
       - run:
           name: 🏄 Copy test env vars
