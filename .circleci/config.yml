@@ -50,7 +50,7 @@ jobs:
 
       - run:
           name: 📥 Download deps
-          command: npm install
+          command: npm ci
 
       - save_cache:
           key: v4-deps-{{ checksum "package-lock.json" }}
