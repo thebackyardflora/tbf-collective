@@ -39,9 +39,7 @@ jobs:
 
       - run:
           name: Set NPM Cache
-          command: | 
-            npm config set cache .npm
-            npm config get cache
+          command: npm config set cache .npm
 
       - run:
           name: Add GH Packages Token
@@ -50,22 +48,19 @@ jobs:
       - restore_cache:
           name: Restore NPM Package Cache
           keys:
-            - v7-deps-{{ checksum "package-lock.json" }}
-            - v7-deps-
+            - v8-deps-{{ checksum "package-lock.json" }}
+            - v8-deps-
 
       - run:
           name: 📥 Download deps
-          command: npm ci
+          command: npm install
 
       - save_cache:
-          key: v7-deps-{{ checksum "package-lock.json" }}
+          key: v8-deps-{{ checksum "package-lock.json" }}
           paths:
+            - node_modules
             - .npm
             - .cache
-
-      - run:
-          name: Print npm cache size
-          command: du -sh .npm
 
       - run:
           name: 🏄 Copy test env vars
