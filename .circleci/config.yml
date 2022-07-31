@@ -6,6 +6,10 @@ orbs:
   cypress: cypress-io/cypress@1
 
 executors:
+  cypress:
+    docker:
+      - image: cypress/base:16
+
   postgres:
     docker:
       - image: cypress/base:16
@@ -25,7 +29,7 @@ workflows:
       # AND build the library once
       # then the workspace will be passed to other jobs
       - cypress/install:
-          executor: cypress/base-16
+          executor: cypress
           name: Install
           build: npm run transpile
           pre-steps:
