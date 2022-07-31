@@ -64,6 +64,10 @@ jobs:
             - .cache
 
       - run:
+          name: Print npm cache size
+          command: du -sh .npm
+
+      - run:
           name: 🏄 Copy test env vars
           command: cp .env.test .env
 
