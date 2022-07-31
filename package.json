@@ -66,8 +66,8 @@
     "zod-form-data": "1.2.1"
   },
   "devDependencies": {
-    "@emotion/react": "11.9.3",
-    "@emotion/styled": "11.9.3",
+    "@emotion/react": "11.10.0",
+    "@emotion/styled": "11.10.0",
     "@faker-js/faker": "7.3.0",
     "@justinwaite/prettier-config": "1.0.0",
     "@remix-run/dev": "1.6.7",
