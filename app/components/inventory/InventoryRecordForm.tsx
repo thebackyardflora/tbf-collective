@@ -300,13 +300,15 @@ function useCreateAlphabetizedList(catalogItems: ListCatalogItem[]) {
   return useMemo(() => {
     const directory: { [key: string]: ListCatalogItem[] } = {};
 
-    catalogItems.forEach((catalogItem) => {
-      const firstLetter = catalogItem.name.charAt(0).toUpperCase();
-      if (!directory[firstLetter]) {
-        directory[firstLetter] = [];
-      }
-      directory[firstLetter].push(catalogItem);
-    });
+    catalogItems
+      .sort((a, b) => (a.name > b.name ? 1 : -1))
+      .forEach((catalogItem) => {
+        const firstLetter = catalogItem.name.charAt(0).toUpperCase();
+        if (!directory[firstLetter]) {
+          directory[firstLetter] = [];
+        }
+        directory[firstLetter].push(catalogItem);
+      });
 
     return directory;
   }, [catalogItems]);
