@@ -49,7 +49,6 @@ export interface InventoryRecordFormProps {
 
 export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setIsOpen, catalogItems, editRecord }) => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  const [isInputFocused, setIsInputFocused] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { query, clear } = useSearchBox();
   const { hits } = useHits();
@@ -62,10 +61,7 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
     return (id && catalogItemMap[id]) ?? null;
   }, [editRecord?.catalogItemId, selectedItemId, catalogItemMap]);
 
-  const showList = useMemo(
-    () => mode === 'create' && (!selectedItemId || isInputFocused),
-    [mode, selectedItemId, isInputFocused]
-  );
+  const showList = useMemo(() => mode === 'create' && !selectedItemId, [mode, selectedItemId]);
 
   const onClose = useCallback(() => {
     setIsOpen(false);
@@ -79,8 +75,7 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
     [clear]
   );
 
-  const onInputFocus = useCallback(() => setIsInputFocused(true), []);
-  const onInputClear = useCallback(() => setIsInputFocused(false), []);
+  const onInputFocus = useCallback(() => setSelectedItemId(null), []);
 
   const onAfterLeave = useCallback(() => {
     setTimeout(() => {
@@ -165,7 +160,7 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
                           {/* Search bar */}
                           {mode === 'create' ? (
                             <div className="space-y-6 pt-6 pb-5">
-                              <SearchBox onFocus={onInputFocus} onBlur={onInputClear} />
+                              <SearchBox onFocus={onInputFocus} />
                             </div>
                           ) : null}
 
