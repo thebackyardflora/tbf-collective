@@ -7,7 +7,7 @@ orbs:
   cypress: cypress-io/cypress@1
 
 jobs:
-  test:
+  cypress:
     machine:
       image: ubuntu-2204:2022.04.1
 
@@ -71,4 +71,4 @@ jobs:
 workflows:
   tbf-collective-ci:
     jobs:
-      - test
+      - cypress
