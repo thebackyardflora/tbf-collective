@@ -45,72 +45,6 @@ jobs:
       - name: 🧹 Lint
         run: npm run lint
 
-  cypress:
-    name: ⚫️ Cypress
-    runs-on: ubuntu-latest
-    if: ${{ false }}
-    env:
-      ALGOLIA_APP_ID: ${{secrets.ALGOLIA_APP_ID}}
-      ALGOLIA_API_KEY: ${{secrets.ALGOLIA_API_KEY}}
-      ALGOLIA_INDEX_NAME: ${{secrets.ALGOLIA_INDEX_NAME}}
-      ALGOLIA_SEARCH_ONLY_API_KEY: ${{secrets.ALGOLIA_SEARCH_ONLY_API_KEY}}
-      CLOUDINARY_API_KEY: ${{secrets.CLOUDINARY_API_KEY}}
-      CLOUDINARY_API_SECRET: ${{secrets.CLOUDINARY_API_SECRET}}
-    strategy:
-      matrix:
-        containers: [1, 2]
-      fail-fast: false
-    steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
-
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v3
-
-      - name: 🏄 Copy test env vars
-        run: cp .env.test .env
-
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@mando-collabs'
-
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.TAILWIND_UI_TOKEN}}
-
-      - name: 🐳 Docker compose
-        # the sleep is just there to give time for postgres to get started
-        run: docker-compose up -d && sleep 3
-        env:
-          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/postgres'
-
-      - name: 🛠 Setup Database
-        run: npx prisma migrate reset --force
-
-      - name: ⚙️ Build
-        run: npm run build
-
-      - name: 🌳 Cypress run
-        uses: cypress-io/github-action@v4
-        with:
-          command: npx cy2 run --record --parallel --key ${{ secrets.CYPRESS_RECORD_KEY }} --ci-build-id "${{ github.repository }}-${{ github.run_id }}-${{ github.run_attempt}}"
-          start: npm run start:mocks
-          wait-on: 'http://localhost:8811'
-        env:
-          PORT: '8811'
-          CYPRESS_API_URL: "https://cypress-director.fly.dev"
-
-      - uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-
-
   build:
     name: 🐳 Build
     # only build/deploy master branch on pushes
@@ -174,7 +108,7 @@ jobs:
   deploy:
     name: 🚀 Deploy
     runs-on: ubuntu-latest
-    needs: [ precheck, cypress, build ]
+    needs: [ precheck, build ]
     # only build/deploy master branch on pushes
     if: ${{ (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev') && github.event_name == 'push' }}
 
