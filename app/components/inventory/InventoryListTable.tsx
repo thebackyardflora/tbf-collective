@@ -80,7 +80,7 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
             </p>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-            <Button type="button" onClick={() => setIsSubmitModalOpen(true)}>
+            <Button type="button" onClick={() => setIsSubmitModalOpen(true)} disabled={inventoryRecords.length === 0}>
               Submit for market
             </Button>
             <Form id="submit-list" method="post" />

@@ -24,7 +24,7 @@ import { UnitOfMeasure } from '@prisma/client';
 import { SearchBox } from '~/components/SearchBox';
 import { useHits, useSearchBox } from 'react-instantsearch-hooks';
 import React from 'react';
-import { useFetcher } from '@remix-run/react';
+import { Link, useFetcher } from '@remix-run/react';
 
 type ListCatalogItem = {
   id: string;
@@ -159,8 +159,15 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
                         <div className="divide-y divide-gray-200 px-4 sm:px-6">
                           {/* Search bar */}
                           {mode === 'create' ? (
-                            <div className="space-y-6 pt-6 pb-5">
+                            <div className="pt-6 pb-5">
                               <SearchBox onFocus={onInputFocus} />
+
+                              <p className="mt-2 text-sm text-gray-500">
+                                Can't find what you're looking for?{' '}
+                                <Link to="/growers/catalog/new" className="font-medium text-primary-600">
+                                  Add a new catalog item
+                                </Link>
+                              </p>
                             </div>
                           ) : null}
 
@@ -300,13 +307,15 @@ function useCreateAlphabetizedList(catalogItems: ListCatalogItem[]) {
   return useMemo(() => {
     const directory: { [key: string]: ListCatalogItem[] } = {};
 
-    catalogItems.forEach((catalogItem) => {
-      const firstLetter = catalogItem.name.charAt(0).toUpperCase();
-      if (!directory[firstLetter]) {
-        directory[firstLetter] = [];
-      }
-      directory[firstLetter].push(catalogItem);
-    });
+    catalogItems
+      .sort((a, b) => (a.name > b.name ? 1 : -1))
+      .forEach((catalogItem) => {
+        const firstLetter = catalogItem.name.charAt(0).toUpperCase();
+        if (!directory[firstLetter]) {
+          directory[firstLetter] = [];
+        }
+        directory[firstLetter].push(catalogItem);
+      });
 
     return directory;
   }, [catalogItems]);
