@@ -6,17 +6,31 @@ import { UpcomingMarket } from '~/components/UpcomingMarket';
 import { getUpcomingMarketEvent } from '~/models/market-event.server';
 import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
+import { getInventoryListByMarketId } from '~/models/inventory-list';
 
 export async function loader({ request }: LoaderArgs) {
-  await requireActiveCompany(request, CompanyType.GROWER);
+  const { company } = await requireActiveCompany(request, CompanyType.GROWER);
 
   const upcomingMarketEvent = await getUpcomingMarketEvent();
 
-  return json({ upcomingMarketEvent: upcomingMarketEvent });
+  let isInventorySubmitted = false;
+
+  if (upcomingMarketEvent) {
+    const inventoryList = await getInventoryListByMarketId({
+      companyId: company.id,
+      marketEventId: upcomingMarketEvent.id,
+    });
+
+    if (inventoryList) {
+      isInventorySubmitted = inventoryList.status === 'APPROVED';
+    }
+  }
+
+  return json({ upcomingMarketEvent, isInventorySubmitted });
 }
 
 export default function GrowerDashboard() {
-  const { upcomingMarketEvent } = useLoaderData<typeof loader>();
+  const { upcomingMarketEvent, isInventorySubmitted } = useLoaderData<typeof loader>();
   return (
     <PageWrapper title="Dashboard">
       {upcomingMarketEvent ? (
@@ -25,6 +39,7 @@ export default function GrowerDashboard() {
           className="mt-4"
           marketDate={upcomingMarketEvent.marketDate}
           address={upcomingMarketEvent.address}
+          isInventorySubmitted={isInventorySubmitted}
         />
       ) : (
         <div>There are no upcoming market events.</div>
