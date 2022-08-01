@@ -198,6 +198,7 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
                                   <input type="hidden" name="inventoryRecordId" value={editRecord.id} />
                                 ) : null}
                                 <Input
+                                  autoFocus={true}
                                   type="number"
                                   name="quantity"
                                   label="Quantity"
