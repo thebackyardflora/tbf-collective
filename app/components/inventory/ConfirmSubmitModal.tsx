@@ -1,20 +1,16 @@
-import type { FC, RefObject } from 'react';
-import { Fragment, useRef } from 'react';
+/* This example requires Tailwind CSS v2.0+ */
+import type { FC } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationIcon } from '@heroicons/react/outline';
 import { Button } from '@mando-collabs/tailwind-ui';
-import { useTransition } from '@remix-run/react';
 
-export const ConfirmDeleteModal: FC<{
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  count: number;
-  formId: string;
-}> = ({ isOpen, setIsOpen, count, formId }) => {
-  const { type, state } = useTransition();
+export const ConfirmSubmitModal: FC<{ isOpen: boolean; setIsOpen: (val: boolean) => void; formId: string }> = ({
+  isOpen,
+  setIsOpen,
+  formId,
+}) => {
   const cancelButtonRef = useRef(null);
-
-  const isLoading = type === 'actionSubmission' && state === 'submitting';
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -44,37 +40,38 @@ export const ConfirmDeleteModal: FC<{
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                 <div className="sm:flex sm:items-start">
-                  <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <ExclamationIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                  <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <ExclamationIcon className="h-6 w-6 text-primary-600" aria-hidden="true" />
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                      Delete Inventory Records
+                      Submit Inventory List
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">Are you sure you want to delete {count} record(s)?</p>
+                      <p className="text-sm text-gray-500">
+                        Once you you submit your inventory list for the market, it can no longer be modified. Are you
+                        sure you are ready to submit?
+                      </p>
                     </div>
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <Button
                     type="submit"
-                    kind="destructive"
-                    name="_action"
-                    value="delete-items"
                     form={formId}
-                    loading={isLoading}
+                    name="_action"
+                    value="submit-list"
                     onClick={() => setIsOpen(false)}
                     className="mb-4 w-full sm:mb-0 sm:mr-4 sm:w-auto"
                   >
-                    Delete
+                    Submit
                   </Button>
                   <Button
                     type="button"
                     kind="white"
+                    className="w-full sm:w-auto"
                     onClick={() => setIsOpen(false)}
                     ref={cancelButtonRef}
-                    className="w-full sm:w-auto"
                   >
                     Cancel
                   </Button>

@@ -7,6 +7,7 @@ import type { InventoryRecord } from '@prisma/client';
 import type { UnitOfMeasure } from '@prisma/client';
 import { Form, useTransition } from '@remix-run/react';
 import { ConfirmDeleteModal } from '~/components/inventory/ConfirmDeleteModal';
+import { ConfirmSubmitModal } from '~/components/inventory/ConfirmSubmitModal';
 
 export interface InventoryListTableProps {
   className?: string;
@@ -35,6 +36,7 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedRecords, setSelectedRecords] = useState<typeof inventoryRecords>([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const { state, type } = useTransition();
 
   useEffect(() => {
@@ -62,6 +64,7 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
 
   return (
     <>
+      <ConfirmSubmitModal isOpen={isSubmitModalOpen} setIsOpen={setIsSubmitModalOpen} formId="submit-list" />
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
@@ -77,9 +80,10 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
             </p>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-            <Button type="button" leadingIcon={PlusIcon} onClick={onAddInventoryRecord}>
-              Add item
+            <Button type="button" onClick={() => setIsSubmitModalOpen(true)}>
+              Submit for market
             </Button>
+            <Form id="submit-list" method="post" />
           </div>
         </div>
         <div className="mt-8 flex flex-col">
@@ -171,6 +175,16 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
               </Form>
             </div>
           </div>
+
+          <Button
+            className="mt-4 sm:self-start"
+            type="button"
+            kind="secondary"
+            leadingIcon={PlusIcon}
+            onClick={onAddInventoryRecord}
+          >
+            Add item
+          </Button>
         </div>
       </div>
     </>
