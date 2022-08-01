@@ -48,6 +48,7 @@ jobs:
   cypress:
     name: ⚫️ Cypress
     runs-on: ubuntu-latest
+    if: ${{ false }}
     env:
       ALGOLIA_APP_ID: ${{secrets.ALGOLIA_APP_ID}}
       ALGOLIA_API_KEY: ${{secrets.ALGOLIA_API_KEY}}
