@@ -1,0 +1,74 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+  cypress: cypress-io/cypress@1
+
+jobs:
+  test:
+    machine:
+      image: ubuntu-2204:2022.04.1
+
+    parallelism: 4
+
+    environment:
+      PORT: '8811'
+      CYPRESS_API_URL: "https://cypress-director.fly.dev"
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres"
+      CYPRESS_CACHE_FOLDER: "~/project/.cache"
+
+    steps:
+      - checkout
+
+      - run:
+          name: Set NPM Cache
+          command: npm config set cache .npm
+
+      - run:
+          name: Add GH Packages Token
+          command: 'echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc'
+
+      - restore_cache:
+          name: Restore NPM Package Cache
+          keys:
+            - v8-deps-{{ checksum "package-lock.json" }}
+            - v8-deps-
+
+      - run:
+          name: 📥 Download deps
+          command: npm install
+
+      - save_cache:
+          key: v8-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+            - .cache
+
+      - run:
+          name: 🏄 Copy test env vars
+          command: cp .env.test .env
+
+      - run:
+          name: 🐳 Docker compose
+          command: docker-compose up -d && sleep 3
+
+      - run:
+          name: 🛠 Setup Database
+          command: npx prisma migrate reset --force
+
+      - run:
+          name: ⚙️ Build
+          command: npm run build
+
+      - run:
+          name: 🌳 Cypress run
+          command: |
+            npm run test:e2e:run
+
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  tbf-collective-ci:
+    jobs:
+      - test
