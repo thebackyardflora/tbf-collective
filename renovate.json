@@ -15,8 +15,5 @@
   "automerge": true,
   "automergeType": "pr",
   "platformAutomerge": true,
-  "pruneBranchAfterAutomerge": true,
-  "schedule": [
-    "every weekend"
-  ]
+  "pruneBranchAfterAutomerge": true
 }
