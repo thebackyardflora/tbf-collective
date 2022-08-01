@@ -1,5 +1,5 @@
 import { prisma } from '~/db.server';
-import type { Company, MarketEvent } from '@prisma/client';
+import type { Company, InventoryListStatus, MarketEvent } from '@prisma/client';
 
 export async function findOrCreateInventoryListByMarketId({
   companyId,
@@ -42,4 +42,8 @@ export function getInventoryListByMarketId({
       },
     },
   });
+}
+
+export function setInventoryListStatus(id: string, status: InventoryListStatus) {
+  return prisma.inventoryList.update({ where: { id }, data: { status } });
 }

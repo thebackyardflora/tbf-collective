@@ -1,10 +1,14 @@
 import { PageWrapper } from '~/components/PageWrapper';
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 import { requireActiveCompany } from '~/session.server';
 import type { InventoryRecord } from '@prisma/client';
-import { CompanyType, UnitOfMeasure } from '@prisma/client';
-import { findOrCreateInventoryListByMarketId, getInventoryListByMarketId } from '~/models/inventory-list';
+import { CompanyType, InventoryListStatus, UnitOfMeasure } from '@prisma/client';
+import {
+  findOrCreateInventoryListByMarketId,
+  getInventoryListByMarketId,
+  setInventoryListStatus,
+} from '~/models/inventory-list';
 import invariant from 'tiny-invariant';
 import { getAllCategoryItems } from '~/models/catalog-item.server';
 import { useLoaderData } from '@remix-run/react';
@@ -88,6 +92,9 @@ export async function action({ request, params }: ActionArgs) {
     if (!inventoryRecordIds.length) return null;
 
     await deleteInventoryRecords(inventoryRecordIds);
+  } else if (method.toLowerCase() === 'post' && action === 'submit-list') {
+    await setInventoryListStatus(inventoryList.id, InventoryListStatus.APPROVED);
+    return redirect('/growers/dashboard');
   }
 
   return null;

@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef, FC } from 'react';
-import { CalendarIcon, LocationMarkerIcon } from '@heroicons/react/outline';
+import { BadgeCheckIcon, CalendarIcon, CheckCircleIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import { Button } from '@mando-collabs/tailwind-ui';
 import type { Address } from '@prisma/client';
 import { twMerge } from 'tailwind-merge';
@@ -10,6 +10,7 @@ export interface UpcomingMarketProps extends ComponentPropsWithoutRef<'div'> {
   marketEventId: string;
   marketDate: string;
   address: Pick<Address, 'street' | 'city' | 'state' | 'zip' | 'country'>;
+  isInventorySubmitted: boolean;
 }
 
 export const UpcomingMarket: FC<UpcomingMarketProps> = ({
@@ -17,6 +18,7 @@ export const UpcomingMarket: FC<UpcomingMarketProps> = ({
   address,
   className,
   marketEventId,
+  isInventorySubmitted,
   ...divProps
 }) => {
   const date = useLocalDate(marketDate, { format: 'dddd, MMMM D, YYYY @ h:mm A' });
@@ -27,14 +29,20 @@ export const UpcomingMarket: FC<UpcomingMarketProps> = ({
       <div className="mb-1 flex items-center">
         <CalendarIcon className="mr-2 h-5 w-5 text-primary-500" /> {date}
       </div>
-      <div className="flex items-center">
+      <div className="mb-1 flex items-center">
         <LocationMarkerIcon className="mr-2 h-5 w-5 text-primary-500" /> {address.street}
       </div>
-      <div className="mt-4">
-        <Link to={`../market/${marketEventId}/inventory`}>
-          <Button>Update inventory</Button>
-        </Link>
-      </div>
+      {isInventorySubmitted ? (
+        <div className="flex items-center">
+          <CheckCircleIcon className="mr-2 h-5 w-5 text-green-800" /> Inventory list submitted
+        </div>
+      ) : (
+        <div className="mt-4">
+          <Link to={`../market/${marketEventId}/inventory`}>
+            <Button>Update inventory</Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

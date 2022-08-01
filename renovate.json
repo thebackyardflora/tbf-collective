@@ -1,8 +1,14 @@
 {
-  "extends": ["config:base", "group:monorepos"],
+  "extends": [
+    "config:base",
+    "group:monorepos"
+  ],
   "packageRules": [
     {
-      "packageNames": ["@types/react", "@types/react-dom"],
+      "packageNames": [
+        "@types/react",
+        "@types/react-dom"
+      ],
       "groupName": "react monorepo"
     }
   ],
