@@ -8,7 +8,7 @@ interface CreateCatalogItemParams {
   parentId?: CatalogItem['parentId'];
   name: CatalogItem['name'];
   description?: CatalogItem['description'];
-  createdById: CatalogItem['createdById'];
+  createdById: string;
   imageKeys: string[];
   imagesToRemove?: string[];
 }
