@@ -17,12 +17,15 @@ async function deleteUser(email: string) {
     throw new Error('All test emails must end in @example.com');
   }
 
+  console.log('Logging out', email);
+
   try {
     await prisma.user.delete({ where: { email } });
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
       console.log('User not found, so no need to delete');
     } else {
+      console.log('Error code:', error.code);
       throw error;
     }
   }
