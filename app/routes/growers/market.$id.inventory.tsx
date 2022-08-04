@@ -24,7 +24,7 @@ import { deleteInventoryRecords } from '~/models/inventory-record.server';
 export async function loader({ request, params }: LoaderArgs) {
   const { company } = await requireActiveCompany(request, CompanyType.GROWER);
 
-  invariant(process.env.ALGOLIA_INDEX_NAME, 'ALGOLIA_INDEX_NAME is required');
+  invariant(process.env.ALGOLIA_INDEX_NAME, 'ALGOLIA_INDEX_NAME is required!');
 
   const { id } = params;
   invariant(id);
