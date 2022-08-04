@@ -91,7 +91,7 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
       hits.map((hit) => ({
         id: hit.objectID,
         name: hit.name as string,
-        type: hit.parentId ? 'Variety of ' + catalogItemMap[hit.parentId as string].name : 'Species',
+        type: hit.parentId ? 'Variety of ' + catalogItemMap[hit.parentId as string]?.name ?? 'Unknown' : 'Species',
         thumbnail: hit.thumbnail as string,
       })),
     [hits, catalogItemMap]

@@ -8,6 +8,7 @@ export default defineConfig({
       const port = process.env.PORT ?? (isDev ? '3000' : '8811');
       const configOverrides: Partial<Cypress.PluginConfigOptions> = {
         baseUrl: `http://localhost:${port}`,
+        videoUploadOnPasses: false,
       };
 
       // To use this:
