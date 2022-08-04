@@ -3,7 +3,6 @@ import { PageWrapper } from '~/components/PageWrapper';
 import { Form, useActionData, useTransition } from '@remix-run/react';
 import { Button, Input, RVFButton, RVFInput, RVFTextArea } from '@mando-collabs/tailwind-ui';
 import { CheckCircleIcon, LogoutIcon } from '@heroicons/react/outline';
-import type { Company, User, SocialSite } from '@prisma/client';
 import { SocialSiteType } from '@prisma/client';
 import { ValidatedForm } from 'remix-validated-form';
 import { companyProfileValidator } from '~/forms/company-profile';
@@ -11,13 +10,20 @@ import { parseInstagramHandleFromUrl } from '~/utils';
 import { accountSettingsValidator } from '~/forms/account-settings';
 import { changePasswordFormValidator } from '~/forms/change-password';
 import { useEffect, useRef, useState } from 'react';
-import type { SerializedEntity } from '~/types';
 import { ImagePreview } from '~/components/ImagePreview';
 
 export interface ProfilePageProps {
-  user: SerializedEntity<User>;
-  company: Omit<SerializedEntity<Company>, 'imageKey'> & { imageUrl: string | null };
-  socialSites: SerializedEntity<SocialSite>[];
+  user: { email: string };
+  company: {
+    name: string;
+    ownerName: string;
+    bio: string | null;
+    imageUrl: string | null;
+    phone: string | null;
+    email: string | null;
+    einTin: string;
+  };
+  socialSites: { type: SocialSiteType; url: string }[];
 }
 
 function isFocusedHtmlElement(element: Element | null): element is HTMLElement {
