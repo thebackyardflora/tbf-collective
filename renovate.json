@@ -10,6 +10,17 @@
         "@types/react-dom"
       ],
       "groupName": "react monorepo"
+    },
+    {
+      "depTypeList": ["action"],
+      "semanticCommitType": "ci",
+      "semanticCommitScope": "action"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "semanticCommitType": "ci",
+      "matchPackageNames": ["node"],
+      "versioning": "node"
     }
   ],
   "automerge": true,
