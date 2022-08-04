@@ -40,18 +40,20 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({
     inventoryList: {
       ...inventoryList,
-      inventoryRecords: inventoryList.inventoryRecords.map((record) => {
-        const catalogItem = catalogItemMap[record.catalogItemId];
-        return {
-          ...record,
-          itemName: catalogItem.name,
-          unit: record.unitOfMeasure === UnitOfMeasure.STEM ? 'Stems' : 'Bunches',
-        };
-      }),
+      inventoryRecords: inventoryList.inventoryRecords
+        .filter((record) => Boolean(catalogItemMap[record.catalogItemId]))
+        .map((record) => {
+          const catalogItem = catalogItemMap[record.catalogItemId];
+          return {
+            ...record,
+            itemName: catalogItem.name,
+            unit: record.unitOfMeasure === UnitOfMeasure.STEM ? 'Stems' : 'Bunches',
+          };
+        }),
     },
     catalogItems: catalogItems.map((catalogItem) => ({
       ...catalogItem,
-      type: catalogItem.parentId ? 'Variety of ' + catalogItemMap[catalogItem.parentId].name : 'Species',
+      type: catalogItem.parentId ? 'Variety of ' + catalogItemMap[catalogItem.parentId]?.name ?? 'Unknown' : 'Species',
     })),
     indexName: process.env.ALGOLIA_INDEX_NAME,
   });
