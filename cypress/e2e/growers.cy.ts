@@ -9,8 +9,9 @@ describe('growers dashboard tests', () => {
     cy.intercept('POST', '/growers/profile*').as('profilePost');
 
     cy.visitAndCheck('/growers');
-    cy.url().should('include', '/growers/dashboard');
-    cy.findByRole('link', { name: /view profile/i }).click();
+
+    cy.findByTestId('profile-button').click();
+    cy.findByRole('menuitem', { name: /your profile/i }).click();
 
     const newBusinessName = faker.company.companyName();
     const newOwnerName = faker.name.findName();

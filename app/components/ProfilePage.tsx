@@ -175,11 +175,6 @@ export const ProfilePage: FC<ProfilePageProps> = ({ user, company, socialSites }
             </p>
           ) : null}
         </ValidatedForm>
-        <Form method="post" action="/logout" className="mt-4">
-          <Button type="submit" kind="white" leadingIcon={LogoutIcon}>
-            Logout
-          </Button>
-        </Form>
       </PageWrapper>
     </>
   );

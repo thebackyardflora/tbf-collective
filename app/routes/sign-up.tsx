@@ -3,7 +3,7 @@ import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
 import * as React from 'react';
 
-import { getUserId, createUserSession } from '~/session.server';
+import { createUserSession, getUserId } from '~/session.server';
 
 import { createUser, getUserByEmail } from '~/models/user.server';
 import { safeRedirect, validateEmail, validateName } from '~/utils';
@@ -85,6 +85,7 @@ export default function SignUp() {
             label="Full name"
             required
             autoComplete="name"
+            autoFocus={true}
             errorText={actionData?.errors?.name}
           />
 
@@ -94,7 +95,6 @@ export default function SignUp() {
             id="email"
             label="Email address"
             required
-            autoFocus={true}
             autoComplete="email"
             errorText={actionData?.errors?.email}
           />

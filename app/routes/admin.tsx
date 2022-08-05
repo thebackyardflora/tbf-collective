@@ -1,14 +1,14 @@
 import type { LoaderArgs } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
 import { StorefrontOutlined } from '@mui/icons-material';
 
 /* This example requires Tailwind CSS v2.0+ */
 import { useState } from 'react';
-import { ClipboardIcon, HomeIcon, MenuIcon } from '@heroicons/react/outline';
+import { ClipboardIcon, CollectionIcon, HomeIcon, MenuIcon } from '@heroicons/react/outline';
 import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { StaticSidebar } from '~/components/StaticSidebar';
 import { MobileSidebar } from '~/components/MobileSidebar';
-import { json } from '@remix-run/node';
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAdmin(request);
@@ -34,6 +34,12 @@ export default function AdminRoot() {
       href: 'market-events',
       icon: StorefrontOutlined,
       current: location.pathname.startsWith('/admin/market-events'),
+    },
+    {
+      name: 'Catalog',
+      href: 'catalog',
+      icon: CollectionIcon,
+      current: location.pathname.startsWith('/admin/catalog'),
     },
   ];
 

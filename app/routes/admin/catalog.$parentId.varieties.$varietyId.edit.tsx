@@ -2,8 +2,7 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
 import { getCatalogItemById } from '~/models/catalog-item.server';
-import { requireActiveCompany } from '~/session.server';
-import { CompanyType } from '@prisma/client';
+import { requireAdmin } from '~/session.server';
 import { PageWrapper } from '~/components/PageWrapper';
 import { useLoaderData } from '@remix-run/react';
 import { CatalogForm } from '~/components/catalog/CatalogForm';
@@ -13,7 +12,7 @@ import { handleCatalogItemForm } from '~/forms/catalog-item';
 import { getImageUrl } from '~/cloudinary.server';
 
 export async function loader({ request, params }: LoaderArgs) {
-  await requireActiveCompany(request, CompanyType.GROWER);
+  await requireAdmin(request);
 
   const { parentId, varietyId } = params;
   invariant(parentId);
@@ -23,7 +22,7 @@ export async function loader({ request, params }: LoaderArgs) {
   const variety = await getCatalogItemById(varietyId);
 
   if (!species || !variety) {
-    return redirect('/growers/catalog');
+    return redirect('/admin/catalog');
   }
 
   return json({
@@ -40,7 +39,7 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export async function action({ request, params }: ActionArgs) {
-  const { user } = await requireActiveCompany(request, CompanyType.GROWER);
+  const user = await requireAdmin(request);
   const { parentId, varietyId } = params;
   invariant(parentId);
   invariant(varietyId);
@@ -51,7 +50,7 @@ export async function action({ request, params }: ActionArgs) {
   return await handleCatalogItemForm({
     formData,
     userId: user.id,
-    successRedirect: `/growers/catalog/${parentId}/varieties/${varietyId}`,
+    successRedirect: `/admin/catalog/${parentId}/varieties/${varietyId}`,
     parentId,
   });
 }
@@ -63,9 +62,9 @@ export default function EditVarietyPage() {
     <PageWrapper
       title="Edit Variety"
       breadcrumbs={[
-        { name: 'Catalog', href: '/growers/catalog' },
-        { name: `Species: ${speciesName}`, href: `/growers/catalog/${speciesId}` },
-        { name: `Variety: ${variety.name}`, href: `/growers/catalog/${speciesId}/varieties/${variety.id}` },
+        { name: 'Catalog', href: '/admin/catalog' },
+        { name: `Species: ${speciesName}`, href: `/admin/catalog/${speciesId}` },
+        { name: `Variety: ${variety.name}`, href: `/admin/catalog/${speciesId}/varieties/${variety.id}` },
         { name: `Edit`, href: '#' },
       ]}
     >

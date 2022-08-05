@@ -2,8 +2,7 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
 import { getCatalogItemById } from '~/models/catalog-item.server';
-import { requireActiveCompany } from '~/session.server';
-import { CompanyType } from '@prisma/client';
+import { requireAdmin } from '~/session.server';
 import { PageWrapper } from '~/components/PageWrapper';
 import { useLoaderData } from '@remix-run/react';
 import { CatalogForm } from '~/components/catalog/CatalogForm';
@@ -12,7 +11,7 @@ import { unstable_parseMultipartFormData as parseMultipartFormData } from '@remi
 import { handleCatalogItemForm } from '~/forms/catalog-item';
 
 export async function loader({ request, params }: LoaderArgs) {
-  await requireActiveCompany(request, CompanyType.GROWER);
+  await requireAdmin(request);
 
   const { parentId } = params;
   invariant(parentId);
@@ -20,7 +19,7 @@ export async function loader({ request, params }: LoaderArgs) {
   const catalogItem = await getCatalogItemById(parentId);
 
   if (!catalogItem) {
-    return redirect('/growers/catalog');
+    return redirect('/admin/catalog');
   }
 
   return json({
@@ -30,7 +29,7 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export async function action({ request, params }: ActionArgs) {
-  const { user } = await requireActiveCompany(request, CompanyType.GROWER);
+  const user = await requireAdmin(request);
   const { parentId } = params;
   invariant(parentId);
 
@@ -40,7 +39,7 @@ export async function action({ request, params }: ActionArgs) {
   return await handleCatalogItemForm({
     formData,
     userId: user.id,
-    successRedirect: `/growers/catalog/${parentId}`,
+    successRedirect: `/admin/catalog/${parentId}`,
     parentId,
   });
 }
@@ -52,8 +51,8 @@ export default function NewVarietyPage() {
     <PageWrapper
       title="New Variety"
       breadcrumbs={[
-        { name: 'Catalog', href: '/growers/catalog' },
-        { name: `Species: ${speciesName}`, href: `/growers/catalog/${speciesId}` },
+        { name: 'Catalog', href: '/admin/catalog' },
+        { name: `Species: ${speciesName}`, href: `/admin/catalog/${speciesId}` },
         { name: `New`, href: '#' },
       ]}
     >
