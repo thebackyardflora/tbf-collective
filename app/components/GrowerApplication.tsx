@@ -28,8 +28,15 @@ export default function GrowerApplication() {
           <RVFInput type="text" name="businessOwnerName" label="Business Owner Name" autoComplete="name" />
           <RVFInput type="text" name="businessName" label="Business Name" autoComplete="organization" />
           <RVFInput type="text" name="einTin" label="EIN/TIN" placeholder="XX-XXXXXXX" />
-          <RVFInput type="url" name="website" label="Website" />
-          <RVFInput type="text" name="instagramHandle" label="Instagram Handle" />
+          <RVFInput
+            type="url"
+            name="website"
+            label="Website"
+            cornerHint="Optional"
+            placeholder={`https://www.example.com`}
+            helpText='Be sure to include "https://"'
+          />
+          <RVFInput type="text" name="instagramHandle" label="Instagram Handle" cornerHint="Optional" />
           <RVFInput type="email" name="email" label="Email" autoComplete="email" />
           <RVFInput type="tel" name="phone" label="Contact Phone Number" autoComplete="tel" />
           <RVFInput type="text" name="businessAddress" label="Business Address" />

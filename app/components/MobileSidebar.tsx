@@ -92,7 +92,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ sidebarOpen, setSi
                 </nav>
               </div>
               <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
-                <Link to="profile" className="group block flex-shrink-0" onClick={() => setSidebarOpen(false)}>
+                <div className="group block flex-shrink-0">
                   <div className="flex items-center">
                     <div className="inline-block h-10 w-10 overflow-hidden rounded-full">
                       <Avatar
@@ -104,10 +104,9 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ sidebarOpen, setSi
                     </div>
                     <div className="ml-3">
                       <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">{user.name}</p>
-                      <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">View profile</p>
                     </div>
                   </div>
-                </Link>
+                </div>
               </div>
             </Dialog.Panel>
           </Transition.Child>

@@ -25,37 +25,21 @@ export default function FloristApplication() {
     <div className="mx-auto mt-8 pb-8">
       <ValidatedForm method="post" action={`?type=${CompanyType.FLORIST}`} validator={floristApplicationValidator}>
         <div className="grid-cols-2 gap-8 space-y-4 pb-8 lg:grid lg:space-y-0">
-          <RVFInput
-            type="text"
-            name="businessOwnerName"
-            label="Business Owner Name"
-            placeholder="Jane Doe"
-            autoComplete="name"
-          />
-          <RVFInput
-            type="text"
-            name="businessName"
-            label="Business Name"
-            placeholder="Acme Flowers Inc."
-            autoComplete="organization"
-          />
+          <RVFInput type="text" name="businessOwnerName" label="Business Owner Name" autoComplete="name" />
+          <RVFInput type="text" name="businessName" label="Business Name" autoComplete="organization" />
           <RVFInput type="text" name="einTin" label="EIN/TIN" placeholder="XX-XXXXXXX" />
-          <RVFInput type="url" name="website" label="Website" placeholder="https://example.com" />
-          <RVFInput type="text" name="instagramHandle" label="Instagram Handle" />
+          <RVFInput
+            type="url"
+            name="website"
+            label="Website"
+            cornerHint="Optional"
+            placeholder={`https://www.example.com`}
+            helpText='Be sure to include "https://"'
+          />
+          <RVFInput type="text" name="instagramHandle" label="Instagram Handle" cornerHint="Optional" />
           <RVFInput type="email" name="email" label="Email" placeholder="you@example.com" autoComplete="email" />
-          <RVFInput
-            type="tel"
-            name="phone"
-            label="Contact Phone Number"
-            placeholder="208-123-4567"
-            autoComplete="tel"
-          />
-          <RVFInput
-            type="text"
-            name="businessAddress"
-            label="Business Address"
-            placeholder="123 Easy Street, Rexburg, ID 83440"
-          />
+          <RVFInput type="tel" name="phone" label="Contact Phone Number" autoComplete="tel" />
+          <RVFInput type="text" name="businessAddress" label="Business Address" />
           <RVFInput type="text" name="yearsInBusiness" label="How many years have you been in business?" />
           <RVFCheckbox
             name="accessToCooler"

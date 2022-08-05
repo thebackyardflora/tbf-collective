@@ -1,10 +1,10 @@
 import type { LoaderArgs } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { requireActiveCompany } from '~/session.server';
-import { CompanyType } from '@prisma/client';
+import { CompanyType, InventoryListStatus } from '@prisma/client';
 import { PageWrapper } from '~/components/PageWrapper';
 import { UpcomingMarket } from '~/components/UpcomingMarket';
 import { getUpcomingMarketEvent } from '~/models/market-event.server';
-import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { getInventoryListByMarketId } from '~/models/inventory-list';
 
@@ -22,7 +22,7 @@ export async function loader({ request }: LoaderArgs) {
     });
 
     if (inventoryList) {
-      isInventorySubmitted = inventoryList.status === 'APPROVED';
+      isInventorySubmitted = inventoryList.status === InventoryListStatus.APPROVED;
     }
   }
 
@@ -32,7 +32,7 @@ export async function loader({ request }: LoaderArgs) {
 export default function GrowerDashboard() {
   const { upcomingMarketEvent, isInventorySubmitted } = useLoaderData<typeof loader>();
   return (
-    <PageWrapper title="Dashboard">
+    <PageWrapper title="Growers Dashboard" description="Check the status of the next market, or update your inventory.">
       {upcomingMarketEvent ? (
         <UpcomingMarket
           marketEventId={upcomingMarketEvent.id}
