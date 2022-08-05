@@ -10,6 +10,9 @@ describe('Admin', () => {
 
     const response = await loader({ request: new Request(faker.internet.url()), context: {}, params: {} });
 
-    await expect(response.json()).resolves.toStrictEqual({ user: JSON.parse(JSON.stringify(testUser)) });
+    await expect(response.json()).resolves.toStrictEqual({
+      showGrowerDashboardLink: false,
+      user: JSON.parse(JSON.stringify(testUser)),
+    });
   });
 });
