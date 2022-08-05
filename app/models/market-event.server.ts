@@ -68,5 +68,9 @@ export async function setMarketCancelState({ id, isCanceled }: { id: string; isC
 }
 
 export async function getUpcomingMarketEvent() {
-  return await prisma.marketEvent.findFirst({ orderBy: { marketDate: 'asc' }, include: { address: true } });
+  return await prisma.marketEvent.findFirst({
+    where: { marketDate: { gte: new Date() } },
+    orderBy: { marketDate: 'asc' },
+    include: { address: true },
+  });
 }

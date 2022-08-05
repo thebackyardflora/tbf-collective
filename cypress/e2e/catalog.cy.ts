@@ -1,14 +1,14 @@
 import { faker } from '@faker-js/faker';
 
-describe('grower catalog', () => {
+describe('flower catalog', () => {
   beforeEach(() => {
-    cy.loginGrower();
+    cy.login({ isAdmin: true });
   });
 
-  it('should allow a grower to create a catalog item', () => {
+  it('should allow an admin to create a catalog item', () => {
     const productName = faker.commerce.productName();
 
-    cy.visitAndCheck('/growers');
+    cy.visitAndCheck('/admin');
 
     // Create an item
     cy.findByRole('link', { name: /catalog/i }).click();

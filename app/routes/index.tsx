@@ -2,12 +2,12 @@ import Header from '~/components/Header';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Button } from '@mando-collabs/tailwind-ui';
 import type { LoaderArgs } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 import { getUser } from '~/session.server';
 import { getApplicationByUserId } from '~/models/application.server';
 import { InlineNotification } from '~/components/InlineNotification';
-import { ApplicationStatus } from '@prisma/client';
+import { ApplicationStatus, CompanyType } from '@prisma/client';
 import { getCompanyByOwnerId } from '~/models/company.server';
-import { json } from '@remix-run/node';
 
 export async function loader({ request }: LoaderArgs) {
   const user = await getUser(request);
@@ -16,6 +16,12 @@ export async function loader({ request }: LoaderArgs) {
     user ? await getApplicationByUserId(user.id) : null,
     user ? await getCompanyByOwnerId(user.id) : null,
   ]);
+
+  if (application?.status === 'APPROVED') {
+    return redirect(application.type === CompanyType.GROWER ? '/growers' : '/florists');
+  } else if (user?.isAdmin) {
+    return redirect('/admin');
+  }
 
   return json({ user, company, application });
 }

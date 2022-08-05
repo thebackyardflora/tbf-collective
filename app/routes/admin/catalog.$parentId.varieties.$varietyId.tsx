@@ -1,8 +1,7 @@
 import { PageWrapper } from '~/components/PageWrapper';
 import type { LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
-import { requireActiveCompany } from '~/session.server';
-import { CompanyType } from '@prisma/client';
+import { requireAdmin } from '~/session.server';
 import invariant from 'tiny-invariant';
 import { getCatalogItemByIdWithParent } from '~/models/catalog-item.server';
 import { getImageUrl } from '~/cloudinary.server';
@@ -11,7 +10,7 @@ import { Button } from '@mando-collabs/tailwind-ui';
 import { CatalogPage } from '~/components/catalog/CatalogPage';
 
 export async function loader({ request, params }: LoaderArgs) {
-  await requireActiveCompany(request, CompanyType.GROWER);
+  await requireAdmin(request);
 
   const { varietyId } = params;
   invariant(varietyId);
@@ -19,7 +18,7 @@ export async function loader({ request, params }: LoaderArgs) {
   const catalogItem = await getCatalogItemByIdWithParent(varietyId);
 
   if (!catalogItem) {
-    return redirect('/growers/catalog');
+    return redirect('/admin/catalog');
   }
 
   return json({
@@ -41,8 +40,8 @@ export default function VarietyPage() {
     <PageWrapper
       title={catalogItem.name}
       breadcrumbs={[
-        { name: 'Catalog', href: '/growers/catalog' },
-        { name: `Species: ${catalogItem.parent?.name}`, href: `/growers/catalog/${catalogItem.parent?.id}` },
+        { name: 'Catalog', href: '/admin/catalog' },
+        { name: `Species: ${catalogItem.parent?.name}`, href: `/admin/catalog/${catalogItem.parent?.id}` },
         { name: `Variety: ${catalogItem.name}`, href: '#' },
       ]}
       actions={

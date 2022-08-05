@@ -6,12 +6,11 @@ import { MenuIcon, XIcon } from '@heroicons/react/outline';
 import { Form, Link, useLocation } from '@remix-run/react';
 import classNames from 'classnames';
 import Logo from '~/components/Logo';
-import { ChevronDownIcon } from '@heroicons/react/solid';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
-import type { User, Company } from '@prisma/client';
-import { Button } from '@mando-collabs/tailwind-ui';
+import type { Company, User } from '@prisma/client';
 import { CompanyType } from '@prisma/client';
+import { Button } from '@mando-collabs/tailwind-ui';
 import type { SerializedEntity } from '~/types';
 
 export type HeaderProps = {
@@ -146,7 +145,7 @@ export default function Header(props: HeaderProps) {
                     </Form>
 
                     {props.company?.active ? (
-                      <Link to={props.company.type === CompanyType.GROWER ? '/growers/dashboard' : '#'}>
+                      <Link to={props.company.type === CompanyType.GROWER ? '/growers' : '#'}>
                         <Button>Dashboard</Button>
                       </Link>
                     ) : null}
@@ -237,7 +236,7 @@ export default function Header(props: HeaderProps) {
                         </Button>
                       </Form>
                       {props.company?.active ? (
-                        <Link to={props.company.type === CompanyType.GROWER ? '/growers/dashboard' : '#'}>
+                        <Link to={props.company.type === CompanyType.GROWER ? '/growers' : '#'}>
                           <Button>Dashboard</Button>
                         </Link>
                       ) : null}

@@ -1,8 +1,7 @@
 import { PageWrapper } from '~/components/PageWrapper';
 import type { LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
-import { requireActiveCompany } from '~/session.server';
-import { CompanyType } from '@prisma/client';
+import { requireAdmin } from '~/session.server';
 import invariant from 'tiny-invariant';
 import { getCatalogItemByIdWithChildren } from '~/models/catalog-item.server';
 import { getImageUrl } from '~/cloudinary.server';
@@ -12,7 +11,7 @@ import { PlusIcon } from '@heroicons/react/outline';
 import { CatalogPage } from '~/components/catalog/CatalogPage';
 
 export async function loader({ request, params }: LoaderArgs) {
-  await requireActiveCompany(request, CompanyType.GROWER);
+  await requireAdmin(request);
 
   const catalogItemId = params.id;
   invariant(catalogItemId, 'catalogItemId is required');
@@ -20,7 +19,7 @@ export async function loader({ request, params }: LoaderArgs) {
   const catalogItem = await getCatalogItemByIdWithChildren(catalogItemId);
 
   if (!catalogItem) {
-    return redirect('/growers/catalog');
+    return redirect('/admin/catalog');
   }
 
   return json({

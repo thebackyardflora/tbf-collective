@@ -11,8 +11,11 @@ import type { UseDataFunctionReturn } from '@remix-run/react/dist/components';
 import { SearchBox } from '~/components/SearchBox';
 import invariant from 'tiny-invariant';
 import { useAlgolia } from '~/components/AlgoliaProvider';
+import { requireAdmin } from '~/session.server';
 
 export async function loader({ request }: LoaderArgs) {
+  await requireAdmin(request);
+
   invariant(process.env.ALGOLIA_APP_ID, 'ALGOLIA_APP_ID is required');
   invariant(process.env.ALGOLIA_API_KEY, 'ALGOLIA_API_KEY is required');
   invariant(process.env.ALGOLIA_INDEX_NAME, 'ALGOLIA_INDEX_NAME is required');

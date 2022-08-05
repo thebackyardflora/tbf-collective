@@ -96,7 +96,7 @@ export async function action({ request, params }: ActionArgs) {
     await deleteInventoryRecords(inventoryRecordIds);
   } else if (method.toLowerCase() === 'post' && action === 'submit-list') {
     await setInventoryListStatus(inventoryList.id, InventoryListStatus.APPROVED);
-    return redirect('/growers/dashboard');
+    return redirect('/growers');
   }
 
   return null;

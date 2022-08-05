@@ -15,7 +15,7 @@
   ```
 */
 import type { FC } from 'react';
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import { Button, Input } from '@mando-collabs/tailwind-ui';
@@ -23,7 +23,6 @@ import type { InventoryRecord } from '@prisma/client';
 import { UnitOfMeasure } from '@prisma/client';
 import { SearchBox } from '~/components/SearchBox';
 import { useHits, useSearchBox } from 'react-instantsearch-hooks';
-import React from 'react';
 import { Link, useFetcher } from '@remix-run/react';
 
 type ListCatalogItem = {
@@ -164,7 +163,7 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
 
                               <p className="mt-2 text-sm text-gray-500">
                                 Can't find what you're looking for?{' '}
-                                <Link to="/growers/catalog/new" className="font-medium text-primary-600">
+                                <Link to="/admin/catalog/new" className="font-medium text-primary-600">
                                   Add a new catalog item
                                 </Link>
                               </p>
