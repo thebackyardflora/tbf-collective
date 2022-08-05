@@ -7,6 +7,8 @@ import { Button, Input } from '@mando-collabs/tailwind-ui';
 import { createUserSession, getUserId } from '~/session.server';
 import { verifyLogin } from '~/models/user.server';
 import { safeRedirect, validateEmail } from '~/utils';
+import { getApplicationByUserId } from '~/models/application.server';
+import { ApplicationStatus, CompanyType } from '@prisma/client';
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -25,8 +27,9 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get('email');
   const password = formData.get('password');
-  const redirectTo = safeRedirect(formData.get('redirectTo'), '/');
   const remember = formData.get('remember');
+
+  let redirectTo = safeRedirect(formData.get('redirectTo'), '/');
 
   if (!validateEmail(email)) {
     return json<ActionData>({ errors: { email: 'Email is invalid' } }, { status: 400 });
@@ -44,6 +47,15 @@ export async function action({ request }: ActionArgs) {
 
   if (!user) {
     return json<ActionData>({ errors: { email: 'Invalid email or password' } }, { status: 400 });
+  }
+
+  if (redirectTo === '/') {
+    const application = await getApplicationByUserId(user.id);
+    if (application?.status === ApplicationStatus.APPROVED) {
+      redirectTo = application.type === CompanyType.GROWER ? '/growers' : '/florists';
+    } else if (application) {
+      redirectTo = '/apply';
+    }
   }
 
   return createUserSession({
