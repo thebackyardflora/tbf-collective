@@ -9,15 +9,22 @@ import { ClipboardIcon, CollectionIcon, HomeIcon, MenuIcon } from '@heroicons/re
 import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { StaticSidebar } from '~/components/StaticSidebar';
 import { MobileSidebar } from '~/components/MobileSidebar';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import { getCompanyByOwnerId } from '~/models/company.server';
+import { CompanyType } from '@prisma/client';
 
 export async function loader({ request }: LoaderArgs) {
   const user = await requireAdmin(request);
 
-  return json({ user });
+  const company = await getCompanyByOwnerId(user.id);
+
+  const showGrowerDashboardLink = company?.type === CompanyType.GROWER;
+
+  return json({ user, showGrowerDashboardLink });
 }
 
 export default function AdminRoot() {
-  const { user } = useLoaderData<typeof loader>();
+  const { user, showGrowerDashboardLink } = useLoaderData<typeof loader>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -41,6 +48,16 @@ export default function AdminRoot() {
       icon: CollectionIcon,
       current: location.pathname.startsWith('/admin/catalog'),
     },
+    ...(showGrowerDashboardLink
+      ? [
+          {
+            name: 'Grower Dashboard',
+            href: '/growers',
+            icon: AgricultureIcon,
+            current: false,
+          },
+        ]
+      : []),
   ];
 
   return (

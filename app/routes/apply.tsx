@@ -3,17 +3,21 @@ import Header from '~/components/Header';
 import type { Step } from '~/components/Steps';
 import { Steps } from '~/components/Steps';
 import type { LoaderArgs } from '@remix-run/node';
-import { requireUser } from '~/session.server';
 import { json } from '@remix-run/node';
+import { requireUser } from '~/session.server';
+import { getApplicationByUserId } from '~/models/application.server';
+import { ApplicationStatus } from '@prisma/client';
 
 export async function loader({ request }: LoaderArgs) {
-  const user = await requireUser(request);
+  const user = await requireUser(request, { takeToSignUp: true });
 
-  return json({ user });
+  const application = await getApplicationByUserId(user.id);
+
+  return json({ user, isApproved: application?.status === ApplicationStatus.APPROVED });
 }
 
 export default function Apply() {
-  const { user } = useLoaderData<typeof loader>();
+  const { user, isApproved } = useLoaderData<typeof loader>();
   const location = useLocation();
 
   const isTypeStep = location.pathname.endsWith('/apply/type');
@@ -28,7 +32,13 @@ export default function Apply() {
       disabled: isTypeStep,
       status: isTypeStep ? 'upcoming' : isReviewStep ? 'complete' : 'current',
     },
-    { id: '03', name: 'Review', href: '#', status: isReviewStep ? 'current' : 'upcoming', disabled: true },
+    {
+      id: '03',
+      name: 'Review',
+      href: '#',
+      status: isApproved ? 'complete' : isReviewStep ? 'current' : 'upcoming',
+      disabled: true,
+    },
   ];
 
   return (

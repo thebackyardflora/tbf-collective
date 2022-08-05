@@ -8,14 +8,13 @@ import { AvatarPlaceholder } from '~/components/AvatarPlaceholder';
 import Logo from '~/components/Logo';
 import { Link, useFetcher } from '@remix-run/react';
 
-const userNavigation = [{ name: 'Your Profile', href: 'profile' }];
-
 export interface AppLayoutProps {
   children?: ReactNode;
   user: {
     name: string;
     email: string;
     imageUrl: string | null;
+    isAdmin: boolean;
   };
 }
 
@@ -25,6 +24,12 @@ export const AppLayout: FC<AppLayoutProps> = ({ children, user }) => {
   const handleSignOutClick = async () => {
     await logoutFetcher.submit(null, { action: '/logout', method: 'post' });
   };
+
+  const userNavigation = [{ name: 'Your Profile', href: 'profile' }];
+
+  if (user.isAdmin) {
+    userNavigation.push({ name: 'Admin Dashboard', href: '/admin' });
+  }
 
   return (
     <div className="min-h-full">
@@ -171,7 +176,7 @@ export const AppLayout: FC<AppLayoutProps> = ({ children, user }) => {
         )}
       </Disclosure>
 
-      <div className="py-10">{children}</div>
+      <div className="py-8">{children}</div>
     </div>
   );
 };
