@@ -22,7 +22,7 @@ export const growerApplicationValidator = withZod(growerApplicationSchema);
 
 export default function GrowerApplication() {
   return (
-    <div className="mx-auto mt-8">
+    <div className="mx-auto py-8">
       <ValidatedForm method="post" action={`?type=${CompanyType.GROWER}`} validator={growerApplicationValidator}>
         <div className="grid-cols-2 gap-8 space-y-4 pb-8 lg:grid lg:space-y-0">
           <RVFInput type="text" name="businessOwnerName" label="Business Owner Name" autoComplete="name" />

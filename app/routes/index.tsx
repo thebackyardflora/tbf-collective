@@ -52,6 +52,12 @@ export default function Index() {
               </Link>
             </div>
           </div>
+          <p className="mt-4 text-sm sm:hidden">
+            Already have an account?{' '}
+            <Link className="text-primary-600 hover:text-primary-800" to="/login">
+              Sign in
+            </Link>
+          </p>
         </div>
       </main>
     </>
