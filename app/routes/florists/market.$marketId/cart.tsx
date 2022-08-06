@@ -1,7 +1,8 @@
-import type { LoaderArgs } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
 import { requireFlorist } from '~/session.server';
 import { PageWrapper } from '~/components/PageWrapper';
-import { Link, useLoaderData } from '@remix-run/react';
+import { Form, Link, useLoaderData } from '@remix-run/react';
 import { UnitOfMeasure } from '@prisma/client';
 import invariant from 'tiny-invariant';
 
@@ -46,12 +47,22 @@ export async function loader({ request, params }: LoaderArgs) {
   return { marketId };
 }
 
+export async function action({ request, params }: ActionArgs) {
+  await requireFlorist(request);
+
+  const { marketId } = params;
+
+  const orderId = 1;
+
+  return redirect(`/florists/market/${marketId}/order/${orderId}/summary`);
+}
+
 export default function Cart() {
   const { marketId } = useLoaderData<typeof loader>();
 
   return (
     <PageWrapper title="Shopping Cart">
-      <form className="mt-12">
+      <Form method="post" className="mt-12">
         <section aria-labelledby="cart-heading">
           <h2 id="cart-heading" className="sr-only">
             Items in your shopping cart
@@ -136,7 +147,7 @@ export default function Cart() {
             </p>
           </div>
         </section>
-      </form>
+      </Form>
     </PageWrapper>
   );
 }
