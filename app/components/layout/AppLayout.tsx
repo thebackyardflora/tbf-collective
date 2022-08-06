@@ -16,9 +16,10 @@ export interface AppLayoutProps {
     imageUrl: string | null;
     isAdmin: boolean;
   };
+  headerActions?: ReactNode;
 }
 
-export const AppLayout: FC<AppLayoutProps> = ({ children, user }) => {
+export const AppLayout: FC<AppLayoutProps> = ({ children, headerActions, user }) => {
   const logoutFetcher = useFetcher();
 
   const handleSignOutClick = async () => {
@@ -43,17 +44,19 @@ export const AppLayout: FC<AppLayoutProps> = ({ children, user }) => {
                     <Logo className="h-10 w-auto sm:block sm:h-12" />
                   </Link>
                 </div>
-                <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                  <button
-                    type="button"
-                    className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                  >
-                    <span className="sr-only">View notifications</span>
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
+                <div className="hidden space-x-3 sm:ml-6 sm:flex sm:items-center">
+                  {headerActions}
+
+                  {/*<button*/}
+                  {/*  type="button"*/}
+                  {/*  className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"*/}
+                  {/*>*/}
+                  {/*  <span className="sr-only">View notifications</span>*/}
+                  {/*  <BellIcon className="h-6 w-6" aria-hidden="true" />*/}
+                  {/*</button>*/}
 
                   {/* Profile dropdown */}
-                  <Menu as="div" className="relative ml-3">
+                  <Menu as="div" className="relative">
                     <div>
                       <Menu.Button
                         className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
@@ -112,7 +115,9 @@ export const AppLayout: FC<AppLayoutProps> = ({ children, user }) => {
                     </Transition>
                   </Menu>
                 </div>
-                <div className="-mr-2 flex items-center sm:hidden">
+                <div className="-mr-2 flex items-center space-x-3 sm:hidden">
+                  {headerActions}
+
                   {/* Mobile menu button */}
                   <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
                     <span className="sr-only">Open main menu</span>
