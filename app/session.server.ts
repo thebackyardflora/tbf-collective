@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant';
 
 import type { User } from '~/models/user.server';
 import { getUserById, getUserWithCompany } from '~/models/user.server';
-import type { CompanyType } from '@prisma/client';
+import { CompanyType } from '@prisma/client';
 
 invariant(process.env.SESSION_SECRET, 'SESSION_SECRET must be set');
 
@@ -80,6 +80,14 @@ export async function requireActiveCompany(request: Request, type: CompanyType) 
   }
 
   throw redirect('/');
+}
+
+export async function requireFlorist(request: Request) {
+  return await requireActiveCompany(request, CompanyType.FLORIST);
+}
+
+export async function requireGrower(request: Request) {
+  return await requireActiveCompany(request, CompanyType.GROWER);
 }
 
 export async function createUserSession({
