@@ -150,8 +150,13 @@ async function seed() {
   const grower1 = await createUser({ email: 'grower1@example.com', name: faker.name.findName() });
 
   const floristCompany = getFakeCompanyData();
-  await createApplication({ type: 'FLORIST', userId: florist1.id, company: floristCompany });
-  await createCompany({ type: 'FLORIST', ownerId: florist1.id, active: false, company: floristCompany });
+  await createApplication({
+    type: 'FLORIST',
+    userId: florist1.id,
+    status: ApplicationStatus.APPROVED,
+    company: floristCompany,
+  });
+  await createCompany({ type: 'FLORIST', ownerId: florist1.id, active: true, company: floristCompany });
 
   const growerCompany = getFakeCompanyData();
   await createApplication({
