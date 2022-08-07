@@ -30,6 +30,7 @@ export async function loader({ request, params }: LoaderArgs) {
     speciesId: species.id,
     variety: {
       ...variety,
+      basePrice: Number(variety.basePrice),
       images: variety.images.map((image) => ({
         id: image.id,
         url: getImageUrl(image.imageKey, { width: 400, height: 400, crop: 'fill' }),
@@ -75,6 +76,7 @@ export default function EditVarietyPage() {
           name: variety.name,
           description: variety.description,
           images: variety.images,
+          basePrice: variety.basePrice,
         }}
       />
     </PageWrapper>

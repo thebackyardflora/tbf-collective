@@ -14,6 +14,7 @@ describe('flower catalog', () => {
     cy.findByRole('link', { name: /catalog/i }).click();
     cy.findByRole('link', { name: /new item/i }).click();
     cy.findByLabelText(/name/i).type(productName);
+    cy.findByLabelText(/price/i).type(faker.datatype.number({ min: 1, max: 10, precision: 0.01 }).toString());
     cy.findByLabelText(/description/i).type(faker.lorem.paragraph());
     cy.findByRole('button', { name: /create/i }).click({ force: true });
 
@@ -23,6 +24,7 @@ describe('flower catalog', () => {
       .click();
     cy.findByRole('link', { name: /new variety/i }).click();
     cy.findByLabelText(/name/i).type(faker.commerce.productName());
+    cy.findByLabelText(/price/i).type(faker.datatype.number({ min: 1, max: 10, precision: 0.01 }).toString());
     cy.findByLabelText(/description/i).type(faker.lorem.paragraph());
     cy.findByRole('button', { name: /create/i }).click({ force: true });
   });

@@ -18,6 +18,7 @@ test('handleCatalogItemForm creates a new catalog item', async () => {
   const data: z.infer<typeof catalogItemSchema> = {
     name: faker.commerce.productName(),
     description: faker.lorem.paragraph(),
+    basePrice: faker.datatype.number({ min: 1, max: 10, precision: 0.01 }),
   };
   const userId = faker.datatype.uuid();
   const formData = formDataFromObject(data);

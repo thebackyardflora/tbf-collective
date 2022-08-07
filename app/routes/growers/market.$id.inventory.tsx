@@ -3,7 +3,7 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { requireActiveCompany } from '~/session.server';
 import type { InventoryRecord } from '@prisma/client';
-import { CompanyType, InventoryListStatus, UnitOfMeasure } from '@prisma/client';
+import { CompanyType, InventoryListStatus } from '@prisma/client';
 import {
   findOrCreateInventoryListByMarketId,
   getInventoryListByMarketId,
@@ -47,7 +47,7 @@ export async function loader({ request, params }: LoaderArgs) {
           return {
             ...record,
             itemName: catalogItem.name,
-            unit: record.unitOfMeasure === UnitOfMeasure.STEM ? 'Stems' : 'Bunches',
+            priceEach: Number(record.priceEach),
           };
         }),
     },
@@ -107,10 +107,9 @@ export default function MarketInventory() {
   const searchClient = useAlgolia();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editRecord, setEditRecord] = useState<Pick<
-    InventoryRecord,
-    'id' | 'catalogItemId' | 'quantity' | 'unitOfMeasure'
-  > | null>(null);
+  const [editRecord, setEditRecord] = useState<
+    (Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity'> & { priceEach: number }) | null
+  >(null);
 
   const marketDate = useLocalDate(inventoryList.marketEvent.marketDate, { format: 'dddd, MMMM D, YYYY' });
 
@@ -120,7 +119,7 @@ export default function MarketInventory() {
   }, []);
 
   const onEditRecord = useCallback(
-    (record: Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity' | 'unitOfMeasure'>) => {
+    (record: Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity'> & { priceEach: number }) => {
       setEditRecord(record);
       setIsFormOpen(true);
     },

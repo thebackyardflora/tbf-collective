@@ -1,4 +1,4 @@
-import type { InventoryRecord, UnitOfMeasure } from '@prisma/client';
+import type { InventoryRecord } from '@prisma/client';
 import { prisma } from '~/db.server';
 
 interface UpdateInventoryRecord {
@@ -6,7 +6,7 @@ interface UpdateInventoryRecord {
   catalogItemId: string;
   inventoryRecordId?: InventoryRecord['id'];
   quantity: number;
-  unitOfMeasure: UnitOfMeasure;
+  priceEach: number;
 }
 
 export async function upsertInventoryRecord({
@@ -28,6 +28,7 @@ export async function upsertInventoryRecord({
         },
       },
       ...data,
+      available: data.quantity,
     },
     update: {
       ...data,

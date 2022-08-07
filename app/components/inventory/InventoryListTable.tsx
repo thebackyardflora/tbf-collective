@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { Button } from '@mando-collabs/tailwind-ui';
 import { PlusIcon } from '@heroicons/react/outline';
 import type { InventoryRecord } from '@prisma/client';
-import type { UnitOfMeasure } from '@prisma/client';
 import { Form, useTransition } from '@remix-run/react';
 import { ConfirmDeleteModal } from '~/components/inventory/ConfirmDeleteModal';
 import { ConfirmSubmitModal } from '~/components/inventory/ConfirmSubmitModal';
@@ -13,14 +12,13 @@ export interface InventoryListTableProps {
   className?: string;
   onAddInventoryRecord?: () => void;
   onEditInventoryRecord?: (
-    record: Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity' | 'unitOfMeasure'>
+    record: Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity'> & { priceEach: number }
   ) => void;
   inventoryRecords: Array<{
     id: string;
     itemName: string;
     quantity: number;
-    unitOfMeasure: UnitOfMeasure;
-    unit: string;
+    priceEach: number;
     catalogItemId: string;
   }>;
 }
@@ -117,10 +115,10 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
                         Item
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Quantity
+                        # of Stems
                       </th>
                       <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Unit
+                        Price Per Stem
                       </th>
                       <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                         <span className="sr-only">Edit</span>
@@ -158,7 +156,7 @@ export const InventoryListTable: FC<InventoryListTableProps> = ({
                           {record.itemName}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{record.quantity}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{record.unit}</td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">${record.priceEach}</td>
                         <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                           <button
                             type="button"
