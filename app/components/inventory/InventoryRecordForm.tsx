@@ -20,10 +20,10 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import { Button, Input } from '@mando-collabs/tailwind-ui';
 import type { InventoryRecord } from '@prisma/client';
-import { UnitOfMeasure } from '@prisma/client';
 import { SearchBox } from '~/components/SearchBox';
 import { useHits, useSearchBox } from 'react-instantsearch-hooks';
-import { Link, useFetcher } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
+import { UnitOfMeasure } from '~/types';
 
 type ListCatalogItem = {
   id: string;
@@ -43,7 +43,7 @@ export interface InventoryRecordFormProps {
     type: string;
     description: string | null;
   }[];
-  editRecord: Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity' | 'unitOfMeasure'> | null;
+  editRecord: (Pick<InventoryRecord, 'id' | 'catalogItemId' | 'quantity'> & { priceEach: number }) | null;
 }
 
 export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setIsOpen, catalogItems, editRecord }) => {
@@ -161,12 +161,12 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
                             <div className="pt-6 pb-5">
                               <SearchBox onFocus={onInputFocus} />
 
-                              <p className="mt-2 text-sm text-gray-500">
-                                Can't find what you're looking for?{' '}
-                                <Link to="/admin/catalog/new" className="font-medium text-primary-600">
-                                  Add a new catalog item
-                                </Link>
-                              </p>
+                              {/*<p className="mt-2 text-sm text-gray-500">*/}
+                              {/*  Can't find what you're looking for?{' '}*/}
+                              {/*  <Link to="/admin/catalog/new" className="font-medium text-primary-600">*/}
+                              {/*    Add a new catalog item*/}
+                              {/*  </Link>*/}
+                              {/*</p>*/}
                             </div>
                           ) : null}
 
@@ -190,7 +190,7 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
                                 ref={formRef}
                                 id="add-item"
                                 method={editRecord ? 'put' : 'post'}
-                                className="py-4"
+                                className="flex flex-col py-4"
                               >
                                 <input type="hidden" name="catalogItemId" value={selectedItem.id ?? ''} />
                                 {editRecord ? (
@@ -208,7 +208,7 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
                                     <Input.TrailingDropdown
                                       srLabel="unit"
                                       name="unitOfMeasure"
-                                      defaultValue={editRecord?.unitOfMeasure ?? UnitOfMeasure.BUNCH}
+                                      defaultValue={UnitOfMeasure.STEM}
                                       options={[
                                         { label: 'Bunches', value: UnitOfMeasure.BUNCH },
                                         {
@@ -218,6 +218,18 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
                                       ]}
                                     />
                                   }
+                                />
+                                <Input
+                                  className="mt-4"
+                                  name="priceEach"
+                                  type="number"
+                                  label="Price Per Stem"
+                                  helpText="Enter the price per stem. The minimum price is set by the collective."
+                                  defaultValue={editRecord?.priceEach ?? ''}
+                                  pattern="^\d+(\.\d{1,2})?$"
+                                  leadingAddon="$"
+                                  cornerHint="Minimum $1.00"
+                                  step={0.01}
                                 />
                                 {errorMessage ? <p className="mt-4 text-red-500">{errorMessage}</p> : null}
                               </fetcher.Form>

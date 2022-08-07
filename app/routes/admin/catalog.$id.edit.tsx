@@ -26,6 +26,7 @@ export async function loader({ request, params }: LoaderArgs) {
   return json({
     catalogItem: {
       ...catalogItem,
+      basePrice: Number(catalogItem.basePrice),
       images: catalogItem.images.map((image) => ({
         id: image.id,
         url: getImageUrl(image.imageKey, { width: 400, height: 400, crop: 'fill' }),

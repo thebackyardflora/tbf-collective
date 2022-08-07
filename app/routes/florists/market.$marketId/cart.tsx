@@ -3,8 +3,8 @@ import { redirect } from '@remix-run/node';
 import { requireFlorist } from '~/session.server';
 import { PageWrapper } from '~/components/PageWrapper';
 import { Form, Link, useLoaderData } from '@remix-run/react';
-import { UnitOfMeasure } from '@prisma/client';
 import invariant from 'tiny-invariant';
+import { UnitOfMeasure } from '~/types';
 
 const products = [
   {

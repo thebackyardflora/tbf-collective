@@ -6,8 +6,8 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
 import { Form, useLoaderData } from '@remix-run/react';
-import { UnitOfMeasure } from '@prisma/client';
 import { requireFlorist } from '~/session.server';
+import { UnitOfMeasure } from '~/types';
 
 export async function loader({ request, params }: LoaderArgs) {
   await requireFlorist(request);

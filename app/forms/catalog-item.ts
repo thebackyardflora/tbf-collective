@@ -1,15 +1,15 @@
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
-import type { User } from '@prisma/client';
+import type { CatalogItem, User } from '@prisma/client';
 import { withZod } from '@remix-validated-form/with-zod';
 import { validationError } from 'remix-validated-form';
 import { upsertCatalogItem } from '~/models/catalog-item.server';
 import { redirect } from '@remix-run/node';
-import type { CatalogItem } from '@prisma/client';
 
 export const catalogItemSchema = z.object({
   name: zfd.text(z.string()),
   description: zfd.text(z.string().optional()),
+  basePrice: zfd.numeric(z.number().positive()),
 });
 
 export const catalogItemFormValidator = withZod(catalogItemSchema);

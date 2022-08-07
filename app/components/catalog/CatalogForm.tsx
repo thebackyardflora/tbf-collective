@@ -1,8 +1,8 @@
 import type { FC } from 'react';
+import { useRef, useState } from 'react';
 import { catalogItemFormValidator } from '~/forms/catalog-item';
 import { Button, RVFButton, RVFInput, RVFTextArea } from '@mando-collabs/tailwind-ui';
 import { ValidatedForm } from 'remix-validated-form';
-import { useRef, useState } from 'react';
 import { PlusIcon, TrashIcon } from '@heroicons/react/outline';
 import classNames from 'classnames';
 
@@ -10,6 +10,7 @@ export interface CatalogFormProps {
   initialValues?: {
     name: string;
     description: string | null;
+    basePrice: number | null;
     images: {
       id: string;
       url: string;
@@ -29,6 +30,7 @@ export const CatalogForm: FC<CatalogFormProps> = ({ initialValues, mode = 'CREAT
           ? {
               name: initialValues.name,
               description: initialValues.description ?? undefined,
+              basePrice: initialValues.basePrice ?? undefined,
             }
           : undefined
       }
@@ -40,6 +42,16 @@ export const CatalogForm: FC<CatalogFormProps> = ({ initialValues, mode = 'CREAT
         name="name"
         label={`${flowerType} name`}
         helpText={`Enter the common name of the flower ${flowerType.toLowerCase()}`}
+      />
+
+      <RVFInput
+        type="number"
+        name="basePrice"
+        label="Minimum Price Per Stem"
+        helpText="Enter the collective's minimum price for this flower."
+        leadingAddon="$"
+        step={0.01}
+        pattern="^\d+(\.\d{1,2})?$"
       />
 
       <RVFTextArea
