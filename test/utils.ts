@@ -1,8 +1,8 @@
 import type { User } from '@prisma/client';
+import { CompanyType } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import type { z } from 'zod';
 import type { floristApplicationSchema } from '~/components/FloristApplication';
-import { CompanyType } from '@prisma/client';
 import type { upsertCompany } from '~/models/company.server';
 
 export function createTestUser(options?: Partial<User>) {
@@ -13,7 +13,7 @@ export function createTestUser(options?: Partial<User>) {
       createdAt: faker.date.past(),
       updatedAt: faker.date.past(),
       isAdmin: false,
-      name: faker.name.findName(),
+      name: faker.name.fullName(),
     },
     options
   );
@@ -22,8 +22,8 @@ export function createTestUser(options?: Partial<User>) {
 export function createTestFloristApplication(): z.infer<typeof floristApplicationSchema> {
   return {
     businessAddress: faker.address.streetAddress(true),
-    businessName: faker.company.companyName(),
-    businessOwnerName: faker.name.findName(),
+    businessName: faker.company.name(),
+    businessOwnerName: faker.name.fullName(),
     einTin: faker.finance.bic(),
     email: faker.internet.email(),
     instagramHandle: faker.internet.userName(),
@@ -40,8 +40,8 @@ export function createTestFloristApplicationFormData(): Omit<
 > & { accessToCooler: 'on' | undefined | null } {
   return {
     businessAddress: faker.address.streetAddress(true),
-    businessName: faker.company.companyName(),
-    businessOwnerName: faker.name.findName(),
+    businessName: faker.company.name(),
+    businessOwnerName: faker.name.fullName(),
     einTin: faker.finance.bic(),
     email: faker.internet.email(),
     instagramHandle: faker.internet.userName(),
@@ -60,8 +60,8 @@ export function createTestCompanyCreateData(
 ): Parameters<typeof upsertCompany>[0] {
   return {
     active,
-    name: faker.company.companyName(),
-    ownerName: faker.name.findName(),
+    name: faker.company.name(),
+    ownerName: faker.name.fullName(),
     email: faker.internet.email(),
     phone: faker.phone.number('208-5##-1###'),
     einTin: faker.finance.bic(),

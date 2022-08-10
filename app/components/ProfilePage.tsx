@@ -1,15 +1,15 @@
 import type { FC } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PageWrapper } from '~/components/PageWrapper';
-import { Form, useActionData, useTransition } from '@remix-run/react';
-import { Button, Input, RVFButton, RVFInput, RVFTextArea } from '@mando-collabs/tailwind-ui';
-import { CheckCircleIcon, LogoutIcon } from '@heroicons/react/outline';
+import { useActionData, useTransition } from '@remix-run/react';
+import { Input, RVFButton, RVFInput, RVFTextArea } from '@mando-collabs/tailwind-ui';
+import { CheckCircleIcon } from '@heroicons/react/outline';
 import { SocialSiteType } from '@prisma/client';
 import { ValidatedForm } from 'remix-validated-form';
 import { companyProfileValidator } from '~/forms/company-profile';
 import { parseInstagramHandleFromUrl } from '~/utils';
 import { accountSettingsValidator } from '~/forms/account-settings';
 import { changePasswordFormValidator } from '~/forms/change-password';
-import { useEffect, useRef, useState } from 'react';
 import { ImagePreview } from '~/components/ImagePreview';
 
 export interface ProfilePageProps {

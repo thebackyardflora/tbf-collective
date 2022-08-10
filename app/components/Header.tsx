@@ -1,13 +1,10 @@
 /* This example requires Tailwind CSS v2.0+ */
-import type { ElementType } from 'react';
 import { Fragment } from 'react';
 import { Popover, Transition } from '@headlessui/react';
 import { MenuIcon, XIcon } from '@heroicons/react/outline';
-import { Form, Link, useLocation } from '@remix-run/react';
+import { Form, Link } from '@remix-run/react';
 import classNames from 'classnames';
 import Logo from '~/components/Logo';
-import AgricultureIcon from '@mui/icons-material/Agriculture';
-import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import type { Company, User } from '@prisma/client';
 import { CompanyType } from '@prisma/client';
 import { Button } from '@mando-collabs/tailwind-ui';
@@ -20,30 +17,30 @@ export type HeaderProps = {
 };
 
 export default function Header(props: HeaderProps) {
-  const { pathname } = useLocation();
+  // const { pathname } = useLocation();
 
-  const navigation: {
-    title: string;
-    href: string;
-    active: boolean;
-    Icon: ElementType<{ className?: string }>;
-    description: string;
-  }[] = [
-    {
-      title: 'Our growers',
-      href: '/growers',
-      active: pathname.startsWith('/growers'),
-      Icon: AgricultureIcon,
-      description: 'Local farms that supply flowers',
-    },
-    {
-      title: 'Our florists',
-      href: '/florists',
-      active: pathname.startsWith('/florists'),
-      Icon: LocalFloristIcon,
-      description: 'Floral design professionals',
-    },
-  ];
+  // const navigation: {
+  //   title: string;
+  //   href: string;
+  //   active: boolean;
+  //   Icon: ElementType<{ className?: string }>;
+  //   description: string;
+  // }[] = [
+  //   {
+  //     title: 'Our growers',
+  //     href: '/growers',
+  //     active: pathname.startsWith('/growers'),
+  //     Icon: AgricultureIcon,
+  //     description: 'Local farms that supply flowers',
+  //   },
+  //   {
+  //     title: 'Our florists',
+  //     href: '/florists',
+  //     active: pathname.startsWith('/florists'),
+  //     Icon: LocalFloristIcon,
+  //     description: 'Floral design professionals',
+  //   },
+  // ];
 
   return (
     <Popover className="relative bg-white">

@@ -1,4 +1,4 @@
-import { updateCompanyProfile, upsertCompany, updateCompanyPrivateInfo } from '~/models/company.server';
+import { updateCompanyPrivateInfo, updateCompanyProfile, upsertCompany } from '~/models/company.server';
 import { prismaMock } from '~/test/prisma-mock';
 import { createTestCompanyCreateData } from '~/test/utils';
 import { SocialSiteType } from '@prisma/client';
@@ -47,8 +47,8 @@ test('updateCompanyProfile calls prisma with the right parameters', async () => 
 
   const data = {
     ownerId: faker.datatype.uuid(),
-    name: faker.company.companyName(),
-    ownerName: faker.name.findName(),
+    name: faker.company.name(),
+    ownerName: faker.name.fullName(),
     bio: faker.lorem.paragraph(),
   };
 

@@ -53,10 +53,7 @@ export default function Example() {
                 can.
               </p>
 
-              <ul
-                role="list"
-                className="mt-6 divide-y divide-gray-200 border-t border-gray-200 text-sm font-medium text-gray-500"
-              >
+              <ul className="mt-6 divide-y divide-gray-200 border-t border-gray-200 text-sm font-medium text-gray-500">
                 {products.map((product) => (
                   <li key={product.id} className="flex space-x-6 py-6">
                     <img

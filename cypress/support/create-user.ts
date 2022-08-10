@@ -20,7 +20,7 @@ async function create(email: string, isAdmin: boolean) {
     throw new Error('All test emails must end in @example.com');
   }
 
-  return await createUser({ email, password: 'myreallystrongpassword', isAdmin, name: faker.name.findName() });
+  return await createUser({ email, password: 'myreallystrongpassword', isAdmin, name: faker.name.fullName() });
 }
 
 async function createAndLogin(email: string, isAdmin: boolean) {

@@ -29,8 +29,8 @@ test('a successful submissions updates the company data', async () => {
     bio: faker.lorem.paragraph(),
     website: undefined,
     instagramHandle: faker.internet.userName(),
-    name: faker.company.companyName(),
-    ownerName: faker.name.findName(),
+    name: faker.company.name(),
+    ownerName: faker.name.fullName(),
   };
 
   const formData = formDataFromObject({ ...testData, companyProfile: true });

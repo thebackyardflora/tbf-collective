@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef, FC } from 'react';
-import { BadgeCheckIcon, CalendarIcon, CheckCircleIcon, LocationMarkerIcon } from '@heroicons/react/outline';
+import { CalendarIcon, CheckCircleIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import { Button } from '@mando-collabs/tailwind-ui';
 import type { Address } from '@prisma/client';
 import { twMerge } from 'tailwind-merge';

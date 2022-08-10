@@ -13,8 +13,8 @@ describe('growers dashboard tests', () => {
     cy.findByTestId('profile-button').click();
     cy.findByRole('menuitem', { name: /your profile/i }).click();
 
-    const newBusinessName = faker.company.companyName();
-    const newOwnerName = faker.name.findName();
+    const newBusinessName = faker.company.name();
+    const newOwnerName = faker.name.fullName();
     const newBio = faker.lorem.paragraph();
     const newInstagram = faker.internet.userName();
     const newWebsite = faker.internet.url();
