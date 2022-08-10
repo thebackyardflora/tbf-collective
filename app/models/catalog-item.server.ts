@@ -1,4 +1,4 @@
-import type { CatalogItem } from '@prisma/client';
+import type { CatalogItem, Prisma } from '@prisma/client';
 import { prisma } from '~/db.server';
 import { catalogIndex } from '~/algolia.server';
 import { getImageUrl } from '~/cloudinary.server';
@@ -189,23 +189,11 @@ export async function getCatalogGroupsForBrowse({ marketEventId }: { marketEvent
 
   return items.map((species) => {
     const varieties = species.children.map((variety) => {
-      let priceMin, priceMax;
-
-      for (const inventoryRecord of variety.inventoryRecords) {
-        priceMin = priceMin
-          ? Math.min(priceMin, inventoryRecord.priceEach.toNumber())
-          : inventoryRecord.priceEach.toNumber();
-        priceMax = priceMax
-          ? Math.max(priceMax, inventoryRecord.priceEach.toNumber())
-          : inventoryRecord.priceEach.toNumber();
-      }
-
-      const priceRange = priceMin === priceMax ? `$${priceMax}` : `$${priceMin?.toFixed(2)} - $${priceMax?.toFixed(2)}`;
       return {
         id: variety.id,
         name: variety.name,
         species: species.name,
-        price: priceRange + ' / stem',
+        price: getPriceText(variety),
         imageSrc: variety.thumbnail,
       };
     });
@@ -215,4 +203,77 @@ export async function getCatalogGroupsForBrowse({ marketEventId }: { marketEvent
       varieties,
     };
   });
+}
+
+export async function getCatalogItemWithInventoryInfo({
+  catalogItemId,
+  marketEventId,
+}: {
+  catalogItemId: string;
+  marketEventId: string;
+}) {
+  const catalogItem = await prisma.catalogItem.findUnique({
+    where: { id: catalogItemId },
+    include: {
+      images: { select: { id: true, imageKey: true }, take: 1 },
+      inventoryRecords: {
+        where: {
+          inventoryList: {
+            marketEventId,
+          },
+        },
+        select: {
+          available: true,
+          priceEach: true,
+          inventoryList: {
+            select: {
+              company: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!catalogItem?.inventoryRecords.length) return null;
+
+  return {
+    name: catalogItem.name,
+    price: getPriceText(catalogItem),
+    description: catalogItem.description,
+    imageSrc: catalogItem.images[0]?.imageKey
+      ? getImageUrl(catalogItem.images[0].imageKey, {
+          crop: 'fill',
+          height: 600,
+          width: 600,
+        })
+      : catalogItem.thumbnail,
+    imageAlt: catalogItem.name,
+    growers: catalogItem.inventoryRecords.map((record) => ({
+      name: record.inventoryList.company.name,
+      priceEach: `$${record.priceEach.toNumber().toFixed(2)} / stem`,
+      available: record.available,
+    })),
+  };
+}
+
+function getPriceText(catalogItem: { inventoryRecords: { priceEach: Prisma.Decimal }[] }) {
+  let priceMin, priceMax;
+
+  for (const inventoryRecord of catalogItem.inventoryRecords) {
+    priceMin = priceMin
+      ? Math.min(priceMin, inventoryRecord.priceEach.toNumber())
+      : inventoryRecord.priceEach.toNumber();
+    priceMax = priceMax
+      ? Math.max(priceMax, inventoryRecord.priceEach.toNumber())
+      : inventoryRecord.priceEach.toNumber();
+  }
+
+  const priceRange = priceMin === priceMax ? `$${priceMax}` : `$${priceMin?.toFixed(2)} - $${priceMax?.toFixed(2)}`;
+
+  return `${priceRange} / stem`;
 }

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { RadioGroup } from '@headlessui/react';
 import classNames from 'classnames';
 import { Breadcrumbs, Button, Input } from '@mando-collabs/tailwind-ui';
@@ -8,15 +8,26 @@ import invariant from 'tiny-invariant';
 import { Form, useLoaderData } from '@remix-run/react';
 import { requireFlorist } from '~/session.server';
 import { UnitOfMeasure } from '~/types';
+import { getCatalogItemWithInventoryInfo } from '~/models/catalog-item.server';
 
 export async function loader({ request, params }: LoaderArgs) {
   await requireFlorist(request);
 
-  const { marketId } = params;
+  const { marketId, productId } = params;
 
   invariant(typeof marketId === 'string');
+  invariant(typeof productId === 'string');
 
-  return json({ marketId });
+  const catalogItem = await getCatalogItemWithInventoryInfo({ catalogItemId: productId, marketEventId: marketId });
+
+  if (!catalogItem) {
+    return redirect(`/florists/market/${marketId}/browse`);
+  }
+
+  return json({
+    marketId,
+    catalogItem,
+  });
 }
 
 export async function action({ request, params }: ActionArgs) {
@@ -28,49 +39,24 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 export default function ProductPage() {
-  const { marketId } = useLoaderData<typeof loader>();
+  const { marketId, catalogItem } = useLoaderData<typeof loader>();
 
-  const product = useMemo(
-    () => ({
-      name: 'Everyday Ruck Snack',
-      href: '#',
-      price: '$2.00 - $5.00 / stem',
-      description:
-        "Don't compromise on snack-carrying capacity with this lightweight and spacious bag. The drawstring top keeps all your favorite chips, crisps, fries, biscuits, crackers, and cookies secure.",
-      imageSrc:
-        'https://res.cloudinary.com/tbf-collective/image/upload/v1659197420/prod/catalog-items/gl6cbhhj2r5td1whzrug.jpg',
-      imageAlt: 'Model wearing light green backpack with black canvas straps and front zipper pouch.',
-      breadcrumbs: [
-        { name: 'Browse', href: `../market/${marketId}/browse` },
-        { name: 'Snapdragons', href: '#' },
-      ],
-      growers: [
-        {
-          name: 'The Backyard Flora',
-          priceEa: '$2.00 / stem',
-          available: '20 stems available',
-        },
-        {
-          name: 'Florage',
-          priceEa: '$1.75 / stem',
-          available: '15 stems available',
-        },
-      ],
-    }),
-    [marketId]
-  );
+  const breadcrumbs = [
+    { name: 'Browse', href: `../market/${marketId}/browse` },
+    { name: catalogItem.name, href: '#' },
+  ];
 
-  const [selectedGrower, setSelectedGrower] = useState(product.growers[0]);
+  const [selectedGrower, setSelectedGrower] = useState(catalogItem.growers[0]);
 
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl py-4 px-4 sm:py-24 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
         {/* Product details */}
         <div className="lg:max-w-lg lg:self-end">
-          <Breadcrumbs breadcrumbs={product.breadcrumbs} />
+          <Breadcrumbs breadcrumbs={breadcrumbs} />
 
           <div className="mt-4">
-            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">{product.name}</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">{catalogItem.name}</h1>
           </div>
 
           <section aria-labelledby="information-heading" className="mt-4">
@@ -79,11 +65,11 @@ export default function ProductPage() {
             </h2>
 
             <div className="flex items-center">
-              <p className="text-lg text-gray-900 sm:text-xl">{product.price}</p>
+              <p className="text-lg text-gray-900 sm:text-xl">{catalogItem.price}</p>
             </div>
 
             <div className="mt-4 space-y-6">
-              <p className="text-base text-gray-500">{product.description}</p>
+              <p className="text-base text-gray-500">{catalogItem.description}</p>
             </div>
           </section>
         </div>
@@ -91,7 +77,11 @@ export default function ProductPage() {
         {/* Product image */}
         <div className="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
           <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg">
-            <img src={product.imageSrc} alt={product.imageAlt} className="h-full w-full object-cover object-center" />
+            <img
+              src={catalogItem.imageSrc ?? '/images/no-image-placeholder.svg'}
+              alt={catalogItem.imageAlt}
+              className="h-full w-full object-cover object-center"
+            />
           </div>
         </div>
 
@@ -108,7 +98,7 @@ export default function ProductPage() {
                 <RadioGroup value={selectedGrower} onChange={setSelectedGrower}>
                   <RadioGroup.Label className="block text-sm font-medium text-gray-700">Grower</RadioGroup.Label>
                   <div className="mt-1 grid grid-cols-1 gap-4">
-                    {product.growers.map((grower) => (
+                    {catalogItem.growers.map((grower) => (
                       <RadioGroup.Option
                         as="div"
                         key={grower.name}
@@ -127,10 +117,10 @@ export default function ProductPage() {
                               className="flex justify-between text-base font-medium text-gray-900"
                             >
                               <span className="truncate">{grower.name}</span>
-                              <span className="flex-shrink-0">{grower.priceEa}</span>
+                              <span className="flex-shrink-0">{grower.priceEach}</span>
                             </RadioGroup.Label>
                             <RadioGroup.Description as="p" className="mt-1 flex justify-end text-sm text-gray-500">
-                              <span className="ml-2 shrink-0">{grower.available}</span>
+                              <span className="ml-2 shrink-0">{grower.available} stems available</span>
                             </RadioGroup.Description>
                             <div
                               className={classNames(
