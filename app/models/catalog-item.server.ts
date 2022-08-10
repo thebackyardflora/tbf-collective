@@ -1,6 +1,6 @@
 import type { CatalogItem } from '@prisma/client';
 import { prisma } from '~/db.server';
-import { algoliaIndex } from '~/algolia.server';
+import { catalogIndex } from '~/algolia.server';
 import { getImageUrl } from '~/cloudinary.server';
 
 interface CreateCatalogItemParams {
@@ -70,8 +70,8 @@ export async function upsertCatalogItem({
   });
 
   const { id: objectID, ...objectData } = item;
-  const { taskID } = await algoliaIndex.saveObject({ objectID, ...objectData });
-  await algoliaIndex.waitTask(taskID);
+  const { taskID } = await catalogIndex.saveObject({ objectID, ...objectData });
+  await catalogIndex.waitTask(taskID);
 
   return item;
 }
@@ -132,5 +132,87 @@ export async function getCatalogItemByIdWithParent(id: string) {
       images: { select: { id: true, imageKey: true } },
       parent: { select: { id: true, name: true } },
     },
+  });
+}
+
+export async function getCatalogGroupsForBrowse({ marketEventId }: { marketEventId: string }) {
+  const items = await prisma.catalogItem.findMany({
+    where: {
+      parentId: null,
+      children: {
+        some: {
+          inventoryRecords: {
+            some: {
+              inventoryList: {
+                marketEventId,
+              },
+            },
+          },
+        },
+      },
+    },
+    select: {
+      name: true,
+      children: {
+        where: {
+          inventoryRecords: {
+            some: {
+              inventoryList: {
+                marketEventId,
+              },
+            },
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          thumbnail: true,
+          inventoryRecords: {
+            where: {
+              inventoryList: {
+                marketEventId,
+              },
+            },
+            select: {
+              quantity: true,
+              available: true,
+              priceEach: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      name: 'asc',
+    },
+  });
+
+  return items.map((species) => {
+    const varieties = species.children.map((variety) => {
+      let priceMin, priceMax;
+
+      for (const inventoryRecord of variety.inventoryRecords) {
+        priceMin = priceMin
+          ? Math.min(priceMin, inventoryRecord.priceEach.toNumber())
+          : inventoryRecord.priceEach.toNumber();
+        priceMax = priceMax
+          ? Math.max(priceMax, inventoryRecord.priceEach.toNumber())
+          : inventoryRecord.priceEach.toNumber();
+      }
+
+      const priceRange = priceMin === priceMax ? `$${priceMax}` : `$${priceMin?.toFixed(2)} - $${priceMax?.toFixed(2)}`;
+      return {
+        id: variety.id,
+        name: variety.name,
+        species: species.name,
+        price: priceRange + ' / stem',
+        imageSrc: variety.thumbnail,
+      };
+    });
+
+    return {
+      name: species.name,
+      varieties,
+    };
   });
 }

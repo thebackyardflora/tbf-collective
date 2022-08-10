@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 
 export const AvatarPlaceholder: FC = () => (
   <svg className="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">

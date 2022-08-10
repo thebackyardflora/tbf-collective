@@ -1,4 +1,4 @@
-import { formDataFromObject, validateEmail, validateName, getInstagramUrl, parseInstagramHandleFromUrl } from './utils';
+import { formDataFromObject, getInstagramUrl, parseInstagramHandleFromUrl, validateEmail, validateName } from './utils';
 import { faker } from '@faker-js/faker';
 
 test('validateEmail returns false for non-emails', () => {
@@ -27,7 +27,7 @@ test('validateName returns false for names that are too short', () => {
 
 test('formDataFromObject returns a FormData object', () => {
   const data = {
-    name: faker.name.findName(),
+    name: faker.name.fullName(),
   };
 
   const formData = formDataFromObject(data);
