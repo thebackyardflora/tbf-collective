@@ -223,12 +223,14 @@ export async function getCatalogItemWithInventoryInfo({
           },
         },
         select: {
+          id: true,
           available: true,
           priceEach: true,
           inventoryList: {
             select: {
               company: {
                 select: {
+                  id: true,
                   name: true,
                 },
               },
@@ -236,13 +238,18 @@ export async function getCatalogItemWithInventoryInfo({
           },
         },
       },
+      parent: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
-
   if (!catalogItem?.inventoryRecords.length) return null;
 
   return {
     name: catalogItem.name,
+    species: catalogItem.parent?.name ?? 'Unknown Species',
     price: getPriceText(catalogItem),
     description: catalogItem.description,
     imageSrc: catalogItem.images[0]?.imageKey
@@ -254,6 +261,7 @@ export async function getCatalogItemWithInventoryInfo({
       : catalogItem.thumbnail,
     imageAlt: catalogItem.name,
     growers: catalogItem.inventoryRecords.map((record) => ({
+      inventoryRecordId: record.id,
       name: record.inventoryList.company.name,
       priceEach: `$${record.priceEach.toNumber().toFixed(2)} / stem`,
       available: record.available,
@@ -273,7 +281,11 @@ function getPriceText(catalogItem: { inventoryRecords: { priceEach: Prisma.Decim
       : inventoryRecord.priceEach.toNumber();
   }
 
-  const priceRange = priceMin === priceMax ? `$${priceMax}` : `$${priceMin?.toFixed(2)} - $${priceMax?.toFixed(2)}`;
+  const priceRange = !priceMin
+    ? 'No pricing set'
+    : priceMin === priceMax
+    ? `$${priceMin.toFixed(2)}`
+    : `$${priceMin?.toFixed(2)} - $${priceMax?.toFixed(2)}`;
 
   return `${priceRange} / stem`;
 }

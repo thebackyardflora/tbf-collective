@@ -1,14 +1,45 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { RadioGroup } from '@headlessui/react';
 import classNames from 'classnames';
-import { Breadcrumbs, Button, Input } from '@mando-collabs/tailwind-ui';
+import { Breadcrumbs, Button, Input, RVFInput } from '@mando-collabs/tailwind-ui';
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
-import { Form, useLoaderData } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import { requireFlorist } from '~/session.server';
 import { UnitOfMeasure } from '~/types';
 import { getCatalogItemWithInventoryInfo } from '~/models/catalog-item.server';
+import { z } from 'zod';
+import { zfd } from 'zod-form-data';
+import { withZod } from '@remix-validated-form/with-zod';
+import { ValidatedForm, validationError } from 'remix-validated-form';
+import {
+  createOrderRequestItem,
+  OrderRequestError,
+  OrderRequestErrorCodeMap,
+} from '~/models/order-request-item.server';
+
+const schema = z
+  .object({
+    grower: z.object({
+      inventoryRecordId: z.string(),
+      available: zfd.numeric(z.number()),
+    }),
+    quantity: zfd.numeric(z.number().positive()),
+    unitOfMeasure: z.nativeEnum(UnitOfMeasure),
+  })
+  .refine(
+    (val) => {
+      const stemQty = val.unitOfMeasure === UnitOfMeasure.STEM ? val.quantity : val.quantity * 10;
+      return stemQty <= val.grower.available;
+    },
+    {
+      path: ['quantity'],
+      message: 'Quantity must be less than or equal to available',
+    }
+  );
+
+const validator = withZod(schema);
 
 export async function loader({ request, params }: LoaderArgs) {
   await requireFlorist(request);
@@ -31,11 +62,42 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export async function action({ request, params }: ActionArgs) {
-  await requireFlorist(request);
+  const { user } = await requireFlorist(request);
 
   const { marketId } = params;
 
-  return redirect(`/florists/market/${marketId}/cart`);
+  invariant(typeof marketId === 'string');
+
+  const validationResult = await validator.validate(await request.formData());
+
+  if (validationResult.error) {
+    return validationError(validationResult.error);
+  }
+
+  const { grower, quantity, unitOfMeasure } = validationResult.data;
+
+  const stemQty = unitOfMeasure === UnitOfMeasure.STEM ? quantity : quantity * 10;
+
+  try {
+    await createOrderRequestItem({
+      quantity: stemQty,
+      inventoryRecordId: grower.inventoryRecordId,
+      marketEventId: marketId,
+      userId: user.id,
+    });
+  } catch (e) {
+    if (e instanceof OrderRequestError) {
+      if (e.code === '1003') {
+        return validationError({ fieldErrors: { quantity: OrderRequestErrorCodeMap[e.code].userMessage } });
+      } else {
+        return json({ formError: OrderRequestErrorCodeMap[e.code].userMessage });
+      }
+    } else {
+      return json({ formError: OrderRequestErrorCodeMap['1001'].userMessage });
+    }
+  }
+
+  return null;
 }
 
 export default function ProductPage() {
@@ -46,17 +108,23 @@ export default function ProductPage() {
     { name: catalogItem.name, href: '#' },
   ];
 
-  const [selectedGrower, setSelectedGrower] = useState(catalogItem.growers[0]);
+  const [selectedInventoryRecordId, setSelectedInventoryRecord] = useState(catalogItem.growers[0].inventoryRecordId);
+
+  const selectedGrower = useMemo(
+    () => catalogItem.growers.find((g) => g.inventoryRecordId === selectedInventoryRecordId)!,
+    [catalogItem.growers, selectedInventoryRecordId]
+  );
 
   return (
     <div className="bg-white">
-      <div className="mx-auto max-w-2xl py-4 px-4 sm:py-24 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
+      <div className="mx-auto max-w-2xl py-4 px-4 sm:py-8 sm:px-6 lg:row-auto lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
         {/* Product details */}
-        <div className="lg:max-w-lg lg:self-end">
+        <div className="lg:max-w-lg">
           <Breadcrumbs breadcrumbs={breadcrumbs} />
 
           <div className="mt-4">
             <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">{catalogItem.name}</h1>
+            <p className="text-base text-gray-500">Species: {catalogItem.species}</p>
           </div>
 
           <section aria-labelledby="information-heading" className="mt-4">
@@ -72,37 +140,29 @@ export default function ProductPage() {
               <p className="text-base text-gray-500">{catalogItem.description}</p>
             </div>
           </section>
-        </div>
 
-        {/* Product image */}
-        <div className="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
-          <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg">
-            <img
-              src={catalogItem.imageSrc ?? '/images/no-image-placeholder.svg'}
-              alt={catalogItem.imageAlt}
-              className="h-full w-full object-cover object-center"
-            />
-          </div>
-        </div>
-
-        {/* Product form */}
-        <div className="mt-10 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start">
-          <section aria-labelledby="options-heading">
+          <section className="mt-10" aria-labelledby="options-heading">
             <h2 id="options-heading" className="sr-only">
               Product options
             </h2>
 
-            <Form method="post">
+            <ValidatedForm id="product-page" validator={validator} method="post">
+              <input type="hidden" name="grower[available]" value={selectedGrower.available} />
+
               <div>
                 {/* Farm selector */}
-                <RadioGroup value={selectedGrower} onChange={setSelectedGrower}>
+                <RadioGroup
+                  name="grower[inventoryRecordId]"
+                  value={selectedInventoryRecordId}
+                  onChange={setSelectedInventoryRecord}
+                >
                   <RadioGroup.Label className="block text-sm font-medium text-gray-700">Grower</RadioGroup.Label>
                   <div className="mt-1 grid grid-cols-1 gap-4">
                     {catalogItem.growers.map((grower) => (
                       <RadioGroup.Option
                         as="div"
                         key={grower.name}
-                        value={grower}
+                        value={grower.inventoryRecordId}
                         className={({ active }) =>
                           classNames(
                             active ? 'ring-2 ring-primary-500' : '',
@@ -138,13 +198,14 @@ export default function ProductPage() {
                 </RadioGroup>
                 <p className="mt-2 text-sm font-medium text-gray-500">1 Bunch = 10 stems</p>
               </div>
-              <div className="mt-10 grid grid-cols-2 gap-4">
-                <Input
+              <div className="mt-10 grid grid-cols-2 items-start gap-4">
+                <RVFInput
                   inputClassName="h-[50px] pr-24"
                   name="quantity"
                   type="number"
                   pattern="\d*"
                   placeholder="0"
+                  required
                   trailingDropdown={
                     <Input.TrailingDropdown
                       srLabel="Quantity"
@@ -163,8 +224,19 @@ export default function ProductPage() {
                   Add to cart
                 </Button>
               </div>
-            </Form>
+            </ValidatedForm>
           </section>
+        </div>
+
+        {/* Product image */}
+        <div className="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
+          <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg">
+            <img
+              src={catalogItem.imageSrc ?? '/images/no-image-placeholder.svg'}
+              alt={catalogItem.imageAlt}
+              className="h-full w-full object-cover object-center"
+            />
+          </div>
         </div>
       </div>
     </div>
