@@ -5,7 +5,7 @@ import { Breadcrumbs, Button, Input, RVFInput } from '@mando-collabs/tailwind-ui
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
-import { useLoaderData } from '@remix-run/react';
+import { useFetcher, useLoaderData } from '@remix-run/react';
 import { requireFlorist } from '~/session.server';
 import { UnitOfMeasure } from '~/types';
 import { getCatalogItemWithInventoryInfo } from '~/models/catalog-item.server';
@@ -18,6 +18,7 @@ import {
   OrderRequestError,
   OrderRequestErrorCodeMap,
 } from '~/models/order-request-item.server';
+import { CheckIcon } from '@heroicons/react/outline';
 
 const schema = z
   .object({
@@ -97,11 +98,12 @@ export async function action({ request, params }: ActionArgs) {
     }
   }
 
-  return null;
+  return json({ success: true });
 }
 
 export default function ProductPage() {
   const { marketId, catalogItem } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher();
 
   const breadcrumbs = [
     { name: 'Browse', href: `../market/${marketId}/browse` },
@@ -114,6 +116,8 @@ export default function ProductPage() {
     () => catalogItem.growers.find((g) => g.inventoryRecordId === selectedInventoryRecordId)!,
     [catalogItem.growers, selectedInventoryRecordId]
   );
+
+  const showSuccessMessage = useMemo(() => fetcher.type === 'done' && Boolean(fetcher.data.success), [fetcher]);
 
   return (
     <div className="bg-white">
@@ -146,7 +150,7 @@ export default function ProductPage() {
               Product options
             </h2>
 
-            <ValidatedForm id="product-page" validator={validator} method="post">
+            <ValidatedForm fetcher={fetcher} id="product-page" validator={validator} method="post">
               <input type="hidden" name="grower[available]" value={selectedGrower.available} />
 
               <div>
@@ -225,6 +229,12 @@ export default function ProductPage() {
                 </Button>
               </div>
             </ValidatedForm>
+            {showSuccessMessage ? (
+              <p className="mt-2 flex items-center text-sm text-primary-700">
+                <CheckIcon className="mr-2 h-5 w-5" />
+                Item added to order!
+              </p>
+            ) : null}
           </section>
         </div>
 
