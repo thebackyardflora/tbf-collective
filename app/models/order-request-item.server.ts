@@ -79,3 +79,81 @@ export const OrderRequestErrorCodeMap = {
     userMessage: 'The quantity you requested is no longer available. Please adjust and try again',
   },
 };
+
+export async function getOrderRequestItems({ userId, marketEventId }: { userId: string; marketEventId: string }) {
+  return await prisma.orderRequestItem.findMany({
+    where: {
+      userId,
+      marketEventId,
+    },
+    select: {
+      id: true,
+      quantity: true,
+      inventoryRecord: {
+        select: {
+          id: true,
+          priceEach: true,
+          catalogItem: {
+            select: {
+              id: true,
+              name: true,
+              thumbnail: true,
+              parent: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          inventoryList: {
+            select: {
+              company: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+export function getOrderRequestItemCount({ userId, marketEventId }: { userId: string; marketEventId: string }) {
+  return prisma.orderRequestItem.count({
+    where: {
+      userId,
+      marketEventId,
+    },
+  });
+}
+
+export async function deleteOrderRequestItem({ orderRequestItemId }: { orderRequestItemId: string }) {
+  await prisma.$transaction(async (client) => {
+    const orderRequestItem = await client.orderRequestItem.findUnique({
+      where: { id: orderRequestItemId },
+    });
+
+    if (!orderRequestItem) {
+      return;
+    }
+
+    await client.inventoryRecord.update({
+      where: {
+        id: orderRequestItem.inventoryRecordId,
+      },
+      data: {
+        available: {
+          increment: orderRequestItem.quantity,
+        },
+      },
+    });
+
+    await client.orderRequestItem.delete({
+      where: {
+        id: orderRequestItemId,
+      },
+    });
+  });
+}
