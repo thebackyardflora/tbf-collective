@@ -95,7 +95,7 @@
     "cy2": "2.0.0",
     "cypress": "10.4.0",
     "dotenv": "16.0.1",
-    "esbuild": "0.15.1",
+    "esbuild": "0.15.2",
     "eslint": "8.21.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.2.1",
