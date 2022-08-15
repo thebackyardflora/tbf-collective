@@ -20,6 +20,7 @@ import { InstantSearch, InstantSearchSSRProvider } from 'react-instantsearch-hoo
 import { useAlgolia } from '~/components/AlgoliaProvider';
 import { handleInventoryRecordForm } from '~/forms/inventory-record.form';
 import { deleteInventoryRecords } from '~/models/inventory-record.server';
+import { reindexMarketInventory } from '~/algolia.server';
 
 export async function loader({ request, params }: LoaderArgs) {
   const { company } = await requireActiveCompany(request, CompanyType.GROWER);
@@ -51,10 +52,14 @@ export async function loader({ request, params }: LoaderArgs) {
           };
         }),
     },
-    catalogItems: catalogItems.map((catalogItem) => ({
-      ...catalogItem,
-      type: catalogItem.parentId ? 'Variety of ' + catalogItemMap[catalogItem.parentId]?.name ?? 'Unknown' : 'Species',
-    })),
+    catalogItems: catalogItems
+      .filter((item) => item.parentId)
+      .map((catalogItem) => ({
+        ...catalogItem,
+        type: catalogItem.parentId
+          ? 'Variety of ' + catalogItemMap[catalogItem.parentId]?.name ?? 'Unknown'
+          : 'Species',
+      })),
     indexName: process.env.ALGOLIA_INDEX_NAME,
   });
 }
@@ -96,6 +101,7 @@ export async function action({ request, params }: ActionArgs) {
     await deleteInventoryRecords(inventoryRecordIds);
   } else if (method.toLowerCase() === 'post' && action === 'submit-list') {
     await setInventoryListStatus(inventoryList.id, InventoryListStatus.APPROVED);
+    await reindexMarketInventory();
     return redirect('/growers');
   }
 
