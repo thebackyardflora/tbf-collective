@@ -18,7 +18,7 @@ describe('inventory list', function () {
     // Wait for modal to open and finish animation
     cy.wait(500);
 
-    cy.findAllByRole('button', { name: /species/i })
+    cy.findAllByRole('button', { name: /variety/i })
       .first()
       .should('be.visible')
       .click({ force: true });
@@ -40,7 +40,7 @@ describe('inventory list', function () {
     // Wait for modal to open and finish animation
     cy.wait(1000);
 
-    cy.findAllByRole('button', { name: /species/i })
+    cy.findAllByRole('button', { name: /variety/i })
       .last()
       .click({ force: true });
     cy.findByLabelText(/quantity/i)

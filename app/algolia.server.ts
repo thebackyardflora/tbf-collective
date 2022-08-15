@@ -1,5 +1,7 @@
 import algoliasearch from 'algoliasearch';
 import invariant from 'tiny-invariant';
+import { getUpcomingMarketEvent } from '~/models/market-event.server';
+import { getCatalogItemsForNextMarket } from '~/models/catalog-item.server';
 
 const env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
 
@@ -14,3 +16,21 @@ export const catalogIndex = algoliaClient.initIndex(catalogIndexName);
 
 export const marketInventoryIndexName = `${env}-market-inventory`;
 export const marketInventoryIndex = algoliaClient.initIndex(marketInventoryIndexName);
+
+export async function reindexMarketInventory() {
+  await marketInventoryIndex.clearObjects();
+
+  const upcomingMarket = await getUpcomingMarketEvent();
+
+  if (!upcomingMarket) return;
+
+  const catalogItems = await getCatalogItemsForNextMarket({ marketEventId: upcomingMarket.id });
+
+  const objects = catalogItems.map(({ id, parent, ...catalogItem }) => ({
+    ...catalogItem,
+    objectID: id,
+    species: parent?.name ?? null,
+  }));
+
+  await marketInventoryIndex.saveObjects(objects);
+}
