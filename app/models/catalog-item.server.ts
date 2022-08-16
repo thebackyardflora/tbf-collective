@@ -291,7 +291,7 @@ function getPriceText(catalogItem: { inventoryRecords: { priceEach: Prisma.Decim
 }
 
 export async function getCatalogItemsForNextMarket({ marketEventId }: { marketEventId: string }) {
-  return await prisma.catalogItem.findMany({
+  const items = await prisma.catalogItem.findMany({
     where: {
       inventoryRecords: {
         some: {
@@ -302,6 +302,11 @@ export async function getCatalogItemsForNextMarket({ marketEventId }: { marketEv
       },
     },
     include: {
+      inventoryRecords: {
+        select: {
+          priceEach: true,
+        },
+      },
       parent: {
         select: {
           name: true,
@@ -309,4 +314,9 @@ export async function getCatalogItemsForNextMarket({ marketEventId }: { marketEv
       },
     },
   });
+
+  return items.map((item) => ({
+    ...item,
+    price: getPriceText(item),
+  }));
 }
