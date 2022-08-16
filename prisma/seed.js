@@ -205,15 +205,16 @@ async function createInventoryList({ companyId, marketId }) {
     },
   });
 
-  const index = client.initIndex('dev-market-inventory');
-  await index.saveObjects(
-    inventoryList.inventoryRecords
-      .map((record) => record.catalogItem)
-      .map(({ id, ...item }) => ({
-        ...item,
-        objectID: id,
-      }))
-  );
+  // const index = client.initIndex('dev-market-inventory');
+  // await index.clearObjects();
+  // await index.saveObjects(
+  //   inventoryList.inventoryRecords
+  //     .map((record) => record.catalogItem)
+  //     .map(({ id, ...item }) => ({
+  //       ...item,
+  //       objectID: id,
+  //     }))
+  // );
 }
 
 async function setupGrower({ index }) {
