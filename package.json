@@ -59,7 +59,7 @@
     "react-instantsearch-hooks-server": "6.31.1",
     "react-instantsearch-hooks-web": "6.31.1",
     "react-simple-image-viewer": "1.2.2",
-    "tailwind-merge": "1.5.1",
+    "tailwind-merge": "1.6.0",
     "tiny-invariant": "1.2.0",
     "zod": "3.18.0",
     "zod-form-data": "1.2.1"
