@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef, FC } from 'react';
-import { CalendarIcon, CheckCircleIcon, LocationMarkerIcon } from '@heroicons/react/outline';
+import { CalendarIcon, CheckCircleIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { Button } from '@mando-collabs/tailwind-ui';
 import type { Address } from '@prisma/client';
 import { twMerge } from 'tailwind-merge';
@@ -30,7 +30,7 @@ export const UpcomingMarket: FC<UpcomingMarketProps> = ({
         <CalendarIcon className="mr-2 h-5 w-5 text-primary-500" /> {date}
       </div>
       <div className="mb-1 flex items-center">
-        <LocationMarkerIcon className="mr-2 h-5 w-5 text-primary-500" /> {address.street}
+        <MapPinIcon className="mr-2 h-5 w-5 text-primary-500" /> {address.street}
       </div>
       {isInventorySubmitted ? (
         <div className="flex items-center">

@@ -1,7 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment } from 'react';
 import { Popover, Transition } from '@headlessui/react';
-import { MenuIcon, XIcon } from '@heroicons/react/outline';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Form, Link } from '@remix-run/react';
 import classNames from 'classnames';
 import Logo from '~/components/Logo';
@@ -60,7 +60,7 @@ export default function Header(props: HeaderProps) {
               <div className="-my-2 -mr-2 md:hidden">
                 <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
                   <span className="sr-only">Open menu</span>
-                  <MenuIcon className="h-6 w-6" aria-hidden="true" />
+                  <Bars3Icon className="h-6 w-6" aria-hidden="true" />
                 </Popover.Button>
               </div>
               {/*<Popover.Group as="nav" className="hidden space-x-10 md:flex">*/}
@@ -172,7 +172,7 @@ export default function Header(props: HeaderProps) {
                     <div className="-mr-2">
                       <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500">
                         <span className="sr-only">Close menu</span>
-                        <XIcon className="h-6 w-6" aria-hidden="true" />
+                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                       </Popover.Button>
                     </div>
                   </div>

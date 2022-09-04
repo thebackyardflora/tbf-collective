@@ -4,7 +4,7 @@ import { requireActiveCompany } from '~/session.server';
 import { CompanyType } from '@prisma/client';
 import { getUpcomingMarketEvent } from '~/models/market-event.server';
 import { useLoaderData } from '@remix-run/react';
-import { CalendarIcon, LocationMarkerIcon } from '@heroicons/react/outline';
+import { CalendarIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { Button } from '@mando-collabs/tailwind-ui';
 import { LocalDate } from '~/components/LocalDate';
@@ -32,7 +32,7 @@ export default function Florists() {
               <LocalDate format="dddd, MMMM D, YYYY @ h:mm A">{upcomingMarket.marketDate}</LocalDate>
             </div>
             <div className="mb-1 flex items-center">
-              <LocationMarkerIcon className="mr-2 h-5 w-5 text-primary-500" /> {upcomingMarket.address.street}
+              <MapPinIcon className="mr-2 h-5 w-5 text-primary-500" /> {upcomingMarket.address.street}
             </div>
 
             <div className="mt-4">

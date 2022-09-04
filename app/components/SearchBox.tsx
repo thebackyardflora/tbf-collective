@@ -1,10 +1,10 @@
 import type { InputProps } from '@mando-collabs/tailwind-ui';
 import { Input } from '@mando-collabs/tailwind-ui';
 import type { FC } from 'react';
-import { useSearchBox } from 'react-instantsearch-hooks';
-import { SearchIcon } from '@heroicons/react/outline';
-import debounce from 'lodash.debounce';
 import { useRef } from 'react';
+import { useSearchBox } from 'react-instantsearch-hooks';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import debounce from 'lodash.debounce';
 
 export interface SearchBoxProps
   extends Omit<InputProps, 'leadingIcon' | 'type' | 'name' | 'defaultValue' | 'onChange'> {}
@@ -19,7 +19,7 @@ export const SearchBox: FC<SearchBoxProps> = ({ className, ...inputProps }) => {
 
   return (
     <Input
-      leadingIcon={SearchIcon}
+      leadingIcon={MagnifyingGlassIcon}
       className={className}
       type="search"
       name="search"

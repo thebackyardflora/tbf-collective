@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { ClipboardIcon, XIcon } from '@heroicons/react/outline';
+import { ClipboardIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { twMerge } from 'tailwind-merge';
 import { Link } from '@remix-run/react';
 import { Button } from '@mando-collabs/tailwind-ui';
@@ -35,7 +35,7 @@ export const InlineNotification: FC<InlineNotificationProps> = ({ className, sho
                 className="-mr-1 flex rounded-md p-2 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <span className="sr-only">Dismiss</span>
-                <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
               </button>
             </div>
           ) : null}

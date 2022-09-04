@@ -2,7 +2,7 @@
 import type { FC, ReactNode } from 'react';
 import React, { Fragment } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
+import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import { AvatarPlaceholder } from '~/components/AvatarPlaceholder';
 import Logo from '~/components/Logo';
@@ -122,9 +122,9 @@ export const AppLayout: FC<AppLayoutProps> = ({ children, headerActions, user })
                   <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
-                      <XIcon className="block h-6 w-6" aria-hidden="true" />
+                      <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
                     ) : (
-                      <MenuIcon className="block h-6 w-6" aria-hidden="true" />
+                      <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
                     )}
                   </Disclosure.Button>
                 </div>

@@ -1,7 +1,7 @@
 import { PageWrapper } from '~/components/PageWrapper';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Button } from '@mando-collabs/tailwind-ui';
-import { PlusIcon } from '@heroicons/react/outline';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { CatalogGrid } from '~/components/catalog/CatalogGrid';
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';

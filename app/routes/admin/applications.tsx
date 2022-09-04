@@ -1,13 +1,13 @@
 import { PageWrapper } from '~/components/PageWrapper';
 import type { LoaderArgs } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
 import { getAllApplicationsByStatus, isApplicationStatus } from '~/models/application.server';
 import { ApplicationStatus } from '@prisma/client';
 import { useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { ApplicationList } from '~/components/ApplicationList';
 import { ButtonGroup } from '@mando-collabs/tailwind-ui';
-import { FolderOpenIcon } from '@heroicons/react/outline';
-import { json } from '@remix-run/node';
+import { FolderOpenIcon } from '@heroicons/react/24/outline';
 
 export async function loader({ request }: LoaderArgs) {
   await requireAdmin(request);

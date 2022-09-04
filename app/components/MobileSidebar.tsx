@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { XIcon } from '@heroicons/react/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import Logo from '~/components/Logo';
 import { Link } from '@remix-run/react';
 import classNames from 'classnames';
@@ -58,7 +58,7 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({ sidebarOpen, setSi
                     onClick={() => setSidebarOpen(false)}
                   >
                     <span className="sr-only">Close sidebar</span>
-                    <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                    <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
                   </button>
                 </div>
               </Transition.Child>

@@ -17,7 +17,7 @@
 import type { FC } from 'react';
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { XIcon } from '@heroicons/react/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Button, Input } from '@mando-collabs/tailwind-ui';
 import type { InventoryRecord } from '@prisma/client';
 import { SearchBox } from '~/components/SearchBox';
@@ -142,7 +142,7 @@ export const InventoryRecordForm: FC<InventoryRecordFormProps> = ({ isOpen, setI
                               onClick={onClose}
                             >
                               <span className="sr-only">Close panel</span>
-                              <XIcon className="h-6 w-6" aria-hidden="true" />
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                             </button>
                           </div>
                         </div>
