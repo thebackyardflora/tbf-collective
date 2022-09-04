@@ -7,7 +7,7 @@ import { getCatalogItemByIdWithChildren } from '~/models/catalog-item.server';
 import { getImageUrl } from '~/cloudinary.server';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Button } from '@mando-collabs/tailwind-ui';
-import { PlusIcon } from '@heroicons/react/outline';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { CatalogPage } from '~/components/catalog/CatalogPage';
 
 export async function loader({ request, params }: LoaderArgs) {

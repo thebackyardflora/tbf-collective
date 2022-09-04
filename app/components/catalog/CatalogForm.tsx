@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { catalogItemFormValidator } from '~/forms/catalog-item';
 import { Button, RVFButton, RVFInput, RVFTextArea } from '@mando-collabs/tailwind-ui';
 import { ValidatedForm } from 'remix-validated-form';
-import { PlusIcon, TrashIcon } from '@heroicons/react/outline';
+import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 
 export interface CatalogFormProps {

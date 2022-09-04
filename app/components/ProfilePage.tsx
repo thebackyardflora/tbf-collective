@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { PageWrapper } from '~/components/PageWrapper';
 import { useActionData, useTransition } from '@remix-run/react';
 import { Input, RVFButton, RVFInput, RVFTextArea } from '@mando-collabs/tailwind-ui';
-import { CheckCircleIcon } from '@heroicons/react/outline';
+import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { SocialSiteType } from '@prisma/client';
 import { ValidatedForm } from 'remix-validated-form';
 import { companyProfileValidator } from '~/forms/company-profile';

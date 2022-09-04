@@ -18,7 +18,7 @@ import {
   OrderRequestError,
   OrderRequestErrorCodeMap,
 } from '~/models/order-request-item.server';
-import { CheckIcon } from '@heroicons/react/outline';
+import { CheckIcon } from '@heroicons/react/24/outline';
 
 const schema = z
   .object({

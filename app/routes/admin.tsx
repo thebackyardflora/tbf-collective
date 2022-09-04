@@ -5,7 +5,7 @@ import { StorefrontOutlined } from '@mui/icons-material';
 
 /* This example requires Tailwind CSS v2.0+ */
 import { useState } from 'react';
-import { ClipboardIcon, CollectionIcon, HomeIcon, MenuIcon } from '@heroicons/react/outline';
+import { Bars3Icon, ClipboardIcon, HomeIcon, RectangleStackIcon } from '@heroicons/react/24/outline';
 import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
 import { StaticSidebar } from '~/components/StaticSidebar';
 import { MobileSidebar } from '~/components/MobileSidebar';
@@ -45,7 +45,7 @@ export default function AdminRoot() {
     {
       name: 'Catalog',
       href: 'catalog',
-      icon: CollectionIcon,
+      icon: RectangleStackIcon,
       current: location.pathname.startsWith('/admin/catalog'),
     },
     ...(showGrowerDashboardLink
@@ -77,7 +77,7 @@ export default function AdminRoot() {
               onClick={() => setSidebarOpen(true)}
             >
               <span className="sr-only">Open sidebar</span>
-              <MenuIcon className="h-6 w-6" aria-hidden="true" />
+              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
           <main className="flex-1">

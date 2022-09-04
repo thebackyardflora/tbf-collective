@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { CalendarIcon } from '@heroicons/react/solid';
+import { CalendarIcon } from '@heroicons/react/24/solid';
 import React from 'react';
 import { Link } from '@remix-run/react';
 import type { Application } from '@prisma/client';

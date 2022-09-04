@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { CheckIcon } from '@heroicons/react/solid';
+import { CheckIcon } from '@heroicons/react/24/solid';
 import React from 'react';
 import { Link } from '@remix-run/react';
 import classNames from 'classnames';

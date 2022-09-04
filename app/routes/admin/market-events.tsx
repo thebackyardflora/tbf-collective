@@ -1,13 +1,13 @@
 import { PageWrapper } from '~/components/PageWrapper';
 import type { LoaderArgs } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { requireAdmin } from '~/session.server';
 import { getMarketEvents } from '~/models/market-event.server';
 import { MarketEventList } from '~/components/MarketEventList';
 import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Button, ButtonGroup } from '@mando-collabs/tailwind-ui';
 import { StorefrontOutlined } from '@mui/icons-material';
-import { PlusIcon } from '@heroicons/react/outline';
-import { json } from '@remix-run/node';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 function isMarketDateFilter(filter: unknown): filter is 'upcoming' | 'past' {
   return filter === 'upcoming' || filter === 'past';

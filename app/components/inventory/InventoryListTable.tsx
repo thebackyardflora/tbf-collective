@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Button } from '@mando-collabs/tailwind-ui';
-import { PlusIcon } from '@heroicons/react/outline';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import type { InventoryRecord } from '@prisma/client';
 import { Form, useTransition } from '@remix-run/react';
 import { ConfirmDeleteModal } from '~/components/inventory/ConfirmDeleteModal';

@@ -1,12 +1,12 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { CalendarIcon } from '@heroicons/react/solid';
+import { CalendarIcon } from '@heroicons/react/24/solid';
 import React from 'react';
 import { Link } from '@remix-run/react';
 import type { SerializedEntity } from '~/types';
 import { useLocalDate } from '~/hooks/use-local-date';
 import { twMerge } from 'tailwind-merge';
 import classNames from 'classnames';
-import { LocationMarkerIcon } from '@heroicons/react/outline';
+import { MapPinIcon } from '@heroicons/react/24/outline';
 import type { MarketEventWithAddress } from '~/models/market-event.server';
 
 export interface StackedListProps {
@@ -52,7 +52,7 @@ function MarketEventListItem(props: { marketEvent: SerializedEntity<MarketEventW
           <div className="mt-2 sm:flex sm:justify-between">
             <div className="sm:flex">
               <p className="flex items-center text-sm capitalize text-gray-500">
-                <LocationMarkerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                <MapPinIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                 {props.marketEvent.address.street}
               </p>
             </div>
