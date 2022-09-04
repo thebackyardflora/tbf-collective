@@ -5,6 +5,12 @@
   ],
   "packageRules": [
     {
+      "matchPackageNames": [
+        "eslint"
+      ],
+      "allowedVersions": "<8.23.0"
+    },
+    {
       "packageNames": [
         "@types/react",
         "@types/react-dom"
@@ -12,14 +18,20 @@
       "groupName": "react monorepo"
     },
     {
-      "depTypeList": ["action"],
+      "depTypeList": [
+        "action"
+      ],
       "semanticCommitType": "ci",
       "semanticCommitScope": "action"
     },
     {
-      "matchDatasources": ["docker"],
+      "matchDatasources": [
+        "docker"
+      ],
       "semanticCommitType": "ci",
-      "matchPackageNames": ["node"],
+      "matchPackageNames": [
+        "node"
+      ],
       "versioning": "node"
     }
   ],
