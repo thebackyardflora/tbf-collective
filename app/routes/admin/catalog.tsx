@@ -4,14 +4,14 @@ import { Button } from '@mando-collabs/tailwind-ui';
 import { PlusIcon } from '@heroicons/react/outline';
 import { CatalogGrid } from '~/components/catalog/CatalogGrid';
 import type { LoaderArgs } from '@remix-run/node';
-import { getTopLevelCategoryItems } from '~/models/catalog-item.server';
 import { json } from '@remix-run/node';
+import { getTopLevelCategoryItems } from '~/models/catalog-item.server';
 import { InstantSearch, InstantSearchSSRProvider } from 'react-instantsearch-hooks-web';
-import type { UseDataFunctionReturn } from '@remix-run/react/dist/components';
 import { SearchBox } from '~/components/SearchBox';
 import invariant from 'tiny-invariant';
 import { useAlgolia } from '~/components/AlgoliaProvider';
 import { requireAdmin } from '~/session.server';
+import type { SerializeFrom } from '@remix-run/server-runtime';
 
 export async function loader({ request }: LoaderArgs) {
   await requireAdmin(request);
@@ -55,7 +55,7 @@ function CatalogSearch({
   initialCatalogItems,
   indexName,
 }: {
-  initialCatalogItems: UseDataFunctionReturn<typeof loader>['catalogItems'];
+  initialCatalogItems: SerializeFrom<typeof loader>['catalogItems'];
   indexName: string;
 }) {
   const searchClient = useAlgolia();
