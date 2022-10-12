@@ -67,7 +67,7 @@
   "devDependencies": {
     "@emotion/react": "11.10.4",
     "@emotion/styled": "11.10.4",
-    "@faker-js/faker": "7.5.0",
+    "@faker-js/faker": "7.6.0",
     "@justinwaite/prettier-config": "1.0.0",
     "@remix-run/dev": "1.7.2",
     "@remix-run/eslint-config": "1.7.2",
