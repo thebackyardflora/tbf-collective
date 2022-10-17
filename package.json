@@ -115,7 +115,7 @@
     "vite": "3.1.8",
     "vite-tsconfig-paths": "3.5.1",
     "vitest": "0.24.3",
-    "vitest-mock-extended": "0.1.16"
+    "vitest-mock-extended": "1.0.2"
   },
   "engines": {
     "node": ">=14"
