@@ -28,7 +28,7 @@
   },
   "prettier": "@justinwaite/prettier-config",
   "dependencies": {
-    "@headlessui/react": "1.7.3",
+    "@headlessui/react": "1.7.4",
     "@heroicons/react": "2.0.13",
     "@mando-collabs/tailwind-ui": "^1.28.0",
     "@mui/icons-material": "5.10.9",
