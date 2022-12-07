@@ -113,7 +113,7 @@
     "tsconfig-paths": "4.1.1",
     "typescript": "4.9.3",
     "vite": "3.2.5",
-    "vite-tsconfig-paths": "4.0.0",
+    "vite-tsconfig-paths": "4.0.1",
     "vitest": "0.25.0",
     "vitest-mock-extended": "1.0.7"
   },
