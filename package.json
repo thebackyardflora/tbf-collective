@@ -49,7 +49,7 @@
     "cross-env": "7.0.3",
     "dayjs": "1.11.7",
     "express": "4.18.2",
-    "google-libphonenumber": "3.2.31",
+    "google-libphonenumber": "3.2.32",
     "isbot": "3.6.5",
     "libphonenumber-js": "1.10.18",
     "lodash.debounce": "4.0.8",
