@@ -29,7 +29,7 @@
   "prettier": "@justinwaite/prettier-config",
   "dependencies": {
     "@headlessui/react": "1.7.10",
-    "@heroicons/react": "2.0.14",
+    "@heroicons/react": "2.0.15",
     "@mando-collabs/tailwind-ui": "^1.28.0",
     "@mui/icons-material": "5.11.0",
     "@prisma/client": "4.10.0",
