@@ -98,7 +98,7 @@
     "dotenv": "16.0.3",
     "esbuild": "0.17.12",
     "eslint": "8.22.0",
-    "eslint-config-prettier": "8.7.0",
+    "eslint-config-prettier": "8.8.0",
     "eslint-plugin-prettier": "4.2.1",
     "happy-dom": "8.9.0",
     "msw": "1.1.1",
