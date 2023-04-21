@@ -31,7 +31,7 @@
     "@headlessui/react": "1.7.14",
     "@heroicons/react": "2.0.17",
     "@mando-collabs/tailwind-ui": "^1.28.0",
-    "@mui/icons-material": "5.11.11",
+    "@mui/icons-material": "5.11.16",
     "@prisma/client": "4.11.0",
     "@remix-run/express": "1.7.3",
     "@remix-run/node": "1.7.3",
