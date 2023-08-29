@@ -72,7 +72,7 @@
     "@remix-run/dev": "1.7.3",
     "@remix-run/eslint-config": "1.7.3",
     "@tailwindcss/aspect-ratio": "0.4.2",
-    "@tailwindcss/forms": "0.5.3",
+    "@tailwindcss/forms": "0.5.6",
     "@tailwindcss/typography": "0.5.9",
     "@testing-library/cypress": "8.0.7",
     "@testing-library/dom": "9.2.0",
